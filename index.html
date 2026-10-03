@@ -115,10 +115,30 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .hero{padding:56px 0;min-height:0}
   .hero-bg{width:100%;opacity:.3;-webkit-mask-image:none;mask-image:none}
 }
-@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+/* Hero animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+.hero h1{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) both}
+.hero h1 span{display:inline-block;animation:floaty 5s ease-in-out 1s infinite}
+.hero p{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) .25s both}
+.hero .cta{animation:fadeUp .9s cubic-bezier(.2,.7,.2,1) .5s both}
+/* Scroll reveal */
+.js .feat>div:not(.pic){opacity:0;transform:translateX(-36px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.js .feat:not(.flip)>div:not(.pic){transform:translateX(36px)}
+.js .feat .pic{opacity:0;transform:scale(.97);transition:opacity .9s cubic-bezier(.2,.7,.2,1) .15s,transform .9s cubic-bezier(.2,.7,.2,1) .15s}
+.js .feat.in>div:not(.pic),.js .feat.in .pic{opacity:1;transform:none}
+.js .reveal{opacity:0;transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.js .reveal.text{transform:translateY(28px)}
+.js .reveal.pic{transform:translateX(-48px)}
+.js .reveal.in-view{opacity:1;transform:none}
+.js .reveal.pic.in-view{transition-delay:.2s}
+@media(prefers-reduced-motion:reduce){.js .reveal{opacity:1;transform:none}}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
 </style>
+<script>document.documentElement.classList.add("js")</script>
 </head>
 <body>
+<script>document.documentElement.className+=" js"</script>
 
 <nav>
   <div class="wrap">
@@ -159,11 +179,11 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 
 <main class="wrap">
   <section class="feat flip" id="towny">
-    <div>
+    <div class="reveal text">
       <h2>Expand your<br>Minecraft empire</h2>
       <p>Found a town with Towny, invite residents, and set their permissions. Sell plots to build a real estate market. Join towns together into a nation and watch it grow.</p>
     </div>
-    <div class="pic"><img src="img/towny.jpg" alt="Players building a town" onerror="this.remove()"></div>
+    <div class="pic reveal"><img src="img/towny.jpg" alt="Players building a town" onerror="this.remove()"></div>
   </section>
 
   <section class="feat" id="map">
@@ -251,6 +271,14 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </footer>
 
 <script>
+  (function(){
+    var els=document.querySelectorAll(".reveal");
+    if(!("IntersectionObserver" in window)){els.forEach(function(e){e.classList.add("in-view")});return}
+    var io=new IntersectionObserver(function(en){
+      en.forEach(function(x){if(x.isIntersecting){x.target.classList.add("in-view");io.unobserve(x.target)}});
+    },{threshold:.2});
+    els.forEach(function(e){io.observe(e)});
+  })();
   [["ip","IP: jes.earth"],["ip2","Copy IP: jes.earth"]].forEach(function(p){
     var b=document.getElementById(p[0]);
     b.addEventListener("click",function(){
@@ -260,6 +288,14 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       });
     });
   });
+</script>
+<script>
+  (function(){
+    var f=document.querySelectorAll(".feat");
+    if(!("IntersectionObserver" in window)){f.forEach(function(e){e.classList.add("in")});return}
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target)}})},{threshold:.2});
+    f.forEach(function(e){io.observe(e)});
+  })();
 </script>
 </body>
 </html>
