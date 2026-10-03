@@ -37,6 +37,7 @@ nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
 .nav-right a:not(.btn):hover{color:var(--text)}
 .dd li a{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .ext{opacity:.7;flex:none}
+.map-link{display:inline-flex;align-items:center;gap:6px}
 .bedrock{margin-top:16px;color:#d9d3e6;font-size:18px}
 .links a:hover,.dd>button:hover{color:var(--text)}
 .dd{position:relative}
@@ -88,10 +89,11 @@ main.wrap{max-width:1280px}
 .quotes figcaption{margin-top:14px;color:var(--muted);font-style:italic;font-size:16px}
 
 /* Bottom banner */
-.banner{position:relative;margin:48px auto 80px;min-height:440px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a);display:grid;place-items:center;text-align:center;padding:56px 24px}
+.banner-wrap{max-width:1800px;margin:0 auto;padding:0 clamp(16px,4vw,64px)}
+.banner{position:relative;margin:48px auto 80px;min-height:clamp(420px,42vw,640px);border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a);display:grid;place-items:center;text-align:center;padding:56px 24px}
 .banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .banner::after{content:"";position:absolute;inset:0;background:rgba(13,11,18,.7)}
-.banner .in{position:relative;z-index:1;max-width:620px}
+.banner .in{position:relative;z-index:1;max-width:760px}
 .banner h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,4.5vw,44px);line-height:1.2;font-weight:700;margin-bottom:16px}
 .banner p{color:#d9d3e6;margin-bottom:28px}
 
@@ -132,7 +134,7 @@ footer li a:hover{color:var(--text)}
       </div>
       <a class="hide" href="#towny">How it works</a>
       <a class="hide" href="https://store.jes.earth">Store</a>
-      <a class="hide" href="https://map.jes.earth">Map</a>
+      <a class="hide map-link" href="https://map.jes.earth" target="_blank" rel="noopener">Map<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
     </div>
     <div class="nav-right">
       <a class="btn primary" href="#play">Play Now</a>
@@ -211,7 +213,7 @@ footer li a:hover{color:var(--text)}
   </figure>
 </section>
 
-<div class="wrap">
+<div class="banner-wrap">
   <section class="banner" id="play">
     <img src="img/banner.jpg" alt="" onerror="this.remove()">
     <div class="in">
