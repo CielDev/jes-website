@@ -105,6 +105,13 @@ main.wrap{max-width:1280px}
 .banner h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,4.5vw,44px);line-height:1.2;font-weight:700;margin-bottom:16px}
 .banner p{color:#d9d3e6;margin-bottom:28px}
 
+/* Corrupt-text shockwave */
+.banner h2.glitch{display:grid;align-content:center;min-height:2.4em}
+.glitch .gl{display:block}
+.glitch .w{display:inline-block;white-space:nowrap}
+.glitch .c{display:inline-block;text-align:center}
+.glitch .c.bad{font-family:"Outfit",sans-serif;font-weight:800;font-size:.78em;overflow:hidden;vertical-align:baseline}
+
 /* Footer */
 footer{border-top:1px solid var(--line);background:var(--bg2);padding:48px 0 28px;font-size:16px}
 .cols{display:flex;justify-content:center;flex-wrap:wrap;gap:48px clamp(64px,12vw,180px)}
@@ -298,15 +305,112 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </footer>
 
 <script>
-  [["ip","IP: jes.earth"],["ip2","Copy IP: jes.earth"]].forEach(function(p){
-    var b=document.getElementById(p[0]);
+  function copyText(txt){
+    return new Promise(function(resolve,reject){
+      function fallback(){
+        try{
+          var ta=document.createElement("textarea");
+          ta.value=txt;ta.setAttribute("readonly","");
+          ta.style.cssText="position:fixed;top:0;left:0;opacity:0";
+          document.body.appendChild(ta);ta.select();ta.setSelectionRange(0,txt.length);
+          var ok=document.execCommand("copy");
+          document.body.removeChild(ta);
+          ok?resolve():reject();
+        }catch(e){reject(e)}
+      }
+      if(navigator.clipboard&&window.isSecureContext){
+        navigator.clipboard.writeText(txt).then(resolve,fallback);
+      }else{fallback()}
+    });
+  }
+  [["ip","IP: jes.earth",1800],["ip2","Copy IP: jes.earth",3000]].forEach(function(p){
+    var b=document.getElementById(p[0]),t;
     b.addEventListener("click",function(){
-      navigator.clipboard.writeText("jes.earth").then(function(){
+      copyText("jes.earth").then(function(){
         b.textContent="Copied!";
-        setTimeout(function(){b.textContent=p[1]},1800);
+        clearTimeout(t);
+        t=setTimeout(function(){b.textContent=p[1]},p[2]);
+      },function(){
+        b.textContent="Press Ctrl+C: jes.earth";
+        clearTimeout(t);
+        t=setTimeout(function(){b.textContent=p[1]},p[2]);
       });
     });
   });
+</script>
+<script>
+  (function(){
+    var h=document.querySelector(".banner h2");
+    if(!h||window.matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    var phrases=["Build something that lasts","Build everlasting friendships","Build a legacy","Build YOUR legacy"];
+    var pi=0;
+    h.classList.add("glitch");
+    h.textContent="";
+    var box=document.createElement("span");box.className="gl";h.appendChild(box);
+    var letters=[];
+    var pool="#%&@$?!<>/\\|{}[]=+*0123456789ABCDEFGHJKLMNPQRSTUVWXYZ";
+    function rnd(){return pool.charAt(Math.floor(Math.random()*pool.length))}
+    function lock(){
+      letters.forEach(function(c){c.style.width=""});
+      letters.forEach(function(c){c.style.width=c.getBoundingClientRect().width+"px"});
+    }
+    function build(text){
+      box.textContent="";letters=[];
+      h.setAttribute("aria-label",text);
+      text.split(" ").forEach(function(word,wi,arr){
+        var w=document.createElement("span");w.className="w";w.setAttribute("aria-hidden","true");
+        word.split("").forEach(function(ch){
+          var c=document.createElement("span");c.className="c";c.textContent=ch;c.dataset.ch=ch;
+          w.appendChild(c);letters.push(c);
+        });
+        box.appendChild(w);
+        if(wi<arr.length-1)box.appendChild(document.createTextNode(" "));
+      });
+      lock();
+    }
+    function setBad(c){c.classList.add("bad");c.textContent=rnd()}
+    function setGood(c){c.classList.remove("bad");c.textContent=c.dataset.ch}
+    build(phrases[0]);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){if(!busy)lock()});
+    window.addEventListener("resize",function(){if(!busy)lock()});
+    // flicker every corrupted letter
+    setInterval(function(){
+      for(var i=0;i<letters.length;i++){if(letters[i].classList.contains("bad"))letters[i].textContent=rnd()}
+    },90);
+    var busy=false,visible=false,timer;
+    function transition(){
+      busy=true;
+      var next=phrases[(pi+1)%phrases.length];
+      var speed=48+Math.random()*24;
+      // phase 1: shockwave corrupts the current text
+      var e=Math.floor(Math.random()*letters.length),maxD=0;
+      letters.forEach(function(c,i){
+        var d=Math.abs(i-e);if(d>maxD)maxD=d;
+        setTimeout(function(){setBad(c)},d*speed);
+      });
+      // phase 2: while everything is garbled, swap in the next phrase, then a second shockwave resolves it
+      setTimeout(function(){
+        pi=(pi+1)%phrases.length;
+        build(next);
+        letters.forEach(setBad);
+        var e2=Math.floor(Math.random()*letters.length),maxD2=0;
+        letters.forEach(function(c,i){
+          var d=Math.abs(i-e2);if(d>maxD2)maxD2=d;
+          setTimeout(function(){setGood(c)},150+d*speed+Math.random()*70);
+        });
+        setTimeout(function(){busy=false;schedule()},150+maxD2*speed+250);
+      },maxD*speed+350);
+    }
+    function schedule(){
+      clearTimeout(timer);
+      if(!visible)return;
+      timer=setTimeout(transition,2400+Math.random()*1000);
+    }
+    new IntersectionObserver(function(es){
+      visible=es[0].isIntersecting;
+      if(visible&&!busy)schedule();else if(!visible)clearTimeout(timer);
+    },{threshold:.3}).observe(h);
+  })();
 </script>
 <script>
   (function(){
