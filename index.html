@@ -56,7 +56,7 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 
 /* Feature sections */
 .feat{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:72px 0}
-.feat.flip .pic{order:2}
+.feat.flip .pic{order:-1}
 .feat h2{font-size:clamp(28px,4vw,40px);line-height:1.15;font-weight:700;margin-bottom:16px}
 .feat p{color:var(--muted)}
 .feat:nth-of-type(2) .pic{background:linear-gradient(135deg,#102a3d,#1b5b6b 50%,#3a8f6a)}
@@ -120,7 +120,7 @@ footer li a:hover{color:var(--text)}
 </header>
 
 <main class="wrap">
-  <section class="feat" id="towny">
+  <section class="feat flip" id="towny">
     <div>
       <h2>Expand your Minecraft empire</h2>
       <p>Found a town with Towny, invite residents, and set their permissions. Sell plots to build a real estate market. Join towns together into a nation and watch it grow.</p>
@@ -128,7 +128,7 @@ footer li a:hover{color:var(--text)}
     <div class="pic"><img src="img/towny.jpg" alt="Players building a town" onerror="this.remove()"></div>
   </section>
 
-  <section class="feat flip" id="map">
+  <section class="feat" id="map">
     <div>
       <h2>Explore Earth at 1:300 scale</h2>
       <p>Every continent is built to scale, so you can find your own country, your city, or the coast you grew up on. Pick a place on the map and start building there.</p>
@@ -136,7 +136,7 @@ footer li a:hover{color:var(--text)}
     <div class="pic"><img src="img/map.jpg" alt="Top-down view of the Earth map" onerror="this.remove()"></div>
   </section>
 
-  <section class="feat" id="economy">
+  <section class="feat flip" id="economy">
     <div>
       <h2>Trade with a gold ingot economy</h2>
       <p>Gold ingots are the server currency. Earn them by mining, collecting taxes, and selling goods in player shops. Prices are set by players, not by the server.</p>
@@ -144,7 +144,7 @@ footer li a:hover{color:var(--text)}
     <div class="pic"><img src="img/economy.jpg" alt="Players trading at a market" onerror="this.remove()"></div>
   </section>
 
-  <section class="feat flip" id="war">
+  <section class="feat" id="war">
     <div>
       <h2>Grow your skills, go to war</h2>
       <p>Level up with MCMMO as you mine, fight, and farm. When towns and nations clash, Siege War lets you attack and defend claims, so every border has to be earned.</p>
