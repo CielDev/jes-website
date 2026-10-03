@@ -33,13 +33,17 @@ nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
 .brand img{height:44px;width:auto;display:block}
 .links{display:flex;gap:24px;align-items:center;margin-left:16px;font-size:16px;color:var(--muted)}
-.nav-cta{margin-left:auto}
+.nav-right{margin-left:auto;display:flex;align-items:center;gap:24px;font-size:16px;color:var(--muted)}
+.nav-right a:not(.btn):hover{color:var(--text)}
+.dd li a{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.ext{opacity:.7;flex:none}
+.bedrock{margin-top:16px;color:#d9d3e6;font-size:18px}
 .links a:hover,.dd>button:hover{color:var(--text)}
 .dd{position:relative}
 .dd>button{background:none;border:0;color:inherit;font:inherit;cursor:pointer}
-.dd ul{display:none;position:absolute;top:100%;left:-12px;list-style:none;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;min-width:150px}
+.dd ul{display:none;position:absolute;top:100%;left:-12px;list-style:none;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;min-width:180px}
 .dd:hover ul,.dd:focus-within ul{display:block}
-.dd li a{display:block;padding:8px 12px;border-radius:6px}
+.dd li a{padding:8px 12px;border-radius:6px}
 .dd li a:hover{background:var(--line);color:var(--text)}
 .btn{display:inline-flex;align-items:center;justify-content:center;padding:calc(18px + .1em) 34px calc(18px - .1em);border-radius:0;font-family:"Minecraft","Outfit",sans-serif;font-weight:700;font-size:20px;line-height:1;letter-spacing:.04em;text-transform:uppercase;border:2px solid rgba(243,240,247,.75);background:transparent;color:var(--text);cursor:pointer;transition:transform .15s}
 .btn:hover{transform:translateY(-2px)}
@@ -104,7 +108,7 @@ footer li a:hover{color:var(--text)}
 @media(max-width:800px){
   .feat,.feat.flip{grid-template-columns:1fr;gap:28px;padding:48px 0;text-align:left}
   .feat.flip .pic{order:0}
-  .links a.hide,.dd{display:none}
+  .links a.hide,.nav-right a.hide,.dd{display:none}
   .hero{padding:56px 0;min-height:0}
   .hero-bg{width:100%;opacity:.3;-webkit-mask-image:none;mask-image:none}
 }
@@ -120,14 +124,20 @@ footer li a:hover{color:var(--text)}
       <div class="dd">
         <button type="button">Community ▾</button>
         <ul>
-          <li><a href="https://discord.gg/8ngbqfhkWt">Discord</a></li>
-          <li><a href="https://store.justanearthserver.net">Store</a></li>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://wiki.jes.earth" target="_blank" rel="noopener">Wiki<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
         </ul>
       </div>
       <a class="hide" href="#towny">How it works</a>
       <a class="hide" href="#economy">Economy</a>
     </div>
-    <a class="btn primary nav-cta" href="#play">Play Now</a>
+    <div class="nav-right">
+      <a class="hide" href="https://store.jes.earth">Store</a>
+      <a class="hide" href="https://map.jes.earth">Map</a>
+      <a class="btn primary" href="#play">Play Now</a>
+    </div>
   </div>
 </nav>
 
@@ -209,6 +219,7 @@ footer li a:hover{color:var(--text)}
       <h2>Build something that lasts</h2>
       <p>JES is a 1:300 Earth where towns grow into nations and rivalries last for months. Pick a spot, bring a friend, and put your name on the map.</p>
       <button class="btn primary" id="ip2" type="button" title="Click to copy">Copy IP: jes.earth</button>
+      <p class="bedrock">Bedrock Port: 19132</p>
     </div>
   </section>
 </div>
