@@ -1,12 +1,199 @@
-   <!DOCTYPE html>
-   <html lang="en">
-   <head>
-     <meta charset="UTF-8">
-     <meta name="viewport" content="width=device-width, initial-scale=1">
-     <title>Just an Earth Server</title>
-   </head>
-   <body>
-     <h1>Just an Earth Server</h1>
-     <p>Welcome to JES.</p>
-   </body>
-   </html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Minecraft Earth Server | Just an Earth Server</title>
+<meta name="description" content="Just an Earth Server: a 1:500 scale Minecraft Earth map with Towny, Siege War, and a player-driven economy. IP: jes.earth">
+<meta property="og:title" content="Just an Earth Server">
+<meta property="og:description" content="Explore a 1:500 scale Minecraft Earth. Join at jes.earth">
+<link rel="icon" href="img/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0d0b12; --bg2:#15121d; --line:#2a2536; --text:#f3f0f7; --muted:#a39db3;
+  --pink:#E43A96; --gold:#FCD05C;
+  --grad:linear-gradient(90deg,var(--pink),var(--gold));
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,sans-serif;line-height:1.6;font-size:18px}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+
+/* Navbar */
+nav{position:sticky;top:0;z-index:10;background:rgba(13,11,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
+.brand img{width:34px;height:34px;border-radius:8px}
+.links{display:flex;gap:24px;align-items:center;margin-left:auto;font-size:16px;color:var(--muted)}
+.links a:hover,.dd>button:hover{color:var(--text)}
+.dd{position:relative}
+.dd>button{background:none;border:0;color:inherit;font:inherit;cursor:pointer}
+.dd ul{display:none;position:absolute;top:100%;left:-12px;list-style:none;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;min-width:150px}
+.dd:hover ul,.dd:focus-within ul{display:block}
+.dd li a{display:block;padding:8px 12px;border-radius:6px}
+.dd li a:hover{background:var(--line);color:var(--text)}
+.btn{display:inline-block;padding:12px 26px;border-radius:999px;font-weight:600;font-size:17px;border:1px solid var(--line);background:transparent;color:var(--text);cursor:pointer;font-family:inherit;transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn.primary{background:var(--grad);color:#1a1020;border:0}
+nav .btn{padding:8px 20px;font-size:15px;color:#1a1020}
+
+/* Hero */
+.hero{text-align:center;padding:96px 0 56px;background:radial-gradient(ellipse at 50% 0,rgba(228,58,150,.22),transparent 65%)}
+h1{font-size:clamp(40px,7vw,76px);line-height:1.05;font-weight:800;letter-spacing:-.02em}
+h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero p{max-width:560px;margin:20px auto 32px;color:var(--muted);font-size:20px}
+.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.shot{margin:56px auto 0;max-width:960px}
+
+/* Image slots: gradient shows if the image file is missing */
+.shot,.pic{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a)}
+.shot img,.pic img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* Feature sections */
+.feat{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:72px 0}
+.feat.flip .pic{order:2}
+.feat h2{font-size:clamp(28px,4vw,40px);line-height:1.15;font-weight:700;margin-bottom:16px}
+.feat p{color:var(--muted)}
+.feat:nth-of-type(2) .pic{background:linear-gradient(135deg,#102a3d,#1b5b6b 50%,#3a8f6a)}
+.feat:nth-of-type(3) .pic{background:linear-gradient(135deg,#3a2a10,#7a5a1a 50%,#c99a3a)}
+.feat:nth-of-type(4) .pic{background:linear-gradient(135deg,#3a1020,#7a1f3a 50%,#c2412f)}
+
+/* Final CTA */
+.final{text-align:center;padding:88px 0;margin-top:24px;border-top:1px solid var(--line);background:radial-gradient(ellipse at 50% 100%,rgba(252,208,92,.14),transparent 65%)}
+.final h2{font-size:clamp(30px,5vw,48px);font-weight:800;margin-bottom:16px}
+.final p{max-width:600px;margin:0 auto 30px;color:var(--muted)}
+
+/* Footer */
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:48px 0 28px;font-size:16px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px}
+footer h3{font-size:16px;font-weight:600;margin-bottom:12px}
+footer ul{list-style:none;padding:0}
+footer li{margin:6px 0}
+footer li a{color:var(--muted)}
+footer li a:hover{color:var(--text)}
+.copy{margin-top:36px;color:var(--muted);font-size:14px}
+
+@media(max-width:800px){
+  .feat{grid-template-columns:1fr;gap:28px;padding:48px 0}
+  .feat.flip .pic{order:0}
+  .links a.hide,.dd{display:none}
+  .hero{padding-top:64px}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="#"><img src="img/logo.png" alt="" onerror="this.style.display='none'">Just an Earth Server</a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/YOUR_INVITE">Discord</a></li>
+          <li><a href="https://store.justanearthserver.net">Store</a></li>
+        </ul>
+      </div>
+      <a class="hide" href="#towny">How it works</a>
+      <a class="hide" href="#economy">Economy</a>
+      <a class="btn primary" href="#play">Play Now</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>The Minecraft <span>Earth</span> server</h1>
+    <p>Explore a 1:500 scale Minecraft Earth. Build a town, trade for gold, and fight for your nation.</p>
+    <div class="cta">
+      <button class="btn primary" id="ip" type="button" title="Click to copy">IP: jes.earth</button>
+      <a class="btn" href="https://discord.gg/YOUR_INVITE">Discord</a>
+    </div>
+    <div class="shot"><img src="img/hero.jpg" alt="A Minecraft city at sunset on Just an Earth Server" onerror="this.remove()"></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="feat" id="towny">
+    <div>
+      <h2>Expand your Minecraft empire</h2>
+      <p>Found a town with Towny, invite residents, and set their permissions. Sell plots to build a real estate market. Join towns together into a nation and watch it grow.</p>
+    </div>
+    <div class="pic"><img src="img/towny.jpg" alt="Players building a town" onerror="this.remove()"></div>
+  </section>
+
+  <section class="feat flip" id="map">
+    <div>
+      <h2>Explore Earth at 1:500 scale</h2>
+      <p>Every continent is built to scale, so you can find your own country, your city, or the coast you grew up on. Pick a place on the map and start building there.</p>
+    </div>
+    <div class="pic"><img src="img/map.jpg" alt="Top-down view of the Earth map" onerror="this.remove()"></div>
+  </section>
+
+  <section class="feat" id="economy">
+    <div>
+      <h2>Trade with a gold ingot economy</h2>
+      <p>Gold ingots are the server currency. Earn them by mining, collecting taxes, and selling goods in player shops. Prices are set by players, not by the server.</p>
+    </div>
+    <div class="pic"><img src="img/economy.jpg" alt="Players trading at a market" onerror="this.remove()"></div>
+  </section>
+
+  <section class="feat flip" id="war">
+    <div>
+      <h2>Grow your skills, go to war</h2>
+      <p>Level up with MCMMO as you mine, fight, and farm. When towns and nations clash, Siege War lets you attack and defend claims, so every border has to be earned.</p>
+    </div>
+    <div class="pic"><img src="img/war.jpg" alt="A siege in progress" onerror="this.remove()"></div>
+  </section>
+</main>
+
+<section class="final" id="play">
+  <div class="wrap">
+    <h2>Start your story on Earth</h2>
+    <p>Add <strong>jes.earth</strong> to your Minecraft Java Edition server list and join. Everything you build stays on the map.</p>
+    <button class="btn primary" id="ip2" type="button" title="Click to copy">Copy IP: jes.earth</button>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <h3>How to play</h3>
+        <ul>
+          <li><a href="#play">How to join</a></li>
+          <li><a href="#towny">Towns and nations</a></li>
+          <li><a href="#war">Siege War</a></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Community</h3>
+        <ul>
+          <li><a href="https://discord.gg/YOUR_INVITE">Discord</a></li>
+          <li><a href="https://store.justanearthserver.net">Store</a></li>
+        </ul>
+      </div>
+    </div>
+    <p class="copy">Copyright © 2026 Just an Earth Server. Not affiliated with Mojang or Microsoft.</p>
+  </div>
+</footer>
+
+<script>
+  [["ip","IP: jes.earth"],["ip2","Copy IP: jes.earth"]].forEach(function(p){
+    var b=document.getElementById(p[0]);
+    b.addEventListener("click",function(){
+      navigator.clipboard.writeText("jes.earth").then(function(){
+        b.textContent="Copied!";
+        setTimeout(function(){b.textContent=p[1]},1800);
+      });
+    });
+  });
+</script>
+</body>
+</html>
