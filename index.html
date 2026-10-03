@@ -58,10 +58,13 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 .shot img,.pic img{width:100%;height:100%;object-fit:cover;display:block}
 
 /* Feature sections */
-.feat{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;padding:72px 0}
+main.wrap{max-width:1280px}
+.feat{display:grid;grid-template-columns:.85fr 1.15fr;gap:48px;align-items:center;padding:72px 0;text-align:right}
+.feat.flip{grid-template-columns:1.15fr .85fr;text-align:left}
 .feat.flip .pic{order:-1}
-.feat h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(22px,3vw,32px);line-height:1.25;font-weight:700;margin-bottom:16px}
-.feat p{color:var(--muted)}
+.feat h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,3.6vw,46px);line-height:1.2;font-weight:700;margin-bottom:20px}
+.feat h2,.banner h2{background:linear-gradient(180deg,#fff 0%,#cdcbd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.feat p{color:#c4bfd2;font-size:21px;line-height:1.65}
 .feat:nth-of-type(2) .pic{background:linear-gradient(135deg,#102a3d,#1b5b6b 50%,#3a8f6a)}
 .feat:nth-of-type(3) .pic{background:linear-gradient(135deg,#3a2a10,#7a5a1a 50%,#c99a3a)}
 .feat:nth-of-type(4) .pic{background:linear-gradient(135deg,#3a1020,#7a1f3a 50%,#c2412f)}
@@ -92,7 +95,7 @@ footer li a:hover{color:var(--text)}
 .copy{margin-top:36px;color:var(--muted);font-size:14px}
 
 @media(max-width:800px){
-  .feat{grid-template-columns:1fr;gap:28px;padding:48px 0}
+  .feat,.feat.flip{grid-template-columns:1fr;gap:28px;padding:48px 0;text-align:left}
   .feat.flip .pic{order:0}
   .links a.hide,.dd{display:none}
   .hero{padding-top:64px}
@@ -135,7 +138,7 @@ footer li a:hover{color:var(--text)}
 <main class="wrap">
   <section class="feat flip" id="towny">
     <div>
-      <h2>Expand your Minecraft empire</h2>
+      <h2>Expand your<br>Minecraft empire</h2>
       <p>Found a town with Towny, invite residents, and set their permissions. Sell plots to build a real estate market. Join towns together into a nation and watch it grow.</p>
     </div>
     <div class="pic"><img src="img/towny.jpg" alt="Players building a town" onerror="this.remove()"></div>
@@ -143,7 +146,7 @@ footer li a:hover{color:var(--text)}
 
   <section class="feat" id="map">
     <div>
-      <h2>Explore Earth at 1:300 scale</h2>
+      <h2>Explore Earth<br>at 1:300 scale</h2>
       <p>Every continent is built to scale, so you can find your own country, your city, or the coast you grew up on. Pick a place on the map and start building there.</p>
     </div>
     <div class="pic"><img src="img/map.jpg" alt="Top-down view of the Earth map" onerror="this.remove()"></div>
@@ -151,7 +154,7 @@ footer li a:hover{color:var(--text)}
 
   <section class="feat flip" id="economy">
     <div>
-      <h2>Trade with a gold ingot economy</h2>
+      <h2>Trade with a gold<br>ingot economy</h2>
       <p>Gold ingots are the server currency. Earn them by mining, collecting taxes, and selling goods in player shops. Prices are set by players, not by the server.</p>
     </div>
     <div class="pic"><img src="img/economy.jpg" alt="Players trading at a market" onerror="this.remove()"></div>
@@ -159,7 +162,7 @@ footer li a:hover{color:var(--text)}
 
   <section class="feat" id="war">
     <div>
-      <h2>Grow your skills, go to war</h2>
+      <h2>Grow your skills,<br>go to war</h2>
       <p>Level up with MCMMO as you mine, fight, and farm. When towns and nations clash, Siege War lets you attack and defend claims, so every border has to be earned.</p>
     </div>
     <div class="pic"><img src="img/war.jpg" alt="A siege in progress" onerror="this.remove()"></div>
