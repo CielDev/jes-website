@@ -49,12 +49,14 @@ nav .btn{padding:calc(13px + .1em) 22px calc(13px - .1em);font-size:16px;color:#
 .cta .btn.primary{padding:calc(24px + .1em) 46px calc(24px - .1em)}
 
 /* Hero */
-.hero{text-align:center;padding:96px 0 56px;background:radial-gradient(ellipse at 50% 0,rgba(228,58,150,.22),transparent 65%)}
-h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(30px,6vw,64px);line-height:1.2;font-weight:700}
+.hero{position:relative;display:flex;align-items:center;min-height:clamp(520px,80vh,740px);padding:72px 0;overflow:hidden;border-bottom:1px solid var(--line);background:radial-gradient(ellipse at 20% 0,rgba(228,58,150,.2),transparent 60%)}
+.hero-bg{position:absolute;top:0;right:0;width:72%;height:100%;object-fit:cover;object-position:center;-webkit-mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.55) 25%,#000 55%);mask-image:linear-gradient(to right,transparent 0%,rgba(0,0,0,.55) 25%,#000 55%)}
+.hero .wrap{position:relative;z-index:1;width:100%}
+.hero-copy{max-width:560px;text-align:left}
+h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(34px,5.2vw,68px);line-height:1.2;font-weight:700}
 h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
-.hero p{max-width:560px;margin:20px auto 32px;color:var(--muted);font-size:20px}
-.cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
-.shot{margin:56px auto 0;max-width:960px}
+.hero p{margin:22px 0 34px;color:#cfc9dc;font-size:22px;line-height:1.55}
+.cta{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap}
 
 /* Image slots: gradient shows if the image file is missing */
 .shot,.pic{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a)}
@@ -101,7 +103,8 @@ footer li a:hover{color:var(--text)}
   .feat,.feat.flip{grid-template-columns:1fr;gap:28px;padding:48px 0;text-align:left}
   .feat.flip .pic{order:0}
   .links a.hide,.dd{display:none}
-  .hero{padding-top:64px}
+  .hero{padding:56px 0;min-height:0}
+  .hero-bg{width:100%;opacity:.3;-webkit-mask-image:none;mask-image:none}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
 </style>
@@ -127,14 +130,16 @@ footer li a:hover{color:var(--text)}
 </nav>
 
 <header class="hero">
+  <img class="hero-bg" src="img/hero.jpg" alt="" onerror="this.remove()">
   <div class="wrap">
-    <h1>The <span>Earth</span>, in Minecraft.</h1>
-    <p>Explore a 1:300 scale Minecraft Earth. Build a town, trade for gold, and fight for your nation.</p>
-    <div class="cta">
-      <button class="btn primary" id="ip" type="button" title="Click to copy">IP: jes.earth</button>
-      <a class="btn discord" href="https://discord.gg/8ngbqfhkWt">Discord</a>
+    <div class="hero-copy">
+      <h1>The <span>Earth</span>,<br>in Minecraft.</h1>
+      <p>Explore a 1:300 scale Minecraft Earth. Build a town, trade for gold, and fight for your nation.</p>
+      <div class="cta">
+        <button class="btn primary" id="ip" type="button" title="Click to copy">IP: jes.earth</button>
+        <a class="btn discord" href="https://discord.gg/8ngbqfhkWt">Discord</a>
+      </div>
     </div>
-    <div class="shot"><img src="img/hero.jpg" alt="A Minecraft city at sunset on Just an Earth Server" onerror="this.remove()"></div>
   </div>
 </header>
 
