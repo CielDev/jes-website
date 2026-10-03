@@ -68,6 +68,21 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 .final h2{font-size:clamp(30px,5vw,48px);font-weight:800;margin-bottom:16px}
 .final p{max-width:600px;margin:0 auto 30px;color:var(--muted)}
 
+
+/* Player quotes */
+.quotes{padding:72px 0 8px;text-align:center}
+.quotes figure{max-width:760px;margin:0 auto 56px}
+.quotes blockquote{font-size:clamp(20px,2.6vw,26px);line-height:1.5;font-weight:500}
+.quotes figcaption{margin-top:14px;color:var(--muted);font-style:italic;font-size:16px}
+
+/* Bottom banner */
+.banner{position:relative;margin:48px auto 80px;min-height:440px;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a);display:grid;place-items:center;text-align:center;padding:56px 24px}
+.banner>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.banner::after{content:"";position:absolute;inset:0;background:rgba(13,11,18,.7)}
+.banner .in{position:relative;z-index:1;max-width:620px}
+.banner h2{font-size:clamp(30px,5vw,50px);line-height:1.1;font-weight:800;margin-bottom:16px}
+.banner p{color:#d9d3e6;margin-bottom:28px}
+
 /* Footer */
 footer{border-top:1px solid var(--line);background:var(--bg2);padding:48px 0 28px;font-size:16px}
 .cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:32px}
@@ -153,13 +168,36 @@ footer li a:hover{color:var(--text)}
   </section>
 </main>
 
-<section class="final" id="play">
-  <div class="wrap">
-    <h2>Start your story on Earth</h2>
-    <p>Add <strong>jes.earth</strong> to your Minecraft Java Edition server list and join. Everything you build stays on the map.</p>
-    <button class="btn primary" id="ip2" type="button" title="Click to copy">Copy IP: jes.earth</button>
-  </div>
+<!-- REPLACE these with real quotes from your players (ask in Discord) -->
+<section class="quotes wrap" id="players">
+  <figure>
+    <blockquote>"I joined to find my hometown on the map. Three months later I'm its mayor, and I still haven't finished the train station."</blockquote>
+    <figcaption>Player name, Town name</figcaption>
+  </figure>
+  <figure>
+    <blockquote>"The wars are what keep me logging in. Defending a border with people you met a week ago is hard to beat."</blockquote>
+    <figcaption>Player name, Town name</figcaption>
+  </figure>
+  <figure>
+    <blockquote>"Everything costs gold, so every shop and every deal actually matters."</blockquote>
+    <figcaption>Player name, Town name</figcaption>
+  </figure>
+  <figure>
+    <blockquote>"Easy to start, hard to put down. People here really help newcomers."</blockquote>
+    <figcaption>Player name, Town name</figcaption>
+  </figure>
 </section>
+
+<div class="wrap">
+  <section class="banner" id="play">
+    <img src="img/banner.jpg" alt="" onerror="this.remove()">
+    <div class="in">
+      <h2>Build something that lasts</h2>
+      <p>JES is a 1:300 Earth where towns grow into nations and rivalries last for months. Pick a spot, bring a friend, and put your name on the map.</p>
+      <button class="btn primary" id="ip2" type="button" title="Click to copy">Copy IP: jes.earth</button>
+    </div>
+  </section>
+</div>
 
 <footer>
   <div class="wrap">
