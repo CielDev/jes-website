@@ -678,6 +678,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       sprite(e.x+dx/d*S*.38,e.y+dy/d*S*.38,ang,S*sc,1);
     }
     window.__ingot={
+      on:function(){return enabled},
       toggle:function(e){
         if(enabled){
           enabled=false;shown=false;have=false;mode="hang";fl=null;cracks=null;parts=[];shakeAt=0;flashAt=0;
@@ -694,21 +695,33 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </script>
 <script>
   (function(){
-    var el=document.getElementById("secret"),n=0,t,toast=document.createElement("div"),tt;
+    var el=document.getElementById("secret"),n=0,t,armed=false,bs=0,bt,toast=document.createElement("div"),tt;
     toast.className="toast";toast.setAttribute("role","status");document.body.appendChild(toast);
     function say(m){toast.textContent=m;toast.classList.add("show");clearTimeout(tt);tt=setTimeout(function(){toast.classList.remove("show")},2200)}
     el.addEventListener("click",function(e){
       e.preventDefault();
       n++;clearTimeout(t);t=setTimeout(function(){n=0},1800);
       if(n>=5){
-        n=0;
+        n=0;armed=true;
         if(window.__ingot&&!window.__banned){var on=window.__ingot.toggle(e);say(on?"Gold ingot unlocked":"Gold ingot put away")}
+      }
+    });
+    // dev shortcut: after unlocking the secret button, press Backspace 5 times to jump to the end of the game
+    window.addEventListener("keydown",function(e){
+      if(!armed||window.__banned||e.code!=="Backspace"||e.repeat)return;
+      e.preventDefault();
+      bs++;clearTimeout(bt);bt=setTimeout(function(){bs=0},2500);
+      if(bs>=5){
+        bs=0;
+        if(window.__ingot&&window.__ingot.on())window.__ingot.toggle({clientX:0,clientY:0});
+        window.dispatchEvent(new CustomEvent("jes:ban",{detail:{dev:true}}));
       }
     });
   })();
 </script>
 <script>
-  window.addEventListener("jes:ban",function(){
+  window.addEventListener("jes:ban",function(ev){
+    var dev=!!(ev&&ev.detail&&ev.detail.dev);
     window.__banned=true;
     var GOAL=2000;
     var root=document.documentElement,ov=document.createElement("div");
@@ -737,7 +750,8 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     root.appendChild(ov);root.style.overflow="hidden";
     document.body.inert=true;
     requestAnimationFrame(function(){requestAnimationFrame(function(){ov.style.opacity="1"})});
-    fade(h,2400);fade(rs,4400);setTimeout(function(){appeal.style.opacity="1";appeal.focus()},6200);
+    if(dev){ov.style.transition="none";ov.style.opacity="1";startGame(true)}
+    else{fade(h,2400);fade(rs,4400);setTimeout(function(){appeal.style.opacity="1";appeal.focus()},6200)}
 
     /* stage 2: loading, then denied */
     function appeal1(){
@@ -761,14 +775,14 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     /* stage 3: only once, dummy */
     function appeal2(){
       var d=line("You can only appeal once, dummy","clamp(24px,5vw,52px)");
-      var again2=btn("Appeal again, again",startGame);
+      var again2=btn("Appeal again, again",function(){startGame(false)});
       show(d,again2);
       requestAnimationFrame(function(){requestAnimationFrame(function(){d.style.opacity="1"})});
       setTimeout(function(){again2.style.opacity="1";again2.focus()},1800);
     }
 
     /* stage 4: Steve runner */
-    function startGame(){
+    function startGame(dev){
       var logo=new Image();logo.src="img/logo.png";
       var wrap=document.createElement("div");
       wrap.style.cssText="width:min(900px,94vw);display:flex;flex-direction:column;gap:14px;align-items:center";
@@ -968,44 +982,39 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
         }
         raf=requestAnimationFrame(frame);
       }
+      if(dev){speed=900;startFinale()}      // dev shortcut: jump straight to the finale
       last=performance.now();raf=requestAnimationFrame(frame);
     }
 
-    /* stage 5: unbanned, with confetti, fireworks and friends */
+    /* stage 5: unbanned (black screen, confetti only) */
     function celebrate(){
       window.removeEventListener("keydown",onKey);window.removeEventListener("keyup",onKeyUp);
       ov.textContent="";
       ov.style.transition="opacity 2s ease";
-      ov.style.background="radial-gradient(circle at 50% 38%,#3a1a52 0%,#1a0d26 55%,#0d0b12 100%)";
-      var st=document.createElement("style");
-      st.textContent="@keyframes jesPop{0%{transform:scale(.2) rotate(-8deg);opacity:0}60%{transform:scale(1.18) rotate(3deg);opacity:1}100%{transform:scale(1) rotate(0);opacity:1}}@keyframes jesBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}@keyframes jesHue{to{filter:hue-rotate(360deg)}}";
-      ov.appendChild(st);
+      ov.style.background="#000";
       var cc=document.createElement("canvas");
       cc.style.cssText="position:absolute;inset:0;width:100%;height:100%;pointer-events:none";
       ov.appendChild(cc);
       var dpr=window.devicePixelRatio||1,W=innerWidth,H=innerHeight;cc.width=W*dpr;cc.height=H*dpr;
       var g=cc.getContext("2d");
-      var flash=document.createElement("div");
-      flash.style.cssText="position:absolute;inset:0;background:#fff;opacity:1;transition:opacity .9s ease;pointer-events:none;z-index:3";
       var box=document.createElement("div");
       box.style.cssText="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px";
-      var title=document.createElement("div");
-      title.textContent="You have been unbanned!!";
-      title.style.cssText="font-size:clamp(28px,6.2vw,80px);max-width:94vw;line-height:1.15;letter-spacing:.03em;background:linear-gradient(90deg,#E43A96,#FCD05C,#4cd8ff,#7CFC7C,#E43A96);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:jesPop .9s cubic-bezier(.2,1.4,.4,1) both,jesBob 2.4s ease-in-out .9s infinite;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45))";
+      var title=line("You have been unbanned!!","clamp(28px,6.2vw,80px)","#FCD05C");
+      title.style.maxWidth="94vw";title.style.transition="opacity 1.2s ease";
       var sub=line("Thank you for playing","clamp(18px,3vw,30px)","#f3f0f7");
       var back=btn("Back to the site",close);
       back.style.borderColor="#FCD05C";back.style.color="#FCD05C";
       back.onmouseenter=function(){back.style.background="#FCD05C";back.style.color="#1a1020"};
       back.onmouseleave=function(){back.style.background="transparent";back.style.color="#FCD05C"};
       box.appendChild(title);box.appendChild(sub);box.appendChild(back);
-      ov.appendChild(box);ov.appendChild(flash);
-      requestAnimationFrame(function(){requestAnimationFrame(function(){flash.style.opacity="0"})});
-      setTimeout(function(){sub.style.opacity="1"},1000);
+      ov.appendChild(box);
+      setTimeout(function(){title.style.opacity="1"},150);
+      setTimeout(function(){sub.style.opacity="1"},1100);
       setTimeout(function(){back.style.opacity="1";back.focus()},3500);
 
       function rand(a,b){return a+Math.random()*(b-a)}
       var cols=["#E43A96","#FCD05C","#4cd8ff","#7CFC7C","#ffffff","#a56bff","#ff8a3d"];
-      var pieces=[],sparks=[],floats=[],closed=false,t0=performance.now(),lastT=t0,nextFw=0,nextFl=0,cannon2=false,raf2=0;
+      var pieces=[],closed=false,t0=performance.now(),lastT=t0,cannon2=false,raf2=0;
       function col(){return cols[Math.floor(Math.random()*cols.length)]}
       function cannon(x,dir){
         for(var i=0;i<110;i++){
@@ -1013,22 +1022,11 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
           pieces.push({x:x,y:H+10,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,w:rand(6,13),h:rand(4,8),r:rand(0,6.3),vr:rand(-12,12),c:col(),sw:rand(0,6.3)});
         }
       }
-      function firework(){
-        var x=rand(.12,.88)*W,y=rand(.1,.5)*H,c1=col(),c2=col(),n=54;
-        for(var i=0;i<n;i++){
-          var a=i/n*6.283+rand(-.05,.05),sp=rand(120,420)*(i%2?1:.62);
-          sparks.push({x:x,y:y,px:x,py:y,vx:Math.cos(a)*sp,vy:Math.sin(a)*sp,life:rand(.9,1.6),age:0,c:i%3?c1:c2});
-        }
-        sparks.push({x:x,y:y,px:x,py:y,vx:0,vy:0,life:.25,age:0,c:"#ffffff",ring:true});
-      }
-      var emoji=["🎉","🥳","🎊","✨","🎈","⭐","🌟"];
-      cannon(0,1);cannon(W,-1);firework();
+      cannon(0,1);cannon(W,-1);
       function loop(now){
         if(closed)return;
         var dt=Math.min(.05,(now-lastT)/1000);lastT=now;var tt=(now-t0)/1000;
         if(tt>1.3&&!cannon2){cannon2=true;cannon(0,1);cannon(W,-1)}
-        if(tt>=nextFw){firework();nextFw=tt+rand(.45,.95)}
-        if(tt>=nextFl){floats.push({e:emoji[Math.floor(Math.random()*emoji.length)],x:rand(.04,.96)*W,y:H+40,vy:-rand(70,170),s:rand(26,52),ph:rand(0,6.3)});nextFl=tt+rand(.18,.4)}
         if(pieces.length<520&&Math.random()<.8)pieces.push({x:rand(0,W),y:-12,vx:rand(-40,40),vy:rand(60,170),w:rand(6,12),h:rand(4,8),r:rand(0,6.3),vr:rand(-9,9),c:col(),sw:rand(0,6.3)});
         g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
         for(var i=pieces.length-1;i>=0;i--){
@@ -1037,21 +1035,6 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
           p.sw+=dt*4;p.x+=(p.vx+Math.sin(p.sw)*40)*dt;p.y+=p.vy*dt;p.r+=p.vr*dt;
           if(p.y>H+30){pieces.splice(i,1);continue}
           g.save();g.translate(p.x,p.y);g.rotate(p.r);g.fillStyle=p.c;g.scale(1,Math.abs(Math.cos(p.sw*1.7))*.8+.2);g.fillRect(-p.w/2,-p.h/2,p.w,p.h);g.restore();
-        }
-        for(var j=sparks.length-1;j>=0;j--){
-          var s=sparks[j];s.age+=dt;
-          if(s.age>s.life){sparks.splice(j,1);continue}
-          var k=1-s.age/s.life;
-          if(s.ring){g.strokeStyle="rgba(255,255,255,"+k+")";g.lineWidth=3;g.beginPath();g.arc(s.x,s.y,(1-k)*90,0,7);g.stroke();continue}
-          s.px=s.x;s.py=s.y;s.vy+=320*dt;s.vx*=1-.9*dt;s.x+=s.vx*dt;s.y+=s.vy*dt;
-          g.globalAlpha=k;g.strokeStyle=s.c;g.lineWidth=2.4;g.beginPath();g.moveTo(s.px,s.py);g.lineTo(s.x,s.y);g.stroke();
-          g.fillStyle="#fff";g.fillRect(s.x-1,s.y-1,2,2);g.globalAlpha=1;
-        }
-        g.textAlign="center";g.textBaseline="middle";
-        for(var m=floats.length-1;m>=0;m--){
-          var f=floats[m];f.y+=f.vy*dt;f.ph+=dt*2;
-          if(f.y<-70){floats.splice(m,1);continue}
-          g.font=f.s+"px sans-serif";g.fillText(f.e,f.x+Math.sin(f.ph)*18,f.y);
         }
         raf2=requestAnimationFrame(loop);
       }
