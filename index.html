@@ -703,6 +703,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       n++;clearTimeout(t);t=setTimeout(function(){n=0},1800);
       if(n>=5){
         n=0;armed=true;
+        window.scrollTo({top:0,behavior:"smooth"});   // 5 clicks also take you back to the top
         if(window.__ingot&&!window.__banned){var on=window.__ingot.toggle(e);say(on?"Gold ingot unlocked":"Gold ingot put away")}
       }
     });
@@ -729,7 +730,8 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     ov.setAttribute("role","alertdialog");ov.setAttribute("aria-live","assertive");
     ov.style.cssText="position:fixed;inset:0;z-index:100000;background:#000;opacity:0;transition:opacity 2s ease;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;text-align:center;padding:24px;color:"+RED+";font-family:"+FONT+";cursor:default;user-select:none";
     var onKey=null,onKeyUp=null;
-    function line(txt,size,color){var d=document.createElement("div");d.textContent=txt;d.style.cssText="opacity:0;transition:opacity 1.4s ease;font-size:"+size+";line-height:1.3;letter-spacing:.03em"+(color?";color:"+color:"");return d}
+    if(document.fonts&&document.fonts.load)document.fonts.load("700 20px Minecraft");
+    function line(txt,size,color){var d=document.createElement("div");d.textContent=txt;d.style.cssText="opacity:0;transition:opacity 1.4s ease;font-family:"+FONT+";font-weight:700;font-size:"+size+";line-height:1.3;letter-spacing:.03em"+(color?";color:"+color:"");return d}
     function fade(el,delay){setTimeout(function(){el.style.opacity="1"},delay)}
     function btn(label,onclick){
       var b=document.createElement("button");
@@ -999,6 +1001,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       var g=cc.getContext("2d");
       var box=document.createElement("div");
       box.style.cssText="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px";
+      box.style.fontFamily=FONT;box.style.fontWeight="700";
       var title=line("You have been unbanned!!","clamp(28px,6.2vw,80px)","#FCD05C");
       title.style.maxWidth="94vw";title.style.transition="opacity 1.2s ease";
       var sub=line("Thank you for playing","clamp(18px,3vw,30px)","#f3f0f7");
