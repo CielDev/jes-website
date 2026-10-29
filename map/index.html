@@ -11,6 +11,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Minecraftia";src:url("../fonts/Minecraftia-Regular.ttf") format("truetype");font-weight:400;font-style:normal;font-display:swap}
 :root{--bg:#05050a;--bg2:#15121d;--panel:rgba(21,18,29,.94);--line:#2a2536;--text:#f3f0f7;--muted:#a39db3;--pink:#E43A96;--gold:#FCD05C;--grad:linear-gradient(90deg,var(--pink),var(--gold));--navh:64px;--top:var(--navh)}
 *{box-sizing:border-box;margin:0}
 html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
@@ -62,6 +63,32 @@ body.nonav{--top:0px}
 .sg img{display:block;image-rendering:pixelated;filter:drop-shadow(1px 0 0 rgba(255,255,255,.55)) drop-shadow(-1px 0 0 rgba(255,255,255,.55)) drop-shadow(0 1px 0 rgba(255,255,255,.55)) drop-shadow(0 -1px 0 rgba(255,255,255,.55)) drop-shadow(0 2px 2px rgba(0,0,0,.6))}
 .bird{width:21px;height:9px;background-size:42px 9px;image-rendering:pixelated;pointer-events:none;animation:flap .45s steps(2) infinite;filter:drop-shadow(0 2px 1px rgba(0,0,0,.5))}
 @keyframes flap{to{background-position:-42px 0}}
+
+/* the wooden warning sign */
+.sign{pointer-events:auto;z-index:2;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
+.sign b{display:block;width:104px;padding:6px 6px 5px;background:#a2793f;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.09) 0 1px,transparent 1px 7px),linear-gradient(90deg,rgba(255,255,255,.05),rgba(0,0,0,.08));border:3px solid #6b4a22;font:400 8px/1.5 "Minecraftia",monospace;color:#1d140a;text-align:center;white-space:pre-line;image-rendering:pixelated}
+.sign i{display:block;width:8px;height:22px;background:#6b4a22;border-left:2px solid #835c2c}
+
+/* the end of the world */
+body.doom nav,body.doom .ctl,body.doom #markers,body.doom #pop,body.doom #list,body.doom #coords,body.doom #status{opacity:0;pointer-events:none;transition:opacity 1.2s}
+#doom,#debris{position:fixed;inset:0;pointer-events:none;display:none;overflow:hidden}
+#doom{z-index:41}
+#debris{z-index:40}
+body.doom #doom,body.doom #debris{display:block}
+#debris>*{position:absolute;left:0;top:0;will-change:transform,opacity;white-space:nowrap}
+#debris img{width:22px;height:22px;image-rendering:pixelated;border-radius:3px;box-shadow:0 0 12px rgba(255,140,60,.55)}
+#debris span{font-size:12px;font-weight:600;color:#f3e9dc;text-shadow:0 0 8px rgba(255,120,40,.8),0 1px 2px #000}
+#doom .bar{position:absolute;left:0;right:0;height:0;background:#000;transition:height 1.6s cubic-bezier(.7,0,.2,1)}
+#doom .bar.t{top:0}
+#doom .bar.b{bottom:0}
+body.cine #doom .bar{height:11vh}
+#doom .flash{position:absolute;inset:0;background:radial-gradient(circle at 55% 42%,#fff 0,#ffe6c0 35%,#ff9a50 100%);opacity:0}
+#doom .say{position:absolute;left:16px;right:16px;bottom:calc(11vh + 26px);text-align:center;font:700 clamp(15px,1.9vw,22px)/1.4 "Minecraft",system-ui,sans-serif;letter-spacing:.06em;color:#ece6f4;text-shadow:0 2px 14px #000;opacity:0;transition:opacity 1.4s}
+#doom .title{position:absolute;left:16px;right:16px;top:44%;transform:translateY(-50%);text-align:center;font:700 clamp(30px,6.2vw,80px)/1.15 "Minecraft",system-ui,sans-serif;letter-spacing:.05em;background:linear-gradient(90deg,#ff7a3c,var(--pink),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 6px 34px rgba(228,58,150,.5));opacity:0;transition:opacity 3s,letter-spacing 10s cubic-bezier(.2,.7,.2,1)}
+#doom .title.on{letter-spacing:.13em}
+#doom .rebuild{position:absolute;left:50%;bottom:calc(5.5vh - 22px);transform:translateX(-50%);pointer-events:auto;opacity:0;transition:opacity 1.4s,transform .15s}
+#doom .rebuild:hover{transform:translate(-50%,-2px)}
+#doom .on{opacity:1}
 
 /* towns */
 .tw{display:flex;align-items:center;gap:4px;pointer-events:auto;cursor:pointer;z-index:1}
@@ -183,6 +210,14 @@ body.nonav{--top:0px}
 <div class="ctl" id="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">&minus;</button></div>
 <div id="status"></div>
 <div id="coords"></div>
+<div id="debris"></div>
+<div id="doom" aria-live="polite">
+  <div class="bar t"></div><div class="bar b"></div>
+  <div class="flash"></div>
+  <div class="say"></div>
+  <div class="title">The world has ended</div>
+  <button class="btn rebuild" type="button">Rebuild the world</button>
+</div>
 <div id="loading">Loading the world...</div>
 
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#05050a;color:#fff;z-index:50">This map needs JavaScript.</p></noscript>
@@ -238,6 +273,8 @@ const U = {
   uP: { value: new THREE.Vector3() }, uE: { value: new THREE.Vector3() }, uN: { value: new THREE.Vector3() },
   uShade: { value: 1 }, uChunks: { value: 0 }, uRB: { value: RB },
   uL: { value: new THREE.Vector3(0, 0, 1) },              // sunlight, kept at the top left of the screen
+  // the end of the world (see doomsday below): impact point, how far the cracks reach, shock wave, glow
+  uImpact: { value: new THREE.Vector3(0, 0, 1) }, uBurn: { value: 0 }, uWave: { value: 0 }, uGlow: { value: 1 },
 };
 const SUN = new THREE.Vector3(-0.55, 0.6, 0.6).normalize(); // in screen space: left, up, towards the viewer
 const GL = `
@@ -261,13 +298,44 @@ const GL_FRAG = GL + `
     s += vec3(0.25, 0.5, 1.0) * pow(1.0 - ndv, 3.5) * (0.08 + 0.55 * sun);              // thin haze on the lit edge
     return mix(col, s, uShade);
   }
+  // cracks are the edges of a 3D Voronoi pattern; the same cells are used to break the planet apart
+  uniform vec3 uImpact; uniform float uBurn, uWave, uGlow;
+  vec3 cellHash(vec3 c){
+    uvec3 v = uvec3(ivec3(c) + 1000);
+    v = v * 1664525u + 1013904223u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    v ^= v >> 16u;
+    v.x += v.y * v.z; v.y += v.z * v.x; v.z += v.x * v.y;
+    return vec3(v) / 4294967295.0;
+  }
+  vec2 vor(vec3 p){
+    vec3 i = floor(p); float f1 = 9.0, f2 = 9.0;
+    for (int x = -1; x <= 1; x++) for (int y = -1; y <= 1; y++) for (int z = -1; z <= 1; z++) {
+      vec3 c = i + vec3(x, y, z); float d = length(c + cellHash(c) - p);
+      if (d < f1) { f2 = f1; f1 = d; } else if (d < f2) f2 = d;
+    }
+    return vec2(f1, f2);
+  }
+  vec3 doom(vec3 col, vec3 d){
+    if (uBurn <= 0.0 && uWave <= 0.0) return col;
+    float ang = acos(clamp(dot(d, uImpact), -1.0, 1.0));
+    if (uWave > 0.0) col += vec3(1.0, 0.72, 0.4) * exp(-pow((ang - uWave) / 0.05, 2.0)) * max(0.0, 1.0 - uWave / 3.2) * 1.6;
+    float reach = smoothstep(-0.12, 0.08, uBurn - ang);
+    if (reach <= 0.0) return col;
+    vec2 big = vor(d * 3.2), small = vor(d * 9.0);
+    float e1 = 1.0 - smoothstep(0.0, 0.06, big.y - big.x), e2 = 1.0 - smoothstep(0.0, 0.05, small.y - small.x);
+    col = mix(col, col * vec3(0.66, 0.36, 0.28), reach * 0.75);                       // scorched
+    col += vec3(1.0, 0.42, 0.08) * (e1 * 2.2 + e2 * 0.7) * reach * uGlow;               // molten cracks
+    col += vec3(1.0, 0.55, 0.15) * smoothstep(0.45, 0.0, ang) * reach * 0.9 * uGlow;    // glowing crater
+    return col;
+  }
 `;
 const MAP_VS = GL + `
   attribute vec2 ll; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
   void main(){ vLL = ll; vUv = uv; vec3 p = place(ll); vW = p; gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`;
 const BASE_FS = GL_FRAG + `
   uniform sampler2D uTex; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
-  void main(){ gl_FragColor = vec4(shade(chunkGrid(texture2D(uTex, vUv).rgb, vLL), vW, vLL), 1.0); }`;
+  void main(){ gl_FragColor = vec4(doom(shade(chunkGrid(texture2D(uTex, vUv).rgb, vLL), vW, vLL), sph(vLL)), 1.0); }`;
 const TILE_FS = GL_FRAG + `
   uniform sampler2D uTex; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
   void main(){
@@ -307,15 +375,15 @@ const atmoMat = new THREE.ShaderMaterial({
   uniforms: { uA: { value: 1 } },
   side: THREE.BackSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
   vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix*normal); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
-  fragmentShader: `uniform float uA; uniform vec3 uSun; varying vec3 vN;
+  fragmentShader: `uniform float uA, uRed; uniform vec3 uSun; varying vec3 vN;
     void main(){
       vec3 n = normalize(vN);
       float i = pow(clamp((0.26 - n.z) / 0.36, 0.0, 1.0), 2.0);   // strongest at the globe's edge, gone at the outside
       float lit = clamp(dot(normalize(n.xy + 1e-5), normalize(uSun.xy)) * 0.5 + 0.5, 0.0, 1.0);
-      gl_FragColor = vec4(0.3,0.55,1.0,1.0) * i * mix(0.06, 0.75, lit * lit) * uA;
+      gl_FragColor = vec4(mix(vec3(0.3,0.55,1.0), vec3(1.0,0.32,0.12), uRed), 1.0) * i * mix(0.06 + uRed * 0.5, 0.75 + uRed * 0.4, lit * lit) * uA;
     }`,
 });
-atmoMat.uniforms.uSun = { value: SUN };
+atmoMat.uniforms.uSun = { value: SUN }; atmoMat.uniforms.uRed = { value: 0 };
 const atmo = new THREE.Mesh(new THREE.SphereGeometry(1.06, 96, 64), atmoMat);
 atmo.renderOrder = 2; scene.add(atmo);
 
@@ -441,6 +509,7 @@ new THREE.TextureLoader().load(
     tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     baseMat.uniforms.uTex.value = tex; dirty = true;
+    try { placeSign(tex.image); } catch (e) {}
     requestAnimationFrame(() => requestAnimationFrame(() => loading.classList.add("done")));
   },
   undefined,
@@ -515,6 +584,7 @@ function zoomAt(factor, cx, cy) {
 const stopAnims = () => { tween = null; vel.lon = vel.lat = 0; lastInput = performance.now(); };
 
 canvas.addEventListener("pointerdown", (e) => {
+  if (doom.on) return;
   canvas.setPointerCapture(e.pointerId);
   ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
   canvas.classList.add("drag"); stopAnims(); zoomAnim = null;
@@ -560,11 +630,11 @@ const endPtr = (e) => {
 canvas.addEventListener("pointerup", endPtr);
 canvas.addEventListener("pointercancel", endPtr);
 canvas.addEventListener("wheel", (e) => {
-  e.preventDefault(); stopAnims();
+  e.preventDefault(); if (doom.on) return; stopAnims();
   const f = Math.exp(e.deltaY * (e.deltaMode ? 0.06 : 0.0015));
   zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: e.clientX, y: e.clientY };
 }, { passive: false });
-canvas.addEventListener("dblclick", (e) => { stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; });
+canvas.addEventListener("dblclick", (e) => { if (doom.on) return; stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; });
 const zoomBtn = (f) => { stopAnims(); zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: innerWidth / 2, y: innerHeight / 2 }; };
 $("#zin").addEventListener("click", () => zoomBtn(0.4));
 $("#zout").addEventListener("click", () => zoomBtn(2.5));
@@ -624,8 +694,8 @@ function pump() {
 function updateTiles() {
   for (const t of tiles.values()) if (t.mesh) t.mesh.visible = false;
   queue = [];
-  // sample the screen and work out how much detail each part needs: with the camera
-  // tilted, the ground near the horizon is much further away than the ground below
+  // sample the screen and work out how much detail each part needs: towards the edge
+  // of the globe the ground is further away and seen at a slant, so it needs less
   const dpr = Math.min(devicePixelRatio || 1, 2), pxAng = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / innerHeight;
   const B = [], P = new THREE.Vector3(), Q = new THREE.Vector3();
   for (let j = 0; j <= 12; j++) for (let i = 0; i <= 12; i++) {
@@ -943,6 +1013,348 @@ function saveHash() {
   });
 }
 
+/* ---------- the wooden warning sign, somewhere different for everyone ---------- */
+const sign = { el: null, lat: 0, lon: 0 };
+function placeSign(img) {
+  let s = null;
+  try { s = JSON.parse(localStorage.getItem("jessign") || "null"); } catch (e) {}
+  if (!s) {
+    // find a random spot on land: read the base image small and skip anything blue
+    const c = document.createElement("canvas"); c.width = 512; c.height = 256;
+    const g = c.getContext("2d"); g.drawImage(img, 0, 0, 512, 256);
+    const px = g.getImageData(0, 0, 512, 256).data;
+    for (let i = 0; i < 2000 && !s; i++) {
+      const lat = -45 + Math.random() * 120, lon = -130 + Math.random() * 305;
+      const x = Math.floor((lon / 360 + 0.5) * 511), y = Math.floor((0.5 - lat / 180) * 255), k = (y * 512 + x) * 4;
+      const r = px[k], gr = px[k + 1], b = px[k + 2];
+      if (!(b > r * 1.25 && b > gr * 1.02) && r + gr + b > 60) s = { lat, lon };
+    }
+    s = s || { lat: 48, lon: 10 };
+    try { localStorage.setItem("jessign", JSON.stringify(s)); } catch (e) {}
+  }
+  sign.lat = s.lat * Math.PI / 180; sign.lon = s.lon * Math.PI / 180;
+  const el = document.createElement("div"); el.className = "sign"; el.title = "A warning";
+  el.innerHTML = `<div class="in"><b>Don't quickly\nspin the Earth\n10 times</b><i></i></div>`;
+  el.firstChild.style.cssText = "display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%";
+  markersEl.appendChild(el); sign.el = el;
+}
+
+/* ---------- spin the world 10 times fast and it ends ----------
+   0s    the screen turns cinematic, the controls fade away
+   1.8s  a meteorite drifts in from deep space, slowly at first
+   10s   impact: flash, shock wave, the planet cracks open from the crater
+   17s   the crust breaks apart along the cracks and drifts away in embers,
+         carrying the players, towns and landmarks with it
+   19s+  "The world has ended" ... and a button to put it all back together */
+const DOOM_TURNS = 10;
+const doom = { on: false, spin: 0, lastLon: 0, t0: 0, rb: 0, stage: 0 };
+const doomEl = $("#doom"), debrisEl = $("#debris"), sayEl = doomEl.querySelector(".say"), titleEl = doomEl.querySelector(".title"),
+  rebuildBtn = doomEl.querySelector(".rebuild"), flashEl = doomEl.querySelector(".flash");
+const AB = THREE.AdditiveBlending, V = () => new THREE.Vector3();
+const glowTex = (() => {
+  const c = document.createElement("canvas"); c.width = c.height = 128; const g = c.getContext("2d");
+  const r = g.createRadialGradient(64, 64, 0, 64, 64, 64);
+  r.addColorStop(0, "rgba(255,255,255,1)"); r.addColorStop(0.2, "rgba(255,255,255,.75)"); r.addColorStop(0.5, "rgba(255,255,255,.18)"); r.addColorStop(1, "rgba(255,255,255,0)");
+  g.fillStyle = r; g.fillRect(0, 0, 128, 128); return new THREE.CanvasTexture(c);
+})();
+
+// the meteorite: a lumpy rock glowing on the side it flies into, with a long trail of fire
+const meteor = new THREE.Group(); meteor.visible = false; scene.add(meteor);
+const meteorMat = new THREE.ShaderMaterial({
+  uniforms: { uL: U.uL, uDir: { value: V() }, uHeat: { value: 0 } },
+  vertexShader: `varying vec3 vN; void main(){ vN = normalize(mat3(modelMatrix) * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: `uniform vec3 uL, uDir; uniform float uHeat; varying vec3 vN;
+    void main(){
+      vec3 n = normalize(vN); float s = max(dot(n, uL), 0.0);
+      vec3 c = vec3(0.25, 0.2, 0.17) * (0.16 + 0.95 * s);
+      c += vec3(1.0, 0.45, 0.1) * pow(max(dot(n, uDir), 0.0), 2.0) * (0.35 + 1.2 * uHeat);
+      gl_FragColor = vec4(c, 1.0);
+    }`,
+});
+{
+  const g = new THREE.IcosahedronGeometry(1, 3), p = g.attributes.position, v = V();
+  for (let i = 0; i < p.count; i++) {
+    v.fromBufferAttribute(p, i);
+    v.multiplyScalar(0.84 + 0.22 * Math.sin(v.x * 4.1 + 1.3) * Math.sin(v.y * 3.7 + 0.7) * Math.sin(v.z * 5.3 + 2.1) + 0.05 * Math.sin(v.x * 15 + v.y * 11));
+    p.setXYZ(i, v.x, v.y, v.z);
+  }
+  g.computeVertexNormals();
+  meteor.add(new THREE.Mesh(g, meteorMat));
+}
+const meteorHalo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, color: 0xffc888, blending: AB, depthWrite: false, transparent: true }));
+meteor.add(meteorHalo);
+const trail = [];
+for (let i = 0; i < 48; i++) {
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: glowTex, blending: AB, depthWrite: false, transparent: true,
+    color: new THREE.Color().setHSL(0.11 - i * 0.0018, 1, Math.max(0.35, 0.68 - i * 0.008)) }));
+  s.visible = false; s.renderOrder = 80; scene.add(s); trail.push(s);
+}
+
+// embers: thousands of glowing specks flying out and cooling to grey, moved on the GPU
+function embers(n, make) {
+  const pos = new Float32Array(n * 3), vel = new Float32Array(n * 3), seed = new Float32Array(n), p = V(), v = V();
+  for (let i = 0; i < n; i++) { make(p, v); p.toArray(pos, i * 3); v.toArray(vel, i * 3); seed[i] = Math.random(); }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3)); g.setAttribute("vel", new THREE.BufferAttribute(vel, 3)); g.setAttribute("seed", new THREE.BufferAttribute(seed, 1));
+  const pts = new THREE.Points(g, new THREE.ShaderMaterial({
+    uniforms: { uT: { value: 0 }, uO: { value: 0 }, uPx: { value: 1 } }, transparent: true, depthWrite: false, blending: AB,
+    vertexShader: `attribute vec3 vel; attribute float seed; uniform float uT, uPx; varying float vS;
+      void main(){ vS = seed; vec4 mv = modelViewMatrix * vec4(position + vel * uT * (0.6 + 0.4 * seed), 1.0);
+        gl_PointSize = (1.6 + seed * 3.4) * uPx * (6.0 / -mv.z); gl_Position = projectionMatrix * mv; }`,
+    fragmentShader: `uniform float uT, uO; varying float vS;
+      void main(){ vec2 q = gl_PointCoord - 0.5; float r = dot(q, q); if (r > 0.25) discard;
+        float cool = clamp(uT / (5.0 + vS * 12.0), 0.0, 1.0);
+        vec3 c = mix(vec3(1.0, 0.62, 0.22), vec3(0.42, 0.38, 0.4), cool);
+        gl_FragColor = vec4(c, (1.0 - r * 4.0) * uO * mix(1.0, 0.5, cool)); }`,
+  }));
+  pts.frustumCulled = false; pts.visible = false; pts.renderOrder = 70; scene.add(pts); return pts;
+}
+
+// the crust breaks along the same Voronoi cells the shader draws the cracks with
+function cellHashJS(x, y, z) {
+  x = (x + 1000) >>> 0; y = (y + 1000) >>> 0; z = (z + 1000) >>> 0;
+  x = (Math.imul(x, 1664525) + 1013904223) >>> 0; y = (Math.imul(y, 1664525) + 1013904223) >>> 0; z = (Math.imul(z, 1664525) + 1013904223) >>> 0;
+  x = (x + Math.imul(y, z)) >>> 0; y = (y + Math.imul(z, x)) >>> 0; z = (z + Math.imul(x, y)) >>> 0;
+  x = (x ^ (x >>> 16)) >>> 0; y = (y ^ (y >>> 16)) >>> 0; z = (z ^ (z >>> 16)) >>> 0;
+  x = (x + Math.imul(y, z)) >>> 0; y = (y + Math.imul(z, x)) >>> 0; z = (z + Math.imul(x, y)) >>> 0;
+  return [x / 4294967295, y / 4294967295, z / 4294967295];
+}
+function cellKey(d) {
+  const S = 3.2, px = d.x * S, py = d.y * S, pz = d.z * S, ix = Math.floor(px), iy = Math.floor(py), iz = Math.floor(pz);
+  let best = 1e9, key = "";
+  for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) for (let c = -1; c <= 1; c++) {
+    const cx = ix + a, cy = iy + b, cz = iz + c, h = cellHashJS(cx, cy, cz);
+    const dd = (cx + h[0] - px) ** 2 + (cy + h[1] - py) ** 2 + (cz + h[2] - pz) ** 2;
+    if (dd < best) { best = dd; key = cx + "," + cy + "," + cz; }
+  }
+  return key;
+}
+const pieceMat = new THREE.ShaderMaterial({
+  uniforms: { ...U, uTex: baseMat.uniforms.uTex }, side: THREE.DoubleSide,
+  vertexShader: `attribute vec3 d0; attribute float kind; varying vec3 vD; varying float vK; varying vec3 vN;
+    void main(){ vD = d0; vK = kind; vN = normalize(mat3(modelMatrix) * normal); gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); }`,
+  fragmentShader: GL_FRAG + `uniform sampler2D uTex; varying vec3 vD; varying float vK; varying vec3 vN;
+    void main(){
+      vec3 d = normalize(vD), n = normalize(vN); if (!gl_FrontFacing) n = -n;
+      float s = max(dot(n, uL), 0.0); vec3 col;
+      if (vK < 0.5) {
+        vec2 uv = vec2(atan(d.x, d.z) / 6.2831853 + 0.5, asin(clamp(d.y, -1.0, 1.0)) / 3.1415927 + 0.5);
+        col = doom(textureLod(uTex, uv, 1.5).rgb * (0.2 + 0.92 * s), d);
+      } else {                                             // broken rock, still molten inside
+        col = vec3(0.2, 0.14, 0.11) * (0.3 + 0.8 * s);
+        col = mix(col, vec3(1.0, 0.38, 0.07), uGlow * (vK > 1.5 ? 0.95 : 0.6));
+      }
+      gl_FragColor = vec4(col, 1.0);
+    }`,
+});
+function buildPieces() {
+  const P = new THREE.SphereGeometry(1, 128, 64).toNonIndexed().attributes.position.array;
+  const groups = new Map(), m = V();
+  for (let i = 0; i < P.length; i += 9) {
+    m.set(P[i] + P[i + 3] + P[i + 6], P[i + 1] + P[i + 4] + P[i + 7], P[i + 2] + P[i + 5] + P[i + 8]);
+    if (m.lengthSq() < 1e-9) continue;
+    const k = cellKey(m.normalize());
+    if (!groups.has(k)) groups.set(k, []);
+    groups.get(k).push(i);
+  }
+  const group = new THREE.Group(), list = [], byKey = new Map(), IN = 0.9;
+  for (const [k, idx] of groups) {
+    const home = V();
+    for (const i of idx) home.add(m.set(P[i] + P[i + 3] + P[i + 6], P[i + 1] + P[i + 4] + P[i + 7], P[i + 2] + P[i + 5] + P[i + 8]));
+    home.normalize();
+    const pos = [], d0 = [], kind = [], edges = new Map();
+    const push = (x, y, z, s, kd) => { pos.push(x * s - home.x, y * s - home.y, z * s - home.z); const l = Math.hypot(x, y, z); d0.push(x / l, y / l, z / l); kind.push(kd); };
+    const vk = (j) => P[j].toFixed(5) + "," + P[j + 1].toFixed(5) + "," + P[j + 2].toFixed(5);
+    for (const i of idx) {
+      for (let v = 0; v < 3; v++) push(P[i + v * 3], P[i + v * 3 + 1], P[i + v * 3 + 2], 1, 0);          // surface
+      for (let v = 2; v >= 0; v--) push(P[i + v * 3], P[i + v * 3 + 1], P[i + v * 3 + 2], IN, 2);        // underside
+      for (let v = 0; v < 3; v++) {
+        const j1 = i + v * 3, j2 = i + ((v + 1) % 3) * 3, a = vk(j1), b = vk(j2), ek = a < b ? a + "|" + b : b + "|" + a;
+        const e = edges.get(ek); if (e) e.n++; else edges.set(ek, { n: 1, j1, j2 });
+      }
+    }
+    for (const { n, j1, j2 } of edges.values()) if (n === 1) {                                            // the broken sides
+      const a = [P[j1], P[j1 + 1], P[j1 + 2]], b = [P[j2], P[j2 + 1], P[j2 + 2]];
+      push(...a, 1, 1); push(...b, 1, 1); push(...b, IN, 1); push(...a, 1, 1); push(...b, IN, 1); push(...a, IN, 1);
+    }
+    const geo = new THREE.BufferGeometry();
+    geo.setAttribute("position", new THREE.BufferAttribute(new Float32Array(pos), 3));
+    geo.setAttribute("d0", new THREE.BufferAttribute(new Float32Array(d0), 3));
+    geo.setAttribute("kind", new THREE.BufferAttribute(new Float32Array(kind), 1));
+    geo.computeVertexNormals();
+    const mesh = new THREE.Mesh(geo, pieceMat); mesh.position.copy(home); mesh.renderOrder = 5; group.add(mesh);
+    const piece = { mesh, home, vel: V(), spin: V(), p0: V(), q0: new THREE.Quaternion() };
+    list.push(piece); byKey.set(k, piece);
+  }
+  group.visible = false; scene.add(group);
+  return { group, list, byKey };
+}
+let pieces = null, fly = [], shards = null, sparks = null;
+const doomBasis = { C: V(), E: V(), N: V(), imp: V(), p0: V(), dir: V() };
+const ease = (k) => (k = clamp(k, 0, 1), k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+const span = (t, a, b) => clamp((t - a) / (b - a), 0, 1);
+function say(text) { sayEl.classList.remove("on"); if (text) setTimeout(() => { sayEl.textContent = text; sayEl.classList.add("on"); }, sayEl.textContent ? 700 : 0); }
+
+function startDoom(now) {
+  doom.on = true; doom.t0 = now; doom.rb = 0; doom.stage = 0; doom.spin = 0; doom.h0 = view.h;
+  tween = zoomAnim = null; vel.lon = vel.lat = pend.lon = pend.lat = 0; ptrs.clear(); canvas.classList.remove("drag");
+  closePop(); closeList(); setPanel(false);
+  if (isFlat()) { $("#tFlat").checked = false; applyToggles(false); }
+  document.body.classList.add("doom");
+  requestAnimationFrame(() => document.body.classList.add("cine"));
+  // aim the meteorite at a spot a little up and right of the middle, coming in from the top right
+  updateCamera();
+  doomBasis.C.copy(C); doomBasis.E.copy(E); doomBasis.N.copy(N);
+  doomBasis.imp.copy(C).addScaledVector(E, 0.2).addScaledVector(N, 0.24).normalize();
+  doomBasis.p0.copy(doomBasis.imp).addScaledVector(E, 3.6).addScaledVector(N, 2.6).addScaledVector(C, 0.8);
+  doomBasis.dir.copy(doomBasis.imp).sub(doomBasis.p0).normalize();
+  U.uImpact.value.copy(doomBasis.imp);
+  meteorMat.uniforms.uDir.value.copy(doomBasis.dir);
+  if (!pieces) pieces = buildPieces();
+  sparks = sparks || embers(900, (p, v) => {
+    p.copy(doomBasis.imp).multiplyScalar(1.01);
+    v.randomDirection().multiplyScalar(0.12 + Math.random() * 0.5).addScaledVector(doomBasis.imp, 0.35 + Math.random() * 0.5);
+  });
+  shards = shards || embers(3200, (p, v) => {
+    p.randomDirection().multiplyScalar(0.92 + Math.random() * 0.1);
+    v.copy(p).normalize().multiplyScalar(0.05 + Math.random() * 0.32).add(V().randomDirection().multiplyScalar(0.05));
+  });
+  say("You spun the world a little too hard...");
+}
+
+function crumble() {
+  base.visible = false; atmo.visible = false; pieces.group.visible = true;
+  const imp = doomBasis.imp;
+  for (const p of pieces.list) {
+    const near = 1 - p.home.angleTo(imp) / Math.PI;           // pieces by the crater fly fastest
+    p.vel.copy(p.home).multiplyScalar(0.07 + Math.random() * 0.13 + near * near * 0.32).add(V().randomDirection().multiplyScalar(0.03));
+    p.spin.randomDirection().multiplyScalar(0.06 + Math.random() * 0.22);
+  }
+  shards.visible = true; shards.material.uniforms.uO.value = 1;
+  // everything that was on the map goes with the piece it was standing on
+  const add = (el, lat, lon) => {
+    const d = new THREE.Vector3(Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon));
+    const piece = pieces.byKey.get(cellKey(d)); if (!piece) return;
+    debrisEl.appendChild(el);
+    fly.push({ el, piece, local: d.multiplyScalar(1.03).sub(piece.home), rot: (Math.random() - 0.5) * 70, r0: Math.random() * 360 });
+  };
+  for (const p of players.values()) if (p.onMap) {
+    const el = document.createElement("div"); const img = makeAvatar(p.name); el.appendChild(img);
+    const s = document.createElement("span"); s.textContent = " " + p.name; el.appendChild(s); add(el, p.lat, p.lon);
+  }
+  for (const t of towns) { const el = document.createElement("span"); el.textContent = (t.el.querySelector("svg") ? "★ " : "") + t.label; add(el, t.lat, t.lon); }
+  for (const s of sights) { const el = s.el.firstChild.cloneNode(true); add(el, s.lat, s.lon); }
+  if (sign.el) { const el = sign.el.cloneNode(true); el.style.cssText = ""; add(el, sign.lat, sign.lon); }
+}
+
+function endDoom() {
+  pieces.group.visible = false; shards.visible = sparks.visible = false;
+  for (const p of pieces.list) { p.mesh.position.copy(p.home); p.mesh.quaternion.identity(); }
+  for (const f of fly) f.el.remove();
+  fly = [];
+  base.visible = true; atmo.visible = true; tileGroup.visible = true;
+  U.uBurn.value = U.uWave.value = 0; U.uGlow.value = 1; atmoMat.uniforms.uRed.value = 0;
+  for (const el of [sayEl, titleEl, rebuildBtn]) el.classList.remove("on");
+  document.body.classList.remove("cine");
+  setTimeout(() => document.body.classList.remove("doom"), 900);
+  doom.on = false; doom.lastLon = view.lon; lastInput = performance.now();
+  applyToggles(false);
+}
+rebuildBtn.addEventListener("click", () => {
+  if (!doom.on || doom.rb) return;
+  doom.rb = performance.now();
+  for (const el of [sayEl, titleEl, rebuildBtn]) el.classList.remove("on");
+  for (const p of pieces.list) { p.p0.copy(p.mesh.position); p.q0.copy(p.mesh.quaternion); }
+  doom.hR = view.h;
+});
+
+const shake = V();
+function doomFrame(now, dt) {
+  const t = (now - doom.t0) / 1000;
+  tileGroup.visible = false; claimGroup.visible = false;
+  shake.set(0, 0, 0);
+
+  if (doom.rb) {                                           // putting the world back together
+    const r = (now - doom.rb) / 1000, k = ease(r / 4.5);
+    for (const p of pieces.list) { p.mesh.position.lerpVectors(p.p0, p.home, k); p.mesh.quaternion.slerpQuaternions(p.q0, new THREE.Quaternion(), k); }
+    shards.material.uniforms.uO.value = Math.max(0, 1 - r / 2.5);
+    view.h = doom.hR + (3.2 - doom.hR) * ease(r / 4.5);
+    if (r >= 4.5 && pieces.group.visible) {               // whole again: swap back to the real globe and let the cracks heal
+      pieces.group.visible = false; shards.visible = false; base.visible = true; atmo.visible = true;
+      for (const f of fly) f.el.remove();
+      fly = [];
+    }
+    if (r >= 4.5) { const h = span(r, 4.5, 7); U.uBurn.value = 3.3 * (1 - ease(h)); U.uGlow.value = 0.35 + 0.65 * h; atmoMat.uniforms.uRed.value = 1 - h; }
+    if (r >= 7.2) endDoom();
+  } else {
+    // camera: settle on the globe, then pull far back after the break up
+    if (t < 2) view.h = doom.h0 + (3.6 - doom.h0) * ease(t / 2);
+    else if (t > 17) { view.h = 3.6 + 4.6 * ease((t - 17) / 15); view.lon += 0.008 * dt; }
+    if (t > 4.6 && doom.stage === 0) { doom.stage = 1; say("Something is coming."); }
+    // the meteorite
+    if (t >= 1.8 && t < 10) {
+      const k = span(t, 1.8, 10), e = Math.pow(k, 2.6);
+      meteor.visible = true;
+      meteor.position.lerpVectors(doomBasis.p0, doomBasis.imp, e);
+      meteor.rotation.x += dt * 0.7; meteor.rotation.y += dt * 0.45;
+      meteor.scale.setScalar(0.05);
+      meteorHalo.scale.setScalar(5 + 7 * k); meteorHalo.material.opacity = 0.55 + 0.45 * k;
+      meteorMat.uniforms.uHeat.value = k;
+      for (let i = 0; i < trail.length; i++) {
+        const s = trail[i], f = i / trail.length;
+        s.visible = true;
+        s.position.copy(meteor.position).addScaledVector(doomBasis.dir, -(0.012 + 0.03 * k) * i * (1 + f));
+        s.scale.setScalar((0.16 + 0.22 * k) * (1 - f * 0.85) * (0.9 + 0.2 * Math.sin(now / 60 + i)));
+        s.material.opacity = Math.pow(1 - f, 1.6) * (0.35 + 0.6 * k);
+      }
+      atmoMat.uniforms.uRed.value = span(t, 7.5, 10);
+      if (t > 7.5) shake.setScalar(0.004 * span(t, 7.5, 10));
+    }
+    if (t >= 10 && doom.stage < 2) {                       // impact
+      doom.stage = 2; meteor.visible = false; for (const s of trail) s.visible = false;
+      say(""); flashEl.style.transition = "none"; flashEl.style.opacity = 1;
+      requestAnimationFrame(() => { flashEl.style.transition = "opacity 2.2s ease-out"; flashEl.style.opacity = 0; });
+      sparks.visible = true; sparks.material.uniforms.uO.value = 1;
+    }
+    if (t >= 10) {
+      shake.setScalar(0.05 * Math.exp(-2.2 * (t - 10)));
+      U.uWave.value = t < 16 ? (t - 10) / 6 * 3.2 : 0;
+      U.uBurn.value = 3.3 * ease(span(t, 10.3, 17));
+      sparks.material.uniforms.uT.value = t - 10; sparks.material.uniforms.uO.value = Math.max(0, 1 - (t - 10) / 7);
+      if (t > 17.5) sparks.visible = false;
+    }
+    if (t >= 17 && doom.stage < 3) { doom.stage = 3; crumble(); }
+    if (t >= 17) {                                         // drifting apart
+      shake.addScalar(0.016 * Math.exp(-1.6 * (t - 17)));
+      for (const p of pieces.list) {
+        p.mesh.position.addScaledVector(p.vel, dt);
+        p.mesh.quaternion.premultiply(new THREE.Quaternion().setFromAxisAngle(p.spin.clone().normalize(), p.spin.length() * dt));
+      }
+      shards.material.uniforms.uT.value = t - 17;
+      U.uGlow.value = 1 - 0.65 * span(t, 17, 30);
+    }
+    if (t >= 19.5 && doom.stage < 4) { doom.stage = 4; titleEl.classList.add("on"); }
+    if (t >= 22.5 && doom.stage < 5) { doom.stage = 5; say("Every town and every player, scattered across the stars."); }
+    if (t >= 25.5 && doom.stage < 6) { doom.stage = 6; rebuildBtn.classList.add("on"); }
+  }
+  const px = Math.min(devicePixelRatio || 1, 2);
+  for (const e of [shards, sparks]) if (e) e.material.uniforms.uPx.value = px;
+}
+function doomCamera(now) {
+  if (shake.lengthSq() > 0) {
+    camera.position.addScaledVector(E, (Math.random() - 0.5) * 2 * shake.x).addScaledVector(N, (Math.random() - 0.5) * 2 * shake.y);
+    camera.updateMatrixWorld();
+  }
+  // the scattered markers ride along with their piece
+  const w = V();
+  for (const f of fly) {
+    w.copy(f.local).applyQuaternion(f.piece.mesh.quaternion).add(f.piece.mesh.position).project(camera);
+    if (w.z > 1 || Math.abs(w.x) > 1.3 || Math.abs(w.y) > 1.3) { f.el.style.opacity = 0; continue; }
+    f.el.style.opacity = 1;
+    f.el.style.transform = `translate3d(${((w.x * .5 + .5) * innerWidth).toFixed(1)}px,${((-w.y * .5 + .5) * innerHeight).toFixed(1)}px,0) translate(-50%,-50%) rotate(${(f.r0 + f.rot * (now - doom.t0) / 1000).toFixed(1)}deg)`;
+  }
+}
+
 /* ---------- frame loop ---------- */
 const tmp = new THREE.Vector3(), sp = new THREE.Vector3();
 let prev = performance.now(), lastTiles = 0;
@@ -1008,6 +1420,17 @@ function frame(now) {
     const dl = wrap(p.tn - p.lon);
     if (Math.abs(dl) > 1e-7 || Math.abs(p.tl - p.lat) > 1e-7) { const f = Math.min(1, dt * 5); p.lon += dl * f; p.lat += (p.tl - p.lat) * f; dirty = true; }
   }
+  if (doom.on) { doomFrame(now, dt); dirty = true; }
+  else {
+    // count how far the globe has been spun by hand; the halo turns red as it gets close
+    const turning = ptrs.size > 0 || Math.abs(vel.lon) > 1e-4 || Math.abs(pend.lon) > 1e-6;
+    if (turning && !isFlat() && view.h > 1) doom.spin += Math.abs(wrap(view.lon - doom.lastLon));
+    doom.lastLon = view.lon;
+    doom.spin *= Math.exp(-dt / 25);
+    const goal = DOOM_TURNS * 2 * Math.PI, red = Math.min(1, Math.pow(doom.spin / goal, 2)) * 0.85;
+    if (Math.abs(red - atmoMat.uniforms.uRed.value) > 0.004) { atmoMat.uniforms.uRed.value = red; dirty = true; }
+    if (doom.spin > goal && baseMat.uniforms.uTex.value) startDoom(now);
+  }
   const sightsOn = $("#tSights").checked && view.h > 0.08;
   if ((cloudO.value > 0.001 || sightsOn) && !document.hidden) dirty = true;   // clouds drift and birds fly
   if (!dirty) return;
@@ -1016,15 +1439,16 @@ function frame(now) {
   updateCamera();
   U.uL.value.copy(SUN).transformDirection(camera.matrixWorld);
   const f = U.uFlat.value;
-  cloudO.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
+  cloudO.value = doom.on ? 0 : (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
   for (const c of clouds) c.visible = cloudO.value > 0.001;
   U.uShade.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.2, 1.5);
   const bpp = RB * radPerPx();
   U.uChunks.value = $("#tChunks").checked ? THREE.MathUtils.smoothstep(8 - bpp, 0, 5) : 0;
   atmoMat.uniforms.uA.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.05, 0.5);
-  atmo.visible = atmoMat.uniforms.uA.value > 0.001;
+  atmo.visible = atmoMat.uniforms.uA.value > 0.001 && !(doom.on && pieces && pieces.group.visible);
   starMat.opacity = .75 * (1 - f * 0.6);
-  if (now - lastTiles > 90) { updateTiles(); lastTiles = now; tilesDirty = false; }
+  if (doom.on) doomCamera(now);
+  else if (now - lastTiles > 90) { updateTiles(); lastTiles = now; tilesDirty = false; }
   renderer.render(scene, camera);
 
   // DOM markers
@@ -1053,6 +1477,11 @@ function frame(now) {
     const p = sf ? screenPos(b.lon0 + b.r * Math.cos(b.a) / Math.cos(b.lat0), b.lat0 + b.r * 0.6 * Math.sin(b.a)) : null;
     if (!p || p[3]) { placeEl(b.el, null); continue; }
     p[2] *= sf * 0.9; placeEl(b.el, p);
+  }
+  if (sign.el) {
+    const p = screenPos(sign.lon, sign.lat);
+    if (!p || p[3]) placeEl(sign.el, null);
+    else { placeEl(sign.el, p, " translateY(-50%)"); sign.el.firstChild.style.transform = `scale(${clamp(1.25 - view.h * 0.22, 0.45, 1.1).toFixed(2)})`; }
   }
   if (popAt) {
     const s = screenPos(popAt.lon, popAt.lat);
