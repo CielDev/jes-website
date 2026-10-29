@@ -113,7 +113,9 @@ body.nonav{--top:0px}
 #pop .x{position:absolute;top:10px;right:12px;background:none;border:0;cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
 #pop .x:hover{color:var(--text)}
 
-#status{position:fixed;left:clamp(12px,2.4vw,32px);bottom:calc(14px + env(safe-area-inset-bottom));z-index:6;font-size:13px;color:var(--muted);pointer-events:none}
+#status{position:fixed;left:clamp(12px,2.4vw,32px);bottom:calc(52px + env(safe-area-inset-bottom));z-index:6;font-size:13px;color:var(--muted);pointer-events:none}
+#coords{position:fixed;left:clamp(12px,2.4vw,32px);bottom:calc(24px + env(safe-area-inset-bottom));z-index:6;padding:4px 10px;border-radius:8px;background:var(--panel);border:1px solid var(--line);font:12px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;color:var(--muted);pointer-events:none;white-space:pre}
+#coords:empty{display:none}
 #loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);font-family:"Minecraft",system-ui,sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:.04em;color:var(--gold);text-transform:uppercase;transition:opacity .7s ease}
 #loading.done{opacity:0;pointer-events:none}
 #loading.err{color:#ff6b6b;text-align:center;padding:24px}
@@ -173,6 +175,7 @@ body.nonav{--top:0px}
 </div>
 <div class="ctl" id="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">&minus;</button></div>
 <div id="status"></div>
+<div id="coords"></div>
 <div id="loading">Loading the world...</div>
 
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#05050a;color:#fff;z-index:50">This map needs JavaScript.</p></noscript>
@@ -337,10 +340,8 @@ function updateCamera() {
   const cl = Math.cos(view.lat), sl = Math.sin(view.lat), co = Math.cos(view.lon), so = Math.sin(view.lon);
   C.set(cl * so, sl, cl * co); E.set(co, 0, -so); N.set(-sl * so, cl, -sl * co);
   U.uC.value.set(view.lon, view.lat); U.uP.value.copy(C); U.uE.value.copy(E); U.uN.value.copy(N);
-  // tilt towards the horizon on the way in, like looking out of a plane window
-  const t = (1 - U.uFlat.value) * 0.72 * (1 - THREE.MathUtils.smoothstep(view.h, 0.6, 1.8)) * THREE.MathUtils.smoothstep(view.h, 0.025, 0.12);
-  camera.position.copy(C).multiplyScalar(1 + view.h * Math.cos(t)).addScaledVector(N, -view.h * Math.sin(t));
-  camera.up.copy(N).multiplyScalar(Math.cos(t)).addScaledVector(C, Math.sin(t)); camera.lookAt(C);
+  camera.position.copy(C).multiplyScalar(1 + view.h);
+  camera.up.copy(N); camera.lookAt(C);
   camera.near = view.h * 0.1; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
 }
 const radPerPx = () => 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * view.h / innerHeight;
@@ -370,14 +371,16 @@ function place(lon, lat, out) {
 }
 
 /* ---------- controls ---------- */
-const vel = { lon: 0, lat: 0 };
+const vel = { lon: 0, lat: 0 }, pend = { lon: 0, lat: 0 };   // pend: drag still to be eased in
 const ptrs = new Map();
 let pinch = null, lastMove = 0, down = null;
-function panBy(dx, dy) {
+function panBy(dx, dy, ease) {
   const k = radPerPx();
   const lonK = isFlat() ? 1 : 1 + (1 / Math.max(Math.cos(view.lat), 0.2) - 1) * clamp((1.2 - view.h) / 1.0, 0, 1);
-  view.lon -= dx * k * lonK; view.lat += dy * k; clampView();
-  return [-dx * k * lonK, dy * k];
+  const dl = -dx * k * lonK, da = dy * k;
+  if (ease) { pend.lon += dl; pend.lat += da; }
+  else { view.lon += dl; view.lat += da; clampView(); }
+  return [dl, da];
 }
 function zoomAt(factor, cx, cy) {
   const a = cx == null ? null : pick(cx, cy);
@@ -405,8 +408,8 @@ canvas.addEventListener("pointermove", (e) => {
   lastInput = performance.now();
   if (ptrs.size === 1) {
     const now = performance.now(), dt = Math.max(8, now - lastMove) / 1000; lastMove = now;
-    const [dl, da] = panBy(dx, dy);
-    vel.lon = dl / dt; vel.lat = da / dt;
+    const [dl, da] = panBy(dx, dy, true);
+    vel.lon = vel.lon * 0.6 + 0.4 * dl / dt; vel.lat = vel.lat * 0.6 + 0.4 * da / dt;
   } else if (ptrs.size === 2 && pinch) {
     const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
     panBy(mx - pinch.x, my - pinch.y); updateCamera();
@@ -415,6 +418,14 @@ canvas.addEventListener("pointermove", (e) => {
   }
   dirty = true;
 });
+// block coordinates under the mouse
+const coordsEl = $("#coords");
+canvas.addEventListener("pointermove", (e) => {
+  if (e.pointerType !== "mouse") return;
+  const p = pick(e.clientX, e.clientY);
+  coordsEl.textContent = p ? `x ${Math.round(p.lon * RB)}  z ${Math.round(-p.lat * RB)}` : "";
+});
+canvas.addEventListener("pointerleave", () => (coordsEl.textContent = ""));
 const endPtr = (e) => {
   ptrs.delete(e.pointerId);
   if (!ptrs.size) canvas.classList.remove("drag");
@@ -844,6 +855,11 @@ function frame(now) {
     if (k >= 1) { U.uFlat.value = flatAnim.to; flatAnim = null; clampView(); }
     dirty = tilesDirty = true;
   }
+  if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
+    const k = 1 - Math.exp(-dt * 16);
+    view.lon += pend.lon * k; view.lat += pend.lat * k; clampView();
+    pend.lon *= 1 - k; pend.lat *= 1 - k; dirty = true;
+  }
   if (tween) {
     const k = Math.min(1, (now - tween.t0) / tween.dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
     view.lon = tween.lon0 + (tween.lon1 - tween.lon0) * e; view.lat = tween.lat0 + (tween.lat1 - tween.lat0) * e;
@@ -857,7 +873,7 @@ function frame(now) {
   } else if (!ptrs.size) {
     if (Math.abs(vel.lon) + Math.abs(vel.lat) > 0.0005 * Math.min(1, view.h)) {    // inertia after a drag
       view.lon += vel.lon * dt; view.lat += vel.lat * dt; clampView();
-      const f = Math.exp(-4 * dt); vel.lon *= f; vel.lat *= f; dirty = true;
+      const f = Math.exp(-2.8 * dt); vel.lon *= f; vel.lat *= f; dirty = true;
     } else if (!reduce && !isFlat() && now - lastInput > 6000 && view.h > 2) {        // slow spin while idle
       view.lon = wrap(view.lon + 0.03 * dt); dirty = true;
     }
