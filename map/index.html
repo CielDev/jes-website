@@ -472,8 +472,6 @@ const ART = {
   pisa: [".....ww.", "....wwww", "....wgwg", "....wwww", "...wgwg.", "...wwww.", "..wgwg..", "..wwww..", ".wgwg...", ".wwww...", "wgwg....", "wwww...."],
   chichen: ["......ssss......", "......sdds......", ".....gggggg.....", "....gggggggg....", "...gggggggggg...", "..gggggggggggg..",
     ".gggggggggggggg.", "gggggggggggggggg"],
-  vatican: [".......y.......", "......ggg......", ".....ggggg.....", "....ggggggg....", "...ggggggggg...", "...wwwwwwwww...",
-    "..wwwwwwwwwww..", "wwwwwdwdwdwwwww", "wdwdwwwwwwwdwdw", "wwwwwdwdwdwwwww"],
   acropolis: ["......wwww......", "...wwwwwwwwww...", "wwwwwwwwwwwwwwww", ".w.w.w.w.w.w.w.w", ".w.w.w.w.w.w.w.w", ".w.w.w.w.w.w.w.w",
     "wwwwwwwwwwwwwwww", "gggggggggggggggg"],
   fuji: ["......wwww......", ".....wwwwww.....", "....wwFwwFww....", "...FFwFFFwFFF...", "..FFFFFFFFFFFF..", ".FFFFFFFFFFFFFF.", "FFFFFFFFFFFFFFFF"],
@@ -493,8 +491,8 @@ function pixelArt(rows, px = 3) {
   return { url: c.toDataURL(), w: w * px, h: rows.length * px };
 }
 const SIGHTS = [                                           // [art, name, lat, lon, nudge in px so neighbours don't overlap]
-  ["eiffel", "Eiffel Tower", 48.858, 2.294], ["bigben", "Big Ben", 51.5, -0.125], ["colosseum", "Colosseum", 41.89, 12.49, 16],
-  ["vatican", "Vatican City", 41.902, 12.454, -20], ["pisa", "Leaning Tower of Pisa", 43.723, 10.397],
+  ["eiffel", "Eiffel Tower", 48.858, 2.294], ["bigben", "Big Ben", 51.5, -0.125], ["colosseum", "Colosseum", 41.89, 12.49],
+  ["pisa", "Leaning Tower of Pisa", 43.723, 10.397],
   ["empire", "Empire State Building", 40.748, -73.986], ["pyramids", "Pyramids of Giza", 29.98, 31.13],
   ["taj", "Taj Mahal", 27.17, 78.04], ["christ", "Christ the Redeemer", -22.95, -43.21], ["torii", "Itsukushima Shrine", 34.3, 132.32],
   ["everest", "Mount Everest", 27.988, 86.925], ["sagrada", "Sagrada Família", 41.404, 2.174], ["oviedo", "Oviedo Cathedral", 43.362, -5.843],
