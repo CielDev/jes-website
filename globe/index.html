@@ -97,13 +97,20 @@ body.nonav{--top:0px}
 #list .empty{padding:10px;color:var(--muted);font-size:14px}
 
 /* town popup */
-#pop{position:fixed;left:0;top:0;z-index:12;width:max-content;max-width:min(280px,calc(100vw - 32px));padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.45;color:var(--muted);box-shadow:0 8px 24px rgba(0,0,0,.45);pointer-events:auto}
+#pop{position:fixed;left:0;top:0;z-index:12;width:max-content;min-width:200px;max-width:min(340px,calc(100vw - 32px));padding:16px 20px 16px;background:var(--panel);border:1px solid var(--line);border-radius:14px;font-size:15px;line-height:1.5;color:#dcd7e6;box-shadow:0 10px 30px rgba(0,0,0,.5);pointer-events:auto}
 #pop[hidden]{display:none}
 #pop::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;margin-left:-6px;background:inherit;border:inherit;border-width:0 1px 1px 0;transform:rotate(45deg)}
-#pop h4{font-size:15px;color:var(--text);margin:0 22px 4px 0}
+#pop h4{font-size:17px;font-weight:700;color:var(--text);margin:0 24px 6px 0;line-height:1.3}
+#pop .nat{font-weight:500;color:#ff7fc2}
+#pop .board{margin:-2px 0 8px;font-style:italic;color:var(--muted)}
+#pop .row{margin:2px 0}
+#pop b{color:var(--text);font-weight:700}
+#pop details{margin-top:2px}
+#pop summary{cursor:pointer;list-style-position:inside}
+#pop .res{margin-top:6px;font-size:14px;color:var(--muted)}
 #pop hr{border:0;border-top:1px solid var(--line);margin:6px 0}
-#pop b{color:var(--text);font-weight:600}
-#pop .x{position:absolute;top:6px;right:8px;background:none;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+#pop .x{position:absolute;top:10px;right:12px;background:none;border:0;cursor:pointer;color:var(--muted);font-size:20px;line-height:1}
+#pop .x:hover{color:var(--text)}
 
 #status{position:fixed;left:clamp(12px,2.4vw,32px);bottom:calc(14px + env(safe-area-inset-bottom));z-index:6;font-size:13px;color:var(--muted);pointer-events:none}
 #loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);font-family:"Minecraft",system-ui,sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:.04em;color:var(--gold);text-transform:uppercase;transition:opacity .7s ease}
@@ -534,7 +541,7 @@ const CLAIM_VS = GL + `
   }`;
 const CLAIM_FS = `varying vec4 vCol; varying float vFace; void main(){ if (vFace < 0.0) discard; gl_FragColor = vCol; }`;
 const claimMat = () => new THREE.ShaderMaterial({ uniforms: U, vertexShader: CLAIM_VS, fragmentShader: CLAIM_FS, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide });
-let areas = [];
+let areas = [], claimCount = {};
 const markersEl = $("#markers"), towns = [];
 const STAR = `<svg viewBox="0 0 24 24"><path fill="#FCD05C" stroke="#7a5a00" stroke-width="1.2" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>`;
 
@@ -545,7 +552,7 @@ function rgba(hex, a) {
 function buildClaims(data) {
   for (const o of [...claimGroup.children]) { claimGroup.remove(o); o.geometry.dispose(); o.material.dispose(); }
   for (const t of towns) t.el.remove();
-  towns.length = 0; areas = [];
+  towns.length = 0; areas = []; claimCount = {};
   const fll = [], fcol = [], lll = [], lcol = [];
   for (const set of Object.values(data.sets || {})) {
     for (const a of Object.values(set.areas || {})) {
@@ -559,6 +566,9 @@ function buildClaims(data) {
         const p = pts[i], q = pts[(i + 1) % pts.length];
         lll.push(p.x / RB, -p.y / RB, q.x / RB, -q.y / RB); lcol.push(...lc, ...lc);
       }
+      let sq = 0;                                          // claimed chunks = polygon area / 256
+      for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; sq += p.x * q.y - q.x * p.y; }
+      claimCount[a.label] = (claimCount[a.label] || 0) + Math.round(Math.abs(sq) / 2 / 256);
       areas.push({ label: a.label, desc: a.desc, pts, x0: Math.min(...xs), x1: Math.max(...xs), z0: Math.min(...zs), z1: Math.max(...zs) });
     }
     for (const m of Object.values(set.markers || {})) {
@@ -625,14 +635,54 @@ function safeDesc(html, out) {
     else if (n.nodeType !== 3 || n.textContent.trim()) br = 0;
   }
 }
+/* read the fields out of the Towny description */
+function parseTown(html) {
+  const doc = new DOMParser().parseFromString(html || "", "text/html");
+  const big = [...doc.querySelectorAll("span")].filter((s) => /120%/.test(s.getAttribute("style") || "") && /bold/.test(s.getAttribute("style") || ""));
+  if (!big.length) return null;
+  const t = { name: big[0].textContent.trim(), nation: (big[1]?.textContent || "").trim().replace(/^\(|\)$/g, ""), fields: [] };
+  const board = [...doc.querySelectorAll("span")].find((s) => /90%/.test(s.getAttribute("style") || ""));
+  if (board) t.board = board.textContent.trim();
+  const img = doc.querySelector("img");
+  if (img && img.nextSibling) t.mayor = img.nextSibling.textContent.trim();
+  for (const s of doc.querySelectorAll("span")) {
+    const k = s.firstElementChild;
+    if (!k || k.tagName !== "SPAN" || !/:$/.test(k.textContent.trim())) continue;
+    const key = k.textContent.trim().slice(0, -1);
+    t.fields.push([key, s.textContent.slice(s.textContent.indexOf(k.textContent) + k.textContent.length).trim()]);
+  }
+  return t;
+}
 function openPop(lon, lat, label, desc) {
   pop.textContent = "";
-  const x = document.createElement("button"); x.className = "x"; x.type = "button"; x.setAttribute("aria-label", "Close"); x.innerHTML = "&times;";
+  const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
+  const x = el("button", "x"); x.type = "button"; x.setAttribute("aria-label", "Close"); x.innerHTML = "&times;";
   x.addEventListener("click", closePop);
-  const h = document.createElement("h4"); h.textContent = label || "Town";
-  const body = document.createElement("div"); safeDesc(desc, body);
-  const first = body.querySelector("b"); if (first && first.textContent.trim() === (label || "").trim()) first.remove();
-  pop.append(x, h, body); pop.hidden = false; popAt = { lon, lat }; dirty = true;
+  const t = parseTown(desc), h = el("h4");
+  if (!t) {                                                // not a Towny marker: show its text as it is
+    h.textContent = label || "Town";
+    const body = el("div"); safeDesc(desc, body);
+    pop.append(x, h, body);
+  } else {
+    h.textContent = t.name || label;
+    if (t.nation) { h.append(" "); h.appendChild(el("span", "nat", "(" + t.nation.replace(/_/g, " ") + ")")); }
+    pop.append(x, h);
+    if (t.board && !/^My cool town on Pixel Earth/.test(t.board)) pop.appendChild(el("p", "board", t.board));
+    const row = (k, v) => { const r = el("div", "row", k + ": "); r.appendChild(el("b", "", v)); pop.appendChild(r); };
+    if (t.mayor) row("Mayor", t.mayor);
+    let residents = null;
+    for (const [k, v] of t.fields) {
+      if (k === "Residents") residents = v.split(",").map((s) => s.trim()).filter(Boolean);
+      else if (k === "Bank") row("Balance", v.replace(/^([\d.,]+)\s*g$/i, "$1 gold"));
+      else row(k, k === "Founded" ? v.replace(/^(\w{3} \d{1,2}) (\d{4})$/, "$1, $2") : v);
+      if (k === "Founded" && claimCount[label]) row("Claims", claimCount[label].toLocaleString("en"));
+    }
+    if (residents) {
+      const d = el("details"), s = el("summary", "", "Residents: "); s.appendChild(el("b", "", String(residents.length)));
+      d.append(s, el("p", "res", residents.join(", "))); pop.appendChild(d);
+    }
+  }
+  pop.hidden = false; popAt = { lon, lat }; dirty = true;
 }
 function closePop() { pop.hidden = true; popAt = null; }
 function onClick(cx, cy) {
