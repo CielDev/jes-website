@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Live Map | Just an Earth Server</title>
+<meta name="description" content="The Just an Earth Server live map: a 3D globe and flat map with towns, claims and live player positions.">
+<link rel="icon" type="image/png" href="../img/favicon.png">
+<style>
+@font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+:root{--bg:#05050a;--bg2:#15121d;--panel:rgba(21,18,29,.94);--line:#2a2536;--text:#f3f0f7;--muted:#a39db3;--pink:#E43A96;--gold:#FCD05C;--grad:linear-gradient(90deg,var(--pink),var(--gold));--top:60px}
+*{box-sizing:border-box;margin:0}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+
+/* top bar, same look as the main site */
+nav{position:fixed;top:0;left:0;right:0;z-index:20;height:var(--top);display:flex;align-items:center;gap:22px;padding:0 clamp(12px,2.4vw,32px);background:rgba(13,11,18,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:transform .3s}
+body.nonav nav{transform:translateY(-100%)}
+body.nonav{--top:0px}
+.brand img{height:38px;width:auto;display:block}
+.links{display:flex;gap:22px;font-size:16px;color:var(--muted)}
+.links a:hover{color:var(--text)}
+.links a.on{color:var(--pink)}
+.right{margin-left:auto;display:flex;align-items:center;gap:18px}
+#online{background:none;border:0;cursor:pointer;color:var(--muted);font-size:16px;padding:8px 4px}
+#online:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:.2em 22px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft",system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:.04em;text-transform:uppercase;line-height:1;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s;white-space:nowrap}
+.btn:hover{transform:translateY(-2px)}
+
+/* map */
+#c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
+#c.drag{cursor:grabbing}
+#markers{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:5}
+#markers>div{position:absolute;left:0;top:0;will-change:transform}
+
+/* players: just a head from far away, a name plate up close */
+.pl{display:flex;align-items:center;gap:5px;transform-origin:0 0;pointer-events:auto;cursor:pointer;white-space:nowrap;z-index:2}
+.pl img,.pl i{width:18px;height:18px;flex:none;display:block;image-rendering:pixelated;border-radius:2px;background:var(--line);box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.pl span{display:none;font-size:12.5px;font-weight:600;line-height:1}
+.pl.near{padding:3px 7px 3px 3px;border-radius:4px;background:rgba(13,11,18,.86);border:1px solid rgba(255,255,255,.08)}
+.pl.near img,.pl.near i{width:16px;height:16px;box-shadow:none}
+.pl.near span{display:block}
+.pl:hover{z-index:3}
+
+/* towns */
+.tw{display:flex;align-items:center;gap:4px;pointer-events:auto;cursor:pointer;z-index:1}
+.tw svg{width:14px;height:14px;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
+.tw b{display:block;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
+.tw span{display:none;font-size:12px;font-weight:600;text-shadow:0 1px 2px #000,0 0 4px #000}
+.tw.near span{display:block}
+.tw.dot:not(.near){display:none}
+
+/* controls, top right and bottom right */
+.ctl{position:fixed;right:clamp(12px,2.4vw,32px);z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+#layersBtn{top:calc(var(--top) + 16px);width:44px;height:44px;display:grid;place-items:center;cursor:pointer;transition:top .3s}
+#layersBtn[hidden]{display:none}
+#layersBtn svg{width:20px;height:20px}
+#layersBtn:hover,#zoom button:hover{background:var(--line)}
+#panel{top:calc(var(--top) + 16px);width:200px;padding:12px;transition:top .3s}
+#panel[hidden]{display:none}
+.ph{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 2px;font-size:14px}
+.ph button{background:none;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;padding:2px 4px}
+.ph button:hover{color:var(--text)}
+.tg{display:flex;align-items:center;gap:10px;padding:7px 2px;font-size:14px;cursor:pointer;user-select:none}
+.tg input{position:absolute;opacity:0;pointer-events:none}
+.tg i{position:relative;width:32px;height:18px;flex:none;border-radius:9px;background:#3a3446;transition:background .2s}
+.tg i::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:#fff;transition:transform .2s}
+.tg input:checked+i{background:var(--pink)}
+.tg input:checked+i::after{transform:translateX(14px)}
+.tg input:focus-visible+i{outline:2px solid var(--gold);outline-offset:2px}
+.tg em{margin-left:auto;font-style:normal;color:var(--muted);font-size:13px}
+#zoom{bottom:calc(24px + env(safe-area-inset-bottom));display:flex;flex-direction:column;overflow:hidden}
+#zoom button{width:44px;height:42px;border:0;background:none;cursor:pointer;font-size:20px;line-height:1}
+#zoom button+button{border-top:1px solid var(--line)}
+
+/* player list */
+#list{position:fixed;top:calc(var(--top) + 8px);right:clamp(12px,2.4vw,32px);z-index:16;width:240px;max-height:min(60vh,460px);overflow:auto;display:none;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+#list.open{display:block}
+#list .row{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;border-radius:8px;background:none;text-align:left;cursor:pointer;font-size:15px}
+#list .row:hover{background:var(--line)}
+#list .row img,#list .row i{width:20px;height:20px;border-radius:3px;flex:none;image-rendering:pixelated;background:var(--line)}
+#list .row small{margin-left:auto;color:var(--muted);font-size:12px}
+#list .empty{padding:10px;color:var(--muted);font-size:14px}
+
+/* town popup */
+#pop{position:fixed;left:0;top:0;z-index:12;width:max-content;max-width:min(280px,calc(100vw - 32px));padding:12px 14px;background:var(--panel);border:1px solid var(--line);border-radius:10px;font-size:13px;line-height:1.45;color:var(--muted);box-shadow:0 8px 24px rgba(0,0,0,.45);pointer-events:auto}
+#pop[hidden]{display:none}
+#pop::after{content:"";position:absolute;left:50%;bottom:-7px;width:12px;height:12px;margin-left:-6px;background:inherit;border:inherit;border-width:0 1px 1px 0;transform:rotate(45deg)}
+#pop h4{font-size:15px;color:var(--text);margin:0 22px 4px 0}
+#pop hr{border:0;border-top:1px solid var(--line);margin:6px 0}
+#pop b{color:var(--text);font-weight:600}
+#pop .x{position:absolute;top:6px;right:8px;background:none;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1}
+
+#status{position:fixed;left:clamp(12px,2.4vw,32px);bottom:calc(14px + env(safe-area-inset-bottom));z-index:6;font-size:13px;color:var(--muted);pointer-events:none}
+#loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);font-family:"Minecraft",system-ui,sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:.04em;color:var(--gold);text-transform:uppercase;transition:opacity .7s ease}
+#loading.done{opacity:0;pointer-events:none}
+#loading.err{color:#ff6b6b;text-align:center;padding:24px}
+
+@media(max-width:800px){
+  :root{--top:54px}
+  nav{gap:12px}
+  .brand img{height:32px}
+  .links{display:none}
+  .btn{height:34px;font-size:15px;padding:.2em 14px 0;border-radius:10px}
+  #list{left:12px;right:12px;width:auto}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+  <div class="links">
+    <a href="../">Home</a>
+    <a href="../#towny">How it works</a>
+    <a href="https://store.jes.earth">Store</a>
+    <a class="on" href="./">Map</a>
+  </div>
+  <div class="right">
+    <button id="online" type="button" aria-haspopup="true" aria-expanded="false">0 online</button>
+    <button class="btn" id="ip" type="button">Play Now</button>
+  </div>
+</nav>
+
+<canvas id="c" aria-label="Map of the Just an Earth Server world"></canvas>
+<div id="markers"></div>
+<div id="pop" hidden></div>
+<div id="list" role="menu"></div>
+
+<button class="ctl" id="layersBtn" type="button" aria-label="Map layers" aria-expanded="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/></svg>
+</button>
+<div class="ctl" id="panel" hidden>
+  <div class="ph"><b>Map</b><button id="panelX" type="button" aria-label="Close">&times;</button></div>
+  <label class="tg"><input type="checkbox" id="tPlayers" checked><i></i><span>Players</span><em id="pCount">0</em></label>
+  <label class="tg"><input type="checkbox" id="tClaims" checked><i></i><span>Claims</span></label>
+  <label class="tg"><input type="checkbox" id="tChunks"><i></i><span>Chunks</span></label>
+  <label class="tg"><input type="checkbox" id="tFlat"><i></i><span>Flat map</span></label>
+  <label class="tg"><input type="checkbox" id="tNav"><i></i><span>Hide menu</span></label>
+</div>
+<div class="ctl" id="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">&minus;</button></div>
+<div id="status"></div>
+<div id="loading">Loading the world...</div>
+
+<noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#05050a;color:#fff;z-index:50">This map needs JavaScript.</p></noscript>
+
+<script type="module">
+import * as THREE from "./three.module.min.js";
+
+/* ------------------------------------------------------------------
+   SETTINGS
+------------------------------------------------------------------ */
+const CONFIG = {
+  map: "https://map.jes.earth",  // Dynmap (needs HTTPS and Access-Control-Allow-Origin: *)
+  world: "Earth",
+  mapName: "flat",               // Dynmap map prefix
+  base: "earth.jpg",             // whole world in one image, made with stitch.html
+  baseZoom: 6,                   // Dynmap zoom that image was built from. Live tiles take over below it
+  worldWidth: 123120,            // blocks around the equator (the JES map is 342 blocks per degree)
+  playerRefresh: 2000,           // ms
+  markerRefresh: 60000,          // ms
+  heads: "https://crafthead.net/helm/{name}/32",
+  ip: "jes.earth",
+};
+/* ------------------------------------------------------------------ */
+
+const $ = (s) => document.querySelector(s);
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const loading = $("#loading"), statusEl = $("#status");
+const RB = CONFIG.worldWidth / (2 * Math.PI);             // blocks per radian
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const wrap = (a) => Math.atan2(Math.sin(a), Math.cos(a));
+const store = (() => { try { return JSON.parse(localStorage.getItem("jesmap") || "{}"); } catch (e) { return {}; } })();
+const save = () => { try { localStorage.setItem("jesmap", JSON.stringify(store)); } catch (e) {} };
+
+/* ---------- renderer ---------- */
+let renderer;
+try {
+  renderer = new THREE.WebGLRenderer({ canvas: $("#c"), antialias: true, powerPreference: "high-performance" });
+} catch (e) {
+  loading.className = "err"; loading.textContent = "Your browser could not start WebGL, so the map can't be shown.";
+  throw e;
+}
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+renderer.setClearColor(0x05050a, 1);
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 200);
+const canvas = renderer.domElement;
+
+/* ---------- shared shader code ----------
+   Every map layer gets (lon, lat) per vertex and is placed in the shader, so the
+   globe can unroll into the flat map (uFlat 0..1) around the point in view. */
+const U = {
+  uFlat: { value: 0 }, uC: { value: new THREE.Vector2() },
+  uP: { value: new THREE.Vector3() }, uE: { value: new THREE.Vector3() }, uN: { value: new THREE.Vector3() },
+  uShade: { value: 1 }, uChunks: { value: 0 }, uRB: { value: RB },
+};
+const GL = `
+  uniform float uFlat, uShade, uChunks, uRB; uniform vec2 uC; uniform vec3 uP, uE, uN;
+  vec3 sph(vec2 ll){ float c = cos(ll.y); return vec3(c*sin(ll.x), sin(ll.y), c*cos(ll.x)); }
+  vec3 place(vec2 ll){ return mix(sph(ll), uP + uE*(ll.x-uC.x) + uN*(ll.y-uC.y), uFlat); }
+`;
+const GL_FRAG = GL + `
+  vec3 chunkGrid(vec3 col, vec2 ll){
+    if (uChunks <= 0.0) return col;
+    vec2 b = vec2(ll.x, -ll.y) * uRB / 16.0;
+    vec2 g = abs(fract(b - 0.5) - 0.5) / fwidth(b);
+    return mix(col, vec3(0.0), (1.0 - min(min(g.x, g.y), 1.0)) * 0.5 * uChunks);
+  }
+  vec3 shade(vec3 col, vec3 wp, vec2 ll){
+    if (uShade <= 0.0) return col;
+    float ndv = clamp(dot(sph(ll), normalize(cameraPosition - wp)), 0.0, 1.0);
+    vec3 s = col * mix(0.5, 1.0, pow(ndv, 0.45)) + vec3(0.10,0.28,0.85) * pow(1.0-ndv, 3.0) * 0.55;
+    return mix(col, s, uShade);
+  }
+`;
+const MAP_VS = GL + `
+  attribute vec2 ll; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
+  void main(){ vLL = ll; vUv = uv; vec3 p = place(ll); vW = p; gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`;
+const BASE_FS = GL_FRAG + `
+  uniform sampler2D uTex; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
+  void main(){ gl_FragColor = vec4(shade(chunkGrid(texture2D(uTex, vUv).rgb, vLL), vW, vLL), 1.0); }`;
+const TILE_FS = GL_FRAG + `
+  uniform sampler2D uTex; varying vec2 vLL; varying vec2 vUv; varying vec3 vW;
+  void main(){
+    vec3 c = texture2D(uTex, vUv).rgb;
+    if (c.r + c.g + c.b < 0.04) discard;          // unrendered parts of a tile are black: let the layer below show
+    gl_FragColor = vec4(shade(chunkGrid(c, vLL), vW, vLL), 1.0);
+  }`;
+
+/* lon/lat grid; uv runs 0..1 over the patch with v = 1 at the north edge */
+function gridGeo(lon0, lon1, lat0, lat1, nx, ny) {
+  const n = (nx + 1) * (ny + 1), ll = new Float32Array(n * 2), uv = new Float32Array(n * 2), pos = new Float32Array(n * 3), idx = [];
+  for (let j = 0, k = 0; j <= ny; j++) for (let i = 0; i <= nx; i++, k++) {
+    const lon = lon0 + (lon1 - lon0) * i / nx, lat = lat0 + (lat1 - lat0) * j / ny, c = Math.cos(lat);
+    ll[k * 2] = lon; ll[k * 2 + 1] = lat; uv[k * 2] = i / nx; uv[k * 2 + 1] = j / ny;
+    pos[k * 3] = c * Math.sin(lon); pos[k * 3 + 1] = Math.sin(lat); pos[k * 3 + 2] = c * Math.cos(lon);
+  }
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) {
+    const a = j * (nx + 1) + i, b = a + 1, c = a + nx + 2, d = a + nx + 1;
+    idx.push(a, b, c, a, c, d);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  g.setAttribute("ll", new THREE.BufferAttribute(ll, 2));
+  g.setAttribute("uv", new THREE.BufferAttribute(uv, 2));
+  g.setIndex(idx);
+  return g;
+}
+const mapMaterial = (fs, tex, extra = {}) => new THREE.ShaderMaterial({ uniforms: { ...U, uTex: { value: tex } }, vertexShader: MAP_VS, fragmentShader: fs, ...extra });
+
+/* ---------- globe ---------- */
+const baseMat = mapMaterial(BASE_FS, null);
+const base = new THREE.Mesh(gridGeo(-Math.PI, Math.PI, -Math.PI / 2, Math.PI / 2, 360, 180), baseMat);
+base.frustumCulled = false; base.renderOrder = 1;
+scene.add(base);
+
+const atmoMat = new THREE.ShaderMaterial({
+  uniforms: { uA: { value: 1 } },
+  side: THREE.BackSide, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false,
+  vertexShader: `varying vec3 vN; void main(){ vN = normalize(normalMatrix*normal); gl_Position = projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+  fragmentShader: `uniform float uA; varying vec3 vN; void main(){ float i = pow(max(0.0, 0.62 - dot(vN, vec3(0.0,0.0,1.0))), 3.2); gl_FragColor = vec4(0.22,0.5,1.0,1.0)*i*1.15*uA; }`,
+});
+const atmo = new THREE.Mesh(new THREE.SphereGeometry(1.13, 96, 64), atmoMat);
+atmo.renderOrder = 2; scene.add(atmo);
+
+const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.4, sizeAttenuation: false, transparent: true, opacity: .75, depthWrite: false });
+{
+  const n = 1400, pos = new Float32Array(n * 3);
+  for (let i = 0; i < n; i++) {
+    const u = Math.random() * 2 - 1, t = Math.random() * Math.PI * 2, s = Math.sqrt(1 - u * u), r = 90;
+    pos.set([r * s * Math.cos(t), r * u, r * s * Math.sin(t)], i * 3);
+  }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute("position", new THREE.BufferAttribute(pos, 3));
+  const stars = new THREE.Points(g, starMat); stars.renderOrder = 0; scene.add(stars);
+}
+
+new THREE.TextureLoader().load(
+  CONFIG.base,
+  (tex) => {
+    tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
+    tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    baseMat.uniforms.uTex.value = tex; dirty = true;
+    requestAnimationFrame(() => requestAnimationFrame(() => loading.classList.add("done")));
+  },
+  undefined,
+  () => { loading.className = "err"; loading.textContent = "Could not load the map image (" + CONFIG.base + ")."; }
+);
+
+/* ---------- camera ----------
+   The camera always looks straight down at (view.lon, view.lat) from height view.h */
+const view = { lon: 0.17, lat: 0.5, h: 3.2 };
+const H_MIN = 0.012, H_MAX = 6;
+const C = new THREE.Vector3(), E = new THREE.Vector3(), N = new THREE.Vector3();
+let dirty = true, tilesDirty = true, lastInput = -1e9, tween = null, zoomAnim = null, flatAnim = null;
+const isFlat = () => U.uFlat.value > 0.5;
+const clampH = (v) => clamp(v, H_MIN, H_MAX);
+const clampView = () => {
+  if (isFlat()) { view.lon = clamp(view.lon, -Math.PI, Math.PI); view.lat = clamp(view.lat, -Math.PI / 2, Math.PI / 2); }
+  else { view.lon = wrap(view.lon); view.lat = clamp(view.lat, -1.5, 1.5); }
+};
+function updateCamera() {
+  const cl = Math.cos(view.lat), sl = Math.sin(view.lat), co = Math.cos(view.lon), so = Math.sin(view.lon);
+  C.set(cl * so, sl, cl * co); E.set(co, 0, -so); N.set(-sl * so, cl, -sl * co);
+  U.uC.value.set(view.lon, view.lat); U.uP.value.copy(C); U.uE.value.copy(E); U.uN.value.copy(N);
+  camera.position.copy(C).multiplyScalar(1 + view.h);
+  camera.up.copy(N); camera.lookAt(C);
+  camera.near = view.h * 0.1; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
+}
+const radPerPx = () => 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * view.h / innerHeight;
+
+/* screen point -> {lon, lat} on the globe or flat map */
+const ray = new THREE.Raycaster(), ndc = new THREE.Vector2(), hit = new THREE.Vector3();
+function pick(cx, cy) {
+  ndc.set(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1);
+  ray.setFromCamera(ndc, camera);
+  const o = ray.ray.origin, d = ray.ray.direction;
+  if (!isFlat()) {
+    const b = o.dot(d), disc = b * b - (o.lengthSq() - 1);
+    if (disc < 0) return null;
+    hit.copy(d).multiplyScalar(-b - Math.sqrt(disc)).add(o);
+    return { lon: Math.atan2(hit.x, hit.z), lat: Math.asin(clamp(hit.y, -1, 1)) };
+  }
+  const dn = d.dot(C); if (dn >= 0) return null;
+  hit.copy(d).multiplyScalar((1 - o.dot(C)) / dn).add(o).sub(C);
+  return { lon: view.lon + hit.dot(E), lat: view.lat + hit.dot(N) };
+}
+/* {lon, lat} -> world position, the same as place() in the shaders */
+function place(lon, lat, out) {
+  const c = Math.cos(lat), f = U.uFlat.value;
+  out.set(c * Math.sin(lon), Math.sin(lat), c * Math.cos(lon));
+  if (f > 0) out.lerp(hit.copy(C).addScaledVector(E, lon - view.lon).addScaledVector(N, lat - view.lat), f);
+  return out;
+}
+
+/* ---------- controls ---------- */
+const vel = { lon: 0, lat: 0 };
+const ptrs = new Map();
+let pinch = null, lastMove = 0, down = null;
+function panBy(dx, dy) {
+  const k = radPerPx();
+  const lonK = isFlat() ? 1 : 1 + (1 / Math.max(Math.cos(view.lat), 0.2) - 1) * clamp((1.2 - view.h) / 1.0, 0, 1);
+  view.lon -= dx * k * lonK; view.lat += dy * k; clampView();
+  return [-dx * k * lonK, dy * k];
+}
+function zoomAt(factor, cx, cy) {
+  const a = cx == null ? null : pick(cx, cy);
+  view.h = clampH(view.h * factor); updateCamera();
+  const b = a && view.h < 1.5 ? pick(cx, cy) : null;
+  if (a && b) { view.lon += isFlat() ? a.lon - b.lon : wrap(a.lon - b.lon); view.lat += a.lat - b.lat; clampView(); }
+  dirty = true;
+}
+const stopAnims = () => { tween = null; vel.lon = vel.lat = 0; lastInput = performance.now(); };
+
+canvas.addEventListener("pointerdown", (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  ptrs.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  canvas.classList.add("drag"); stopAnims(); zoomAnim = null;
+  if (ptrs.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now() };
+  if (ptrs.size === 2) {
+    const [a, b] = [...ptrs.values()];
+    pinch = { d: Math.hypot(a.x - b.x, a.y - b.y), x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; down = null;
+  }
+  closeList();
+});
+canvas.addEventListener("pointermove", (e) => {
+  const p = ptrs.get(e.pointerId); if (!p) return;
+  const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
+  lastInput = performance.now();
+  if (ptrs.size === 1) {
+    const now = performance.now(), dt = Math.max(8, now - lastMove) / 1000; lastMove = now;
+    const [dl, da] = panBy(dx, dy);
+    vel.lon = dl / dt; vel.lat = da / dt;
+  } else if (ptrs.size === 2 && pinch) {
+    const [a, b] = [...ptrs.values()], d = Math.hypot(a.x - b.x, a.y - b.y), mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+    panBy(mx - pinch.x, my - pinch.y); updateCamera();
+    zoomAt(pinch.d / Math.max(d, 1), mx, my);
+    pinch = { d, x: mx, y: my };
+  }
+  dirty = true;
+});
+const endPtr = (e) => {
+  ptrs.delete(e.pointerId);
+  if (!ptrs.size) canvas.classList.remove("drag");
+  if (ptrs.size < 2) pinch = null;
+  if (performance.now() - lastMove > 90) vel.lon = vel.lat = 0;
+  if (down && e.type === "pointerup" && Math.hypot(e.clientX - down.x, e.clientY - down.y) < 6 && performance.now() - down.t < 500) onClick(e.clientX, e.clientY);
+  if (!ptrs.size) down = null;
+};
+canvas.addEventListener("pointerup", endPtr);
+canvas.addEventListener("pointercancel", endPtr);
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault(); stopAnims();
+  const f = Math.exp(e.deltaY * (e.deltaMode ? 0.06 : 0.0015));
+  zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: e.clientX, y: e.clientY };
+}, { passive: false });
+canvas.addEventListener("dblclick", (e) => { stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; });
+const zoomBtn = (f) => { stopAnims(); zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: innerWidth / 2, y: innerHeight / 2 }; };
+$("#zin").addEventListener("click", () => zoomBtn(0.4));
+$("#zout").addEventListener("click", () => zoomBtn(2.5));
+
+function flyTo(lon, lat, h) {
+  closeList();
+  const dl = isFlat() ? lon - view.lon : wrap(lon - view.lon);
+  tween = { lon0: view.lon, lat0: view.lat, h0: Math.log(view.h), lon1: view.lon + dl, lat1: lat, h1: Math.log(clampH(h ?? Math.min(view.h, 0.08))), t0: performance.now(), dur: reduce ? 1 : 1400 };
+  vel.lon = vel.lat = 0; zoomAnim = null; lastInput = performance.now();
+}
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.fov = w / h < 0.9 ? 35 / Math.max(0.55, w / h) * 0.9 : 35;     // keep the globe in view on portrait screens
+  camera.updateProjectionMatrix(); dirty = true;
+}
+addEventListener("resize", resize); resize();
+
+/* ---------- live tiles ----------
+   Dynmap tile (tx, ty) at zoom k covers 2^k x 2^k zoom-0 tiles of 64x64 blocks.
+   x runs tx .. tx+2^k-1, rows (north = up) run ty-2^k+1 .. ty. */
+const tiles = new Map(), tileGroup = new THREE.Group(); scene.add(tileGroup);
+let queue = [], inflight = 0;
+const tileUrl = (k, tx, ty) => `${CONFIG.map}/tiles/${CONFIG.world}/${CONFIG.mapName}/${tx >> 5}_${ty >> 5}/${k ? "z".repeat(k) + "_" : ""}${tx}_${ty}.jpg`;
+function tileFor(k, tx, ty) {
+  const key = k + "/" + tx + "/" + ty;
+  let t = tiles.get(key);
+  if (!t) { t = { key, k, tx, ty, state: 0, mesh: null, used: 0 }; tiles.set(key, t); }
+  return t;
+}
+function makeTileMesh(t, img) {
+  const s = 64 << t.k, x0 = t.tx * 64, zTop = -(t.ty + 1) * 64;
+  const tex = new THREE.Texture(img);
+  tex.magFilter = THREE.NearestFilter; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.generateMipmaps = true;
+  tex.anisotropy = Math.min(4, renderer.capabilities.getMaxAnisotropy()); tex.needsUpdate = true;
+  const seg = t.k >= 3 ? 8 : 2;
+  const m = new THREE.Mesh(gridGeo(x0 / RB, (x0 + s) / RB, -(zTop + s) / RB, -zTop / RB, seg, seg), mapMaterial(TILE_FS, tex, { depthTest: false, depthWrite: false }));
+  m.frustumCulled = false; m.renderOrder = 20 - t.k; m.visible = false;
+  t.mesh = m; tileGroup.add(m);
+}
+function dropTile(t) {
+  if (t.mesh) { tileGroup.remove(t.mesh); t.mesh.geometry.dispose(); t.mesh.material.uniforms.uTex.value.dispose(); t.mesh.material.dispose(); }
+  tiles.delete(t.key);
+}
+function pump() {
+  while (inflight < 6 && queue.length) {
+    const t = queue.shift(); if (t.state !== 0) continue;
+    t.state = 1; inflight++;
+    const img = new Image(); img.crossOrigin = "anonymous"; img.decoding = "async";
+    img.onload = () => { inflight--; t.state = 2; if (tiles.get(t.key) === t) makeTileMesh(t, img); dirty = tilesDirty = true; pump(); };
+    img.onerror = () => { inflight--; t.state = 3; pump(); };
+    img.src = tileUrl(t.k, t.tx, t.ty);
+  }
+}
+function updateTiles() {
+  for (const t of tiles.values()) if (t.mesh) t.mesh.visible = false;
+  queue = [];
+  const bpp = RB * radPerPx() / Math.min(devicePixelRatio || 1, 2);   // blocks per device pixel
+  let k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);           // zoom k has 2^(k-1) blocks per texel
+  if (k >= CONFIG.baseZoom) return;
+
+  // what part of the map is on screen
+  let lo0 = Infinity, lo1 = -Infinity, la0 = Infinity, la1 = -Infinity, n = 0;
+  for (let j = 0; j <= 8; j++) for (let i = 0; i <= 10; i++) {
+    const p = pick(innerWidth * i / 10, innerHeight * j / 8); if (!p) continue;
+    const lon = view.lon + (isFlat() ? p.lon - view.lon : wrap(p.lon - view.lon));
+    lo0 = Math.min(lo0, lon); lo1 = Math.max(lo1, lon); la0 = Math.min(la0, p.lat); la1 = Math.max(la1, p.lat); n++;
+  }
+  if (!n) return;
+  const half = CONFIG.worldWidth / 2;
+  const x0 = clamp(lo0 * RB, -half, half), x1 = clamp(lo1 * RB, -half, half), zN = -la1 * RB, zS = -la0 * RB;
+
+  let list;
+  for (;; k++) {
+    if (k >= CONFIG.baseZoom) return;
+    const u = 1 << k;
+    const txa = Math.floor(x0 / 64 / u) * u, txb = Math.floor(x1 / 64 / u) * u;
+    const tya = Math.ceil(Math.floor(-zS / 64) / u) * u, tyb = Math.ceil(Math.floor(-zN / 64) / u) * u;
+    if (((txb - txa) / u + 1) * ((tyb - tya) / u + 1) > 300) continue;
+    list = [];
+    for (let ty = tya; ty <= tyb; ty += u) for (let tx = txa; tx <= txb; tx += u) list.push([tx, ty]);
+    break;
+  }
+  const u = 1 << k, cx = view.lon * RB / 64, cy = view.lat * RB / 64;
+  list.sort((a, b) => Math.hypot(a[0] + u / 2 - cx, a[1] - u / 2 - cy) - Math.hypot(b[0] + u / 2 - cx, b[1] - u / 2 - cy));
+
+  const now = performance.now();
+  for (const [tx, ty] of list) {
+    const t = tileFor(k, tx, ty); t.used = now;
+    if (t.state === 2) { t.mesh.visible = true; continue; }
+    if (t.state === 0) queue.push(t);
+    for (let j = k + 1; j < CONFIG.baseZoom; j++) {                  // show the closest coarser tile meanwhile
+      const uj = 1 << j, p = tiles.get(j + "/" + Math.floor(tx / uj) * uj + "/" + Math.ceil(ty / uj) * uj);
+      if (p && p.state === 2) { p.mesh.visible = true; p.used = now; break; }
+    }
+  }
+  pump();
+  if (tiles.size > 700) [...tiles.values()].filter((t) => t.state >= 2 && !t.mesh?.visible).sort((a, b) => a.used - b.used).slice(0, tiles.size - 500).forEach(dropTile);
+}
+
+/* ---------- claims and towns ---------- */
+const claimGroup = new THREE.Group(); claimGroup.renderOrder = 50; scene.add(claimGroup);
+const CLAIM_VS = GL + `
+  attribute vec2 ll; attribute vec4 col; varying vec4 vCol; varying float vFace;
+  void main(){
+    vec3 p = place(ll); vCol = col;
+    vFace = uFlat > 0.5 ? 1.0 : dot(sph(ll), normalize(cameraPosition - p));
+    gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0);
+  }`;
+const CLAIM_FS = `varying vec4 vCol; varying float vFace; void main(){ if (vFace < 0.0) discard; gl_FragColor = vCol; }`;
+const claimMat = () => new THREE.ShaderMaterial({ uniforms: U, vertexShader: CLAIM_VS, fragmentShader: CLAIM_FS, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide });
+let areas = [];
+const markersEl = $("#markers"), towns = [];
+const STAR = `<svg viewBox="0 0 24 24"><path fill="#FCD05C" stroke="#7a5a00" stroke-width="1.2" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>`;
+
+function rgba(hex, a) {
+  const m = /^#?([0-9a-f]{6})$/i.exec(hex || ""); const v = m ? parseInt(m[1], 16) : 0x00ffff;
+  return [(v >> 16 & 255) / 255, (v >> 8 & 255) / 255, (v & 255) / 255, a];
+}
+function buildClaims(data) {
+  for (const o of [...claimGroup.children]) { claimGroup.remove(o); o.geometry.dispose(); o.material.dispose(); }
+  for (const t of towns) t.el.remove();
+  towns.length = 0; areas = [];
+  const fll = [], fcol = [], lll = [], lcol = [];
+  for (const set of Object.values(data.sets || {})) {
+    for (const a of Object.values(set.areas || {})) {
+      if (a.label === "World Border" || !a.x || a.x.length < 2) continue;
+      let xs = a.x, zs = a.z;
+      if (xs.length === 2) { xs = [xs[0], xs[1], xs[1], xs[0]]; zs = [zs[0], zs[0], zs[1], zs[1]]; }
+      const pts = xs.map((x, i) => new THREE.Vector2(x, zs[i]));
+      const fc = rgba(a.fillcolor, a.fillopacity ?? 0.35), lc = rgba(a.color, a.opacity ?? 0.8);
+      for (const tri of THREE.ShapeUtils.triangulateShape(pts, [])) for (const i of tri) { fll.push(pts[i].x / RB, -pts[i].y / RB); fcol.push(...fc); }
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i], q = pts[(i + 1) % pts.length];
+        lll.push(p.x / RB, -p.y / RB, q.x / RB, -q.y / RB); lcol.push(...lc, ...lc);
+      }
+      areas.push({ label: a.label, desc: a.desc, pts, x0: Math.min(...xs), x1: Math.max(...xs), z0: Math.min(...zs), z1: Math.max(...zs) });
+    }
+    for (const m of Object.values(set.markers || {})) {
+      const el = document.createElement("div"), cap = m.icon === "star";
+      el.className = "tw" + (cap ? "" : " dot");
+      el.innerHTML = cap ? STAR : "<b></b>";
+      const s = document.createElement("span"); s.textContent = m.label || ""; el.appendChild(s);
+      const t = { el, lon: m.x / RB, lat: -m.z / RB, label: m.label, desc: m.desc };
+      el.addEventListener("click", () => openPop(t.lon, t.lat, t.label, t.desc));
+      markersEl.appendChild(el); towns.push(t);
+    }
+  }
+  const mk = (ll, col, Kind) => {
+    const g = new THREE.BufferGeometry();
+    g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(ll.length / 2 * 3), 3));
+    g.setAttribute("ll", new THREE.BufferAttribute(new Float32Array(ll), 2));
+    g.setAttribute("col", new THREE.BufferAttribute(new Float32Array(col), 4));
+    const o = new Kind(g, claimMat()); o.frustumCulled = false; return o;
+  };
+  if (fll.length) { const f = mk(fll, fcol, THREE.Mesh); f.renderOrder = 50; claimGroup.add(f); }
+  if (lll.length) { const l = mk(lll, lcol, THREE.LineSegments); l.renderOrder = 51; claimGroup.add(l); }
+  dirty = true;
+}
+function areaAt(x, z) {
+  for (const a of areas) {
+    if (x < a.x0 || x > a.x1 || z < a.z0 || z > a.z1) continue;
+    let inside = false;
+    for (let i = 0, j = a.pts.length - 1; i < a.pts.length; j = i++) {
+      const p = a.pts[i], q = a.pts[j];
+      if ((p.y > z) !== (q.y > z) && x < (q.x - p.x) * (z - p.y) / (q.y - p.y) + p.x) inside = !inside;
+    }
+    if (inside) return a;
+  }
+  return null;
+}
+async function pollMarkers() {
+  try {
+    const r = await fetch(`${CONFIG.map}/tiles/_markers_/marker_${CONFIG.world}.json`, { cache: "no-cache" });
+    if (r.ok) buildClaims(await r.json());
+  } catch (e) {}
+}
+
+/* town popup: the Dynmap description is HTML written by players, so only its text and line breaks are kept */
+const pop = $("#pop"); let popAt = null;
+function safeDesc(html, out) {
+  const walk = (node, into) => {
+    for (const n of node.childNodes) {
+      if (n.nodeType === 3) { into.appendChild(document.createTextNode(n.textContent.replace(/\s+/g, " "))); continue; }
+      if (n.nodeType !== 1) continue;
+      const tag = n.tagName;
+      if (tag === "BR") into.appendChild(document.createElement("br"));
+      else if (tag === "HR") into.appendChild(document.createElement("hr"));
+      else if (!/^(IMG|SCRIPT|STYLE|IFRAME|OBJECT|SVG)$/.test(tag)) {
+        const bold = tag === "B" || tag === "STRONG" || /bold/.test(n.getAttribute("style") || "");
+        walk(n, bold ? into.appendChild(document.createElement("b")) : into);
+      }
+    }
+  };
+  walk(new DOMParser().parseFromString(html || "", "text/html").body, out);
+  // tidy up runs of breaks left behind by removed parts
+  let br = 0;
+  for (const n of [...out.childNodes]) {
+    if (n.nodeName === "BR") { if (++br > 1 || n === out.firstChild) n.remove(); }
+    else if (n.nodeType !== 3 || n.textContent.trim()) br = 0;
+  }
+}
+function openPop(lon, lat, label, desc) {
+  pop.textContent = "";
+  const x = document.createElement("button"); x.className = "x"; x.type = "button"; x.setAttribute("aria-label", "Close"); x.innerHTML = "&times;";
+  x.addEventListener("click", closePop);
+  const h = document.createElement("h4"); h.textContent = label || "Town";
+  const body = document.createElement("div"); safeDesc(desc, body);
+  const first = body.querySelector("b"); if (first && first.textContent.trim() === (label || "").trim()) first.remove();
+  pop.append(x, h, body); pop.hidden = false; popAt = { lon, lat }; dirty = true;
+}
+function closePop() { pop.hidden = true; popAt = null; }
+function onClick(cx, cy) {
+  const p = pick(cx, cy);
+  if (!p || !$("#tClaims").checked) return closePop();
+  const a = areaAt(p.lon * RB, -p.lat * RB);
+  if (a) openPop(p.lon, p.lat, a.label, a.desc); else closePop();
+}
+
+/* ---------- players ---------- */
+const listEl = $("#list"), onlineBtn = $("#online");
+const players = new Map();                               // name -> {name, lon, lat, tl, tn, world, el}
+const head = (name) => CONFIG.heads.replace("{name}", encodeURIComponent(name));
+function makeAvatar(name) {
+  const img = new Image(); img.alt = ""; img.decoding = "async"; img.src = head(name);
+  img.onerror = () => img.replaceWith(document.createElement("i"));
+  return img;
+}
+function setPlayers(list) {
+  const seen = new Set();
+  for (const q of list) {
+    seen.add(q.name);
+    let p = players.get(q.name);
+    if (!p) {
+      const el = document.createElement("div"); el.className = "pl";
+      el.appendChild(makeAvatar(q.name));
+      const s = document.createElement("span"); s.textContent = q.name; el.appendChild(s);
+      p = { name: q.name, lon: q.lon, lat: q.lat, el };
+      el.addEventListener("click", () => flyTo(p.tn, p.tl, Math.min(view.h, 0.05)));
+      markersEl.appendChild(el); players.set(q.name, p);
+    }
+    p.tn = q.lon; p.tl = q.lat; p.world = q.world; p.onMap = q.onMap;
+    if (!p.onMap) { p.lon = q.lon; p.lat = q.lat; }
+  }
+  for (const [name, p] of players) if (!seen.has(name)) { p.el.remove(); players.delete(name); }
+  onlineBtn.textContent = players.size + " online";
+  $("#pCount").textContent = players.size;
+  if (listEl.classList.contains("open")) renderList();
+  dirty = true;
+}
+function renderList() {
+  listEl.textContent = "";
+  if (!players.size) { const d = document.createElement("div"); d.className = "empty"; d.textContent = "Nobody is online right now."; listEl.appendChild(d); return; }
+  [...players.values()].sort((a, b) => a.name.localeCompare(b.name)).forEach((p) => {
+    const b = document.createElement("button"); b.className = "row"; b.type = "button";
+    b.appendChild(makeAvatar(p.name)); const s = document.createElement("span"); s.textContent = p.name; b.appendChild(s);
+    if (!p.onMap) { const w = document.createElement("small"); w.textContent = p.world && p.world.startsWith(CONFIG.world + "_") ? p.world.slice(CONFIG.world.length + 1).replace("the_", "") : "hidden"; b.appendChild(w); }
+    else b.addEventListener("click", () => flyTo(p.tn, p.tl, 0.05));
+    listEl.appendChild(b);
+  });
+}
+function closeList() { listEl.classList.remove("open"); onlineBtn.setAttribute("aria-expanded", "false"); }
+onlineBtn.addEventListener("click", (e) => {
+  e.stopPropagation(); const o = listEl.classList.toggle("open"); onlineBtn.setAttribute("aria-expanded", o);
+  if (o) { renderList(); setPanel(false); }
+});
+addEventListener("click", (e) => { if (!listEl.contains(e.target) && e.target !== onlineBtn) closeList(); });
+
+async function pollPlayers() {
+  try {
+    const r = await fetch(`${CONFIG.map}/up/world/${CONFIG.world}/0`, { cache: "no-store" });
+    if (!r.ok) throw new Error(r.status);
+    const j = await r.json();
+    setPlayers((j.players || []).map((p) => ({
+      name: p.account || String(p.name).replace(/<[^>]*>/g, ""), world: p.world,
+      onMap: p.world === CONFIG.world, lon: p.x / RB, lat: -p.z / RB,
+    })));
+    statusEl.textContent = "";
+  } catch (e) { statusEl.textContent = "Live data is unavailable right now"; }
+}
+pollPlayers(); setInterval(pollPlayers, Math.max(1000, CONFIG.playerRefresh));
+pollMarkers(); setInterval(pollMarkers, Math.max(10000, CONFIG.markerRefresh));
+
+/* ---------- layers panel ---------- */
+const panel = $("#panel"), layersBtn = $("#layersBtn");
+function setPanel(o) { panel.hidden = !o; layersBtn.hidden = o; layersBtn.setAttribute("aria-expanded", o); }
+layersBtn.addEventListener("click", () => { setPanel(true); closeList(); });
+$("#panelX").addEventListener("click", () => setPanel(false));
+const toggles = { tPlayers: true, tClaims: true, tChunks: false, tFlat: false, tNav: false };
+for (const id in toggles) {
+  const el = $("#" + id);
+  el.checked = id in store ? !!store[id] : toggles[id];
+  el.addEventListener("change", () => { store[id] = el.checked; save(); applyToggles(true); });
+}
+function applyToggles(animate) {
+  claimGroup.visible = $("#tClaims").checked;
+  document.body.classList.toggle("nonav", $("#tNav").checked);
+  const f = $("#tFlat").checked ? 1 : 0;
+  if (f !== U.uFlat.value) {
+    if (animate && !reduce) flatAnim = { from: U.uFlat.value, to: f, t0: performance.now() };
+    else { U.uFlat.value = f; clampView(); }
+  }
+  dirty = tilesDirty = true;
+}
+applyToggles(false);
+
+/* ---------- links to a place: #x,z,height ---------- */
+{
+  const m = /^#(-?\d+),(-?\d+)(?:,([\d.]+))?/.exec(location.hash);
+  if (m) { view.lon = +m[1] / RB; view.lat = -m[2] / RB; if (m[3]) view.h = clampH(+m[3]); clampView(); lastInput = performance.now(); }
+}
+let hashT;
+function saveHash() {
+  clearTimeout(hashT);
+  hashT = setTimeout(() => history.replaceState(null, "", `#${Math.round(view.lon * RB)},${Math.round(-view.lat * RB)},${+view.h.toPrecision(3)}`), 500);
+}
+
+/* ---------- play button ---------- */
+{
+  const b = $("#ip"); let t;
+  b.addEventListener("click", async () => {
+    let ok = false;
+    try { await navigator.clipboard.writeText(CONFIG.ip); ok = true; } catch (e) {
+      try { const ta = document.createElement("textarea"); ta.value = CONFIG.ip; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); ta.remove(); } catch (_) {}
+    }
+    b.textContent = ok ? "Copied!" : CONFIG.ip; clearTimeout(t); t = setTimeout(() => (b.textContent = "Play Now"), 2000);
+  });
+}
+
+/* ---------- frame loop ---------- */
+const tmp = new THREE.Vector3(), sp = new THREE.Vector3();
+let prev = performance.now(), lastTiles = 0;
+function screenPos(lon, lat) {                            // -> [x, y, opacity] or null when out of sight
+  place(lon, lat, tmp);
+  let o = 1;
+  if (!isFlat()) {
+    const c = Math.cos(lat), vis = c * Math.sin(lon) * camera.position.x + Math.sin(lat) * camera.position.y + c * Math.cos(lon) * camera.position.z - 1;
+    o = clamp(vis / (0.25 * Math.min(1, view.h)), 0, 1);
+    if (o <= 0.02) return null;
+  }
+  sp.copy(tmp).project(camera);
+  if (sp.z > 1 || Math.abs(sp.x) > 1.2 || Math.abs(sp.y) > 1.2) return null;
+  return [(sp.x * .5 + .5) * innerWidth, (-sp.y * .5 + .5) * innerHeight, o];
+}
+function placeEl(el, s, extra = "") {
+  if (!s) { if (el.style.visibility !== "hidden") el.style.visibility = "hidden"; return; }
+  el.style.visibility = "visible"; el.style.opacity = s[2];
+  el.style.transform = `translate3d(${s[0].toFixed(1)}px,${s[1].toFixed(1)}px,0) translate(-50%,-50%)${extra}`;
+}
+
+function frame(now) {
+  requestAnimationFrame(frame);
+  const dt = Math.min(0.05, (now - prev) / 1000); prev = now;
+
+  if (flatAnim) {
+    const k = Math.min(1, (now - flatAnim.t0) / 700), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
+    U.uFlat.value = flatAnim.from + (flatAnim.to - flatAnim.from) * e;
+    if (k >= 1) { U.uFlat.value = flatAnim.to; flatAnim = null; clampView(); }
+    dirty = tilesDirty = true;
+  }
+  if (tween) {
+    const k = Math.min(1, (now - tween.t0) / tween.dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
+    view.lon = tween.lon0 + (tween.lon1 - tween.lon0) * e; view.lat = tween.lat0 + (tween.lat1 - tween.lat0) * e;
+    view.h = Math.exp(tween.h0 + (tween.h1 - tween.h0) * e);
+    if (k >= 1) { tween = null; clampView(); } dirty = true;
+  } else if (zoomAnim) {
+    const lh = Math.log(view.h), lt = Math.log(zoomAnim.target), step = (lt - lh) * Math.min(1, dt * 14);
+    zoomAt(Math.exp(Math.abs(lt - lh) < 0.002 ? lt - lh : step), zoomAnim.x, zoomAnim.y);
+    if (Math.abs(lt - Math.log(view.h)) < 0.002) zoomAnim = null;
+    lastInput = now;
+  } else if (!ptrs.size) {
+    if (Math.abs(vel.lon) + Math.abs(vel.lat) > 0.0005 * Math.min(1, view.h)) {    // inertia after a drag
+      view.lon += vel.lon * dt; view.lat += vel.lat * dt; clampView();
+      const f = Math.exp(-4 * dt); vel.lon *= f; vel.lat *= f; dirty = true;
+    } else if (!reduce && !isFlat() && now - lastInput > 6000 && view.h > 2) {        // slow spin while idle
+      view.lon = wrap(view.lon + 0.03 * dt); dirty = true;
+    }
+  }
+
+  // smooth player movement between updates
+  for (const p of players.values()) {
+    if (!p.onMap) continue;
+    const dl = wrap(p.tn - p.lon);
+    if (Math.abs(dl) > 1e-7 || Math.abs(p.tl - p.lat) > 1e-7) { const f = Math.min(1, dt * 5); p.lon += dl * f; p.lat += (p.tl - p.lat) * f; dirty = true; }
+  }
+  if (!dirty) return;
+  dirty = false; tilesDirty = true;
+
+  updateCamera();
+  const f = U.uFlat.value;
+  U.uShade.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.2, 1.5);
+  const bpp = RB * radPerPx();
+  U.uChunks.value = $("#tChunks").checked ? THREE.MathUtils.smoothstep(8 - bpp, 0, 5) : 0;
+  atmoMat.uniforms.uA.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.05, 0.5);
+  atmo.visible = atmoMat.uniforms.uA.value > 0.001;
+  starMat.opacity = .75 * (1 - f * 0.6);
+  if (now - lastTiles > 90) { updateTiles(); lastTiles = now; tilesDirty = false; }
+  renderer.render(scene, camera);
+
+  // DOM markers
+  const showP = $("#tPlayers").checked, near = view.h < 0.45;
+  for (const p of players.values()) {
+    if (!showP || !p.onMap) { placeEl(p.el, null); continue; }
+    p.el.classList.toggle("near", near);
+    placeEl(p.el, screenPos(p.lon, p.lat));
+  }
+  const showT = $("#tClaims").checked, labels = bpp < 12;
+  for (const t of towns) {
+    if (!showT) { placeEl(t.el, null); continue; }
+    t.el.classList.toggle("near", labels);
+    placeEl(t.el, screenPos(t.lon, t.lat), labels ? " translateX(calc(50% - 7px))" : "");
+  }
+  if (popAt) {
+    const s = screenPos(popAt.lon, popAt.lat);
+    if (!s) pop.style.visibility = "hidden";
+    else { pop.style.visibility = "visible"; pop.style.transform = `translate3d(${s[0].toFixed(1)}px,${s[1].toFixed(1)}px,0) translate(-50%, calc(-100% - 12px))`; }
+  }
+  saveHash();
+}
+// keep tiles coming in after the view settles
+setInterval(() => { if (tilesDirty) dirty = true; }, 150);
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

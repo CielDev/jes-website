@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="robots" content="noindex">
+<title>Globe base image</title>
+<style>
+body{margin:0;padding:24px;background:#05050a;color:#f3f0f7;font:15px system-ui,sans-serif}
+label{display:inline-block;margin:0 14px 10px 0}
+input,select,button{font:inherit;padding:4px 8px}
+#log{margin:12px 0;color:#a39db3}
+canvas{max-width:100%;border:1px solid #2a2536}
+</style>
+</head>
+<body>
+<h3>Globe base image</h3>
+<p>Builds <code>earth.jpg</code> for the globe page from the live Dynmap tiles. Save the result into <code>globe/</code>.</p>
+<label>Map URL <input id="base" size="28" value="https://map.jes.earth"></label>
+<label>Zoom <select id="zoom"><option value="7">7 (64 blocks/px)</option><option value="6" selected>6 (32 blocks/px)</option><option value="5">5 (16 blocks/px)</option></select></label>
+<button id="go">Build</button> <a id="dl" download="earth.jpg" hidden>Download earth.jpg</a>
+<div id="log"></div>
+<canvas id="c" width="1" height="1"></canvas>
+<script>
+// keep these in sync with CONFIG in index.html
+const WORLD = "Earth", MAP = "flat";
+const WORLD_WIDTH = 123120;                       // blocks around the equator
+const AREA = { x1: -62000, x2: 62000, z1: -31000, z2: 19000 };   // part of the world that has tiles
+const OCEAN = [27, 42, 96];                       // fill for unrendered areas
+
+const $ = (s) => document.querySelector(s);
+const log = (t) => ($("#log").textContent = t);
+
+$("#go").onclick = async () => {
+  const base = $("#base").value.replace(/\/+$/, ""), K = +$("#zoom").value, U = 1 << K;
+  const bpp = U / 2;                              // blocks per pixel at this zoom
+  const W = Math.round(WORLD_WIDTH / bpp), H = Math.round(W / 2);
+  const toX = (x) => Math.round((x / WORLD_WIDTH + 0.5) * W);
+  const toY = (z) => Math.round((z / WORLD_WIDTH + 0.25) * W);
+  const c = $("#c"); c.width = W; c.height = H;
+  const g = c.getContext("2d", { willReadFrequently: true });
+  g.fillStyle = `rgb(${OCEAN})`; g.fillRect(0, 0, W, H);
+
+  // zoomed tile (tx,ty) covers x [tx, tx+U) and map rows (ty-U, ty] in zoom-0 tile units (64 blocks)
+  const txa = Math.floor(AREA.x1 / 64 / U) * U, txb = Math.floor(AREA.x2 / 64 / U) * U;
+  const tya = Math.floor(-AREA.z2 / 64 / U) * U, tyb = Math.floor(-AREA.z1 / 64 / U) * U + U;
+  const queue = [];
+  for (let ty = tya; ty <= tyb; ty += U) for (let tx = txa; tx <= txb; tx += U) queue.push([tx, ty]);
+  const total = queue.length; let done = 0, missing = 0;
+
+  const load = (src) => new Promise((r) => { const im = new Image(); im.crossOrigin = "anonymous"; im.onload = () => r(im); im.onerror = () => r(null); im.src = src; });
+  async function worker() {
+    while (queue.length) {
+      const [tx, ty] = queue.shift();
+      const name = (K ? "z".repeat(K) + "_" : "") + tx + "_" + ty + ".jpg";
+      const src = `${base}/tiles/${WORLD}/${MAP}/${tx >> 5}_${ty >> 5}/${name}`;
+      let im = null;
+      for (let i = 0; i < 3 && !im; i++) im = await load(src + (i ? "?r=" + i : ""));
+      if (im) {
+        const x0 = tx * 64, z0 = -(ty + 1) * 64, s = U * 64;
+        const px = toX(x0), py = toY(z0);
+        g.drawImage(im, px, py, toX(x0 + s) - px, toY(z0 + s) - py);
+      } else missing++;
+      log(`${++done} / ${total} tiles`);
+    }
+  }
+  await Promise.all(Array.from({ length: 6 }, worker));
+
+  // unrendered parts of the map come back black: paint them as ocean
+  const d = g.getImageData(0, 0, W, H), p = d.data;
+  for (let i = 0; i < p.length; i += 4) if (p[i] + p[i + 1] + p[i + 2] < 18) { p[i] = OCEAN[0]; p[i + 1] = OCEAN[1]; p[i + 2] = OCEAN[2]; }
+  g.putImageData(d, 0, 0);
+
+  c.toBlob((b) => {
+    const a = $("#dl"); a.href = URL.createObjectURL(b); a.hidden = false;
+    log(`Done: ${W}×${H}, ${(b.size / 1048576).toFixed(1)} MB` + (missing ? `, ${missing} tiles missing` : ""));
+  }, "image/jpeg", 0.9);
+};
+</script>
+</body>
+</html>
