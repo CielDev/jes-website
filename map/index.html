@@ -50,10 +50,14 @@ body.nonav{--top:0px}
 
 /* players: just a head from far away, a name plate up close */
 .pl{display:flex;align-items:center;gap:5px;transform-origin:0 0;pointer-events:auto;cursor:pointer;white-space:nowrap;z-index:2}
-.pl img,.pl i{width:18px;height:18px;flex:none;display:block;image-rendering:pixelated;border-radius:2px;background:var(--line);box-shadow:0 1px 4px rgba(0,0,0,.6)}
+.pl .hd{position:relative;flex:none;border:1px solid rgba(0,0,0,.9);background:var(--line);box-shadow:0 1px 3px rgba(0,0,0,.5)}
+.pl .hd::after{content:"";position:absolute;inset:0;box-shadow:inset 0 0 0 2px rgba(0,0,0,.4);pointer-events:none}
+.pl img,.pl i{width:20px;height:20px;display:block;image-rendering:pixelated}
 .pl span{display:none;font-size:12.5px;font-weight:600;line-height:1}
 .pl.near{padding:3px 7px 3px 3px;border-radius:4px;background:rgba(13,11,18,.86);border:1px solid rgba(255,255,255,.08)}
-.pl.near img,.pl.near i{width:16px;height:16px;box-shadow:none}
+.pl.near .hd{box-shadow:none}
+.pl.near .hd::after{box-shadow:inset 0 0 0 1px rgba(0,0,0,.4)}
+.pl.near img,.pl.near i{width:16px;height:16px}
 .pl.near span{display:block}
 .pl:hover{z-index:3}
 #markers .ghost{pointer-events:none;z-index:0}
@@ -974,7 +978,8 @@ function setPlayers(list) {
     let p = players.get(q.name);
     if (!p) {
       const el = document.createElement("div"); el.className = "pl";
-      el.appendChild(makeAvatar(q.name));
+      const hd = document.createElement("div"); hd.className = "hd";
+      hd.appendChild(makeAvatar(q.name)); el.appendChild(hd);
       const s = document.createElement("span"); s.textContent = q.name; el.appendChild(s);
       p = { name: q.name, lon: q.lon, lat: q.lat, el };
       el.addEventListener("click", () => flyTo(p.tn, p.tl, Math.min(view.h, 0.05)));
