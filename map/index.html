@@ -571,6 +571,9 @@ const view = { lon: 0.17, lat: 0.5, h: 3.2 };
 const H_MIN = 0.012, H_MAX = 6;
 const C = new THREE.Vector3(), E = new THREE.Vector3(), N = new THREE.Vector3();
 let dirty = true, tilesDirty = true, lastInput = -1e9, tween = null, zoomAnim = null, flatAnim = null;
+// the globe unrolls into the flat map on the way in (and stays flat if the "Flat map" switch is on)
+let flatManual = 0;
+const autoFlat = () => 1 - THREE.MathUtils.smoothstep(view.h, 0.09, 0.28);
 const isFlat = () => U.uFlat.value > 0.5;
 const clampH = (v) => clamp(v, H_MIN, H_MAX);
 const clampView = () => {
@@ -578,6 +581,7 @@ const clampView = () => {
   else { view.lon = wrap(view.lon); view.lat = clamp(view.lat, -1.5, 1.5); }
 };
 function updateCamera() {
+  U.uFlat.value = Math.max(flatManual, autoFlat());
   const cl = Math.cos(view.lat), sl = Math.sin(view.lat), co = Math.cos(view.lon), so = Math.sin(view.lon);
   C.set(cl * so, sl, cl * co); E.set(co, 0, -so); N.set(-sl * so, cl, -sl * co);
   U.uC.value.set(view.lon, view.lat); U.uP.value.copy(C); U.uE.value.copy(E); U.uN.value.copy(N);
@@ -678,12 +682,14 @@ const endPtr = (e) => {
 };
 canvas.addEventListener("pointerup", endPtr);
 canvas.addEventListener("pointercancel", endPtr);
-canvas.addEventListener("wheel", (e) => {
+const onWheel = (e) => {
   e.preventDefault(); if (doom.on) return; stopAnims();
   const f = Math.exp(e.deltaY * (e.deltaMode ? 0.06 : 0.0015));
   zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: e.clientX, y: e.clientY };
-}, { passive: false });
-canvas.addEventListener("dblclick", (e) => { if (doom.on) return; stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; });
+};
+const onDbl = (e) => { if (doom.on) return; stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; };
+// icons sit on top of the map, so zooming over one has to be passed through to it
+for (const el of [canvas, $("#markers")]) { el.addEventListener("wheel", onWheel, { passive: false }); el.addEventListener("dblclick", onDbl); }
 const zoomBtn = (f) => { stopAnims(); zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: innerWidth / 2, y: innerHeight / 2 }; };
 $("#zin").addEventListener("click", () => zoomBtn(0.4));
 $("#zout").addEventListener("click", () => zoomBtn(2.5));
@@ -1031,9 +1037,9 @@ function applyToggles(animate) {
   claimGroup.visible = $("#tClaims").checked;
   document.body.classList.toggle("nonav", $("#tNav").checked);
   const f = $("#tFlat").checked ? 1 : 0;
-  if (f !== U.uFlat.value) {
-    if (animate && !reduce) flatAnim = { from: U.uFlat.value, to: f, t0: performance.now() };
-    else { U.uFlat.value = f; clampView(); }
+  if (f !== flatManual) {
+    if (animate && !reduce) flatAnim = { from: flatManual, to: f, t0: performance.now() };
+    else { flatManual = f; updateCamera(); clampView(); }
   }
   dirty = tilesDirty = true;
 }
@@ -1435,8 +1441,8 @@ function frame(now) {
 
   if (flatAnim) {
     const k = Math.min(1, (now - flatAnim.t0) / 700), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
-    U.uFlat.value = flatAnim.from + (flatAnim.to - flatAnim.from) * e;
-    if (k >= 1) { U.uFlat.value = flatAnim.to; flatAnim = null; clampView(); }
+    flatManual = flatAnim.from + (flatAnim.to - flatAnim.from) * e;
+    if (k >= 1) { flatManual = flatAnim.to; flatAnim = null; updateCamera(); clampView(); }
     dirty = tilesDirty = true;
   }
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
