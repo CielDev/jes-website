@@ -49,14 +49,11 @@ body.nonav{--top:0px}
 #markers>div{position:absolute;left:0;top:0;will-change:transform}
 
 /* players: just a head from far away, a name plate up close */
-.pl{display:flex;align-items:center;gap:5px;transform-origin:0 0;pointer-events:auto;cursor:pointer;white-space:nowrap;z-index:2}
-.pl .hd{flex:none;overflow:hidden;border:2px solid #0b0b0b;border-radius:3px;background:var(--line);box-shadow:0 0 0 2px rgba(0,0,0,.3)}
-.pl img,.pl i{width:22px;height:22px;display:block;image-rendering:pixelated}
-.pl span{display:none;font-size:12.5px;font-weight:600;line-height:1}
-.pl.near{padding:3px 7px 3px 3px;border-radius:4px;background:rgba(13,11,18,.86);border:1px solid rgba(255,255,255,.08)}
-.pl.near .hd{box-shadow:none}
-.pl.near img,.pl.near i{width:16px;height:16px}
-.pl.near span{display:block}
+.pl{display:flex;align-items:center;padding:2px;border-radius:3px;background:#0d0b12;transform-origin:0 0;pointer-events:auto;cursor:pointer;white-space:nowrap;z-index:2;transition:padding .3s ease,border-radius .3s ease}
+.pl img,.pl i{width:20px;height:20px;flex:none;display:block;image-rendering:pixelated;background:var(--line)}
+.pl span{max-width:0;margin-left:0;overflow:hidden;opacity:0;font-size:12.5px;font-weight:600;line-height:16px;transition:max-width .3s ease,margin .3s ease,opacity .25s ease}
+.pl.near{padding-right:8px;border-radius:4px}
+.pl.near span{max-width:200px;margin-left:7px;opacity:1}
 .pl:hover{z-index:3}
 #markers .ghost{pointer-events:none;z-index:0}
 
@@ -962,7 +959,8 @@ function onClick(cx, cy) {
 
 /* ---------- players ---------- */
 const listEl = $("#list"), onlineBtn = $("#online");
-const players = new Map();                               // name -> {name, lon, lat, tl, tn, world, el}
+const players = new Map();                               // name -> {name, lon, lat, tl, tn, world, vis, el}
+const leaving = new Map();                               // players who logged off, fading out
 const head = (name) => CONFIG.heads.replace("{name}", encodeURIComponent(name));
 function makeAvatar(name) {
   const img = new Image(); img.alt = ""; img.decoding = "async"; img.src = head(name);
@@ -974,19 +972,20 @@ function setPlayers(list) {
   for (const q of list) {
     seen.add(q.name);
     let p = players.get(q.name);
+    if (!p && (p = leaving.get(q.name))) { leaving.delete(q.name); players.set(q.name, p); }   // back before fading out
     if (!p) {
       const el = document.createElement("div"); el.className = "pl";
-      const hd = document.createElement("div"); hd.className = "hd";
-      hd.appendChild(makeAvatar(q.name)); el.appendChild(hd);
+      el.appendChild(makeAvatar(q.name));
       const s = document.createElement("span"); s.textContent = q.name; el.appendChild(s);
-      p = { name: q.name, lon: q.lon, lat: q.lat, el };
+      p = { name: q.name, lon: q.lon, lat: q.lat, tn: q.lon, tl: q.lat, vis: 0, el };
       el.addEventListener("click", () => flyTo(p.tn, p.tl, Math.min(view.h, 0.05)));
       markersEl.appendChild(el); players.set(q.name, p);
     }
-    p.tn = q.lon; p.tl = q.lat; p.world = q.world; p.onMap = q.onMap;
-    if (!p.onMap) { p.lon = q.lon; p.lat = q.lat; }
+    p.world = q.world; p.onMap = q.onMap;
+    if (p.onMap) { p.tn = q.lon; p.tl = q.lat; }               // off the map the head fades out where it was last seen
+    if (p.onMap && p.vis === 0) { p.lon = q.lon; p.lat = q.lat; }
   }
-  for (const [name, p] of players) if (!seen.has(name)) { p.el.remove(); players.delete(name); }
+  for (const [name, p] of players) if (!seen.has(name)) { players.delete(name); leaving.set(name, p); }
   onlineBtn.textContent = players.size + " online";
   $("#pCount").textContent = players.size;
   if (listEl.classList.contains("open")) renderList();
@@ -1425,6 +1424,8 @@ function screenPos(lon, lat) {                            // -> [x, y, opacity, 
     const vis = c * Math.sin(lon) * camera.position.x + Math.sin(lat) * camera.position.y + c * Math.cos(lon) * camera.position.z - 1;
     behind = vis < 0;
     o = behind ? 0.35 * clamp(1 + vis / (2 * s), 0, 1) : 0.35 + 0.65 * clamp(vis / s, 0, 1);
+    const f = clamp(U.uFlat.value * 2, 0, 1);               // no horizon once the globe starts unrolling
+    o += (1 - o) * f; behind = behind && f < 0.5;
     if (o <= 0.02) return null;
   }
   sp.copy(tmp).project(camera);
@@ -1472,11 +1473,18 @@ function frame(now) {
     }
   }
 
-  // smooth player movement between updates
+  // smooth player movement between updates, heads fade in and out
+  const showP = $("#tPlayers").checked;
   for (const p of players.values()) {
+    const v = showP && p.onMap ? 1 : 0;
+    if (p.vis !== v) { p.vis = v > p.vis ? Math.min(v, p.vis + dt * 3) : Math.max(v, p.vis - dt * 3); dirty = true; }
     if (!p.onMap) continue;
     const dl = wrap(p.tn - p.lon);
     if (Math.abs(dl) > 1e-7 || Math.abs(p.tl - p.lat) > 1e-7) { const f = Math.min(1, dt * 5); p.lon += dl * f; p.lat += (p.tl - p.lat) * f; dirty = true; }
+  }
+  for (const [name, p] of leaving) {
+    p.vis = Math.max(0, p.vis - dt * 3); dirty = true;
+    if (!p.vis) { p.el.remove(); leaving.delete(name); }
   }
   if (doom.on) { doomFrame(now, dt); dirty = true; }
   else {
@@ -1510,11 +1518,13 @@ function frame(now) {
   renderer.render(scene, camera);
 
   // DOM markers
-  const showP = $("#tPlayers").checked, near = view.h < 0.45;
-  for (const p of players.values()) {
-    if (!showP || !p.onMap) { placeEl(p.el, null); continue; }
+  const near = view.h < 0.45;
+  for (const p of [...players.values(), ...leaving.values()]) {
+    const s = p.vis ? screenPos(p.lon, p.lat) : null;
+    if (!s) { placeEl(p.el, null); continue; }
     p.el.classList.toggle("near", near);
-    placeEl(p.el, screenPos(p.lon, p.lat));
+    s[2] *= p.vis * (2 - p.vis);                              // ease out
+    placeEl(p.el, s, " translateX(calc(50% - 12px))");      // the head stays put while the name slides out
   }
   const showT = $("#tClaims").checked, labels = bpp < 12;
   for (const t of towns) {
