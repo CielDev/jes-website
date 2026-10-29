@@ -6,26 +6,39 @@
 <title>Live Map | Just an Earth Server</title>
 <meta name="description" content="The Just an Earth Server live map: a 3D globe and flat map with towns, claims and live player positions.">
 <link rel="icon" type="image/png" href="../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 @font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
-:root{--bg:#05050a;--bg2:#15121d;--panel:rgba(21,18,29,.94);--line:#2a2536;--text:#f3f0f7;--muted:#a39db3;--pink:#E43A96;--gold:#FCD05C;--grad:linear-gradient(90deg,var(--pink),var(--gold));--navh:60px;--top:var(--navh)}
+:root{--bg:#05050a;--bg2:#15121d;--panel:rgba(21,18,29,.94);--line:#2a2536;--text:#f3f0f7;--muted:#a39db3;--pink:#E43A96;--gold:#FCD05C;--grad:linear-gradient(90deg,var(--pink),var(--gold));--navh:64px;--top:var(--navh)}
 *{box-sizing:border-box;margin:0}
-html,body{height:100%;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,sans-serif;overflow:hidden;-webkit-tap-highlight-color:transparent}
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
 
-/* top bar, same look as the main site */
-nav{position:fixed;top:0;left:0;right:0;z-index:20;height:var(--navh);display:flex;align-items:center;gap:22px;padding:0 clamp(12px,2.4vw,32px);background:rgba(13,11,18,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:transform .3s}
+/* top bar, same as the main site */
+nav{position:fixed;top:0;left:0;right:0;z-index:20;background:rgba(13,11,18,.88);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line);transition:transform .3s}
+nav .wrap{display:flex;align-items:center;gap:28px;height:var(--navh);max-width:1600px;margin:0 auto;padding:0 24px}
 body.nonav nav{transform:translateY(-100%)}
 body.nonav{--top:0px}
-.brand img{height:38px;width:auto;display:block}
-.links{display:flex;gap:22px;font-size:16px;color:var(--muted)}
-.links a:hover{color:var(--text)}
-.links a.on{color:var(--pink)}
-.right{margin-left:auto;display:flex;align-items:center;gap:18px}
-#online{background:none;border:0;cursor:pointer;color:var(--muted);font-size:16px;padding:8px 4px}
+.brand{display:flex;align-items:center}
+.brand img{height:44px;width:auto;display:block}
+.links{display:flex;gap:24px;align-items:center;margin-left:16px;font-size:16px;color:var(--muted)}
+.links a:hover,.dd>button:hover{color:var(--text)}
+.links a.on{color:var(--text)}
+.dd{position:relative}
+.dd>button{background:none;border:0;color:inherit;font:inherit;cursor:pointer;padding:1px 6px}
+.dd ul{display:none;position:absolute;top:100%;left:-12px;list-style:none;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;min-width:180px}
+.dd:hover ul,.dd:focus-within ul{display:block}
+.dd li a{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;border-radius:6px}
+.dd li a:hover{background:var(--line);color:var(--text)}
+.ext{opacity:.7;flex:none}
+.right{margin-left:auto;display:flex;align-items:center;gap:24px;font-size:16px;color:var(--muted)}
+#online{background:none;border:0;cursor:pointer;color:inherit;font-size:16px;padding:8px 0}
 #online:hover{color:var(--text)}
-.btn{display:inline-flex;align-items:center;justify-content:center;height:40px;padding:.2em 22px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft",system-ui,sans-serif;font-weight:700;font-size:18px;letter-spacing:.04em;text-transform:uppercase;line-height:1;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s;white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:.2em 26px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;text-transform:uppercase;line-height:1;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s;white-space:nowrap}
 .btn:hover{transform:translateY(-2px)}
 
 /* map */
@@ -98,11 +111,11 @@ body.nonav{--top:0px}
 #loading.err{color:#ff6b6b;text-align:center;padding:24px}
 
 @media(max-width:800px){
-  :root{--navh:54px}
-  nav{gap:12px}
-  .brand img{height:32px}
+  :root{--navh:60px}
+  nav .wrap{gap:12px}
+  .brand img{height:34px}
   .links{display:none}
-  .btn{height:34px;font-size:15px;padding:.2em 14px 0;border-radius:10px}
+  .btn{height:34px;font-size:16px;padding:.2em 16px 0;border-radius:10px}
   #list{left:12px;right:12px;width:auto}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
@@ -111,16 +124,26 @@ body.nonav{--top:0px}
 <body>
 
 <nav>
-  <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
-  <div class="links">
-    <a href="../">Home</a>
-    <a href="../#towny">How it works</a>
-    <a href="https://store.jes.earth">Store</a>
-    <a class="on" href="./">Map</a>
-  </div>
-  <div class="right">
-    <button id="online" type="button" aria-haspopup="true" aria-expanded="false">0 online</button>
-    <button class="btn" id="ip" type="button">Play Now</button>
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">Wiki<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+        </ul>
+      </div>
+      <a href="../#towny">How it works</a>
+      <a href="https://store.jes.earth">Store</a>
+      <a class="on" href="./">Map</a>
+    </div>
+    <div class="right">
+      <button id="online" type="button" aria-haspopup="true" aria-expanded="false">0 online</button>
+      <button class="btn" id="ip" type="button">Play Now</button>
+    </div>
   </div>
 </nav>
 
