@@ -55,6 +55,7 @@ body.nonav{--top:0px}
 .pl.near img,.pl.near i{width:16px;height:16px;box-shadow:none}
 .pl.near span{display:block}
 .pl:hover{z-index:3}
+#markers .ghost{pointer-events:none;z-index:0}
 
 /* towns */
 .tw{display:flex;align-items:center;gap:4px;pointer-events:auto;cursor:pointer;z-index:1}
@@ -336,8 +337,10 @@ function updateCamera() {
   const cl = Math.cos(view.lat), sl = Math.sin(view.lat), co = Math.cos(view.lon), so = Math.sin(view.lon);
   C.set(cl * so, sl, cl * co); E.set(co, 0, -so); N.set(-sl * so, cl, -sl * co);
   U.uC.value.set(view.lon, view.lat); U.uP.value.copy(C); U.uE.value.copy(E); U.uN.value.copy(N);
-  camera.position.copy(C).multiplyScalar(1 + view.h);
-  camera.up.copy(N); camera.lookAt(C);
+  // tilt towards the horizon on the way in, like looking out of a plane window
+  const t = (1 - U.uFlat.value) * 0.72 * (1 - THREE.MathUtils.smoothstep(view.h, 0.6, 1.8)) * THREE.MathUtils.smoothstep(view.h, 0.025, 0.12);
+  camera.position.copy(C).multiplyScalar(1 + view.h * Math.cos(t)).addScaledVector(N, -view.h * Math.sin(t));
+  camera.up.copy(N).multiplyScalar(Math.cos(t)).addScaledVector(C, Math.sin(t)); camera.lookAt(C);
   camera.near = view.h * 0.1; camera.updateProjectionMatrix(); camera.updateMatrixWorld();
 }
 const radPerPx = () => 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) * view.h / innerHeight;
@@ -487,37 +490,41 @@ function pump() {
 function updateTiles() {
   for (const t of tiles.values()) if (t.mesh) t.mesh.visible = false;
   queue = [];
-  const bpp = RB * radPerPx() / Math.min(devicePixelRatio || 1, 2);   // blocks per device pixel
-  let k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);           // zoom k has 2^(k-1) blocks per texel
-  if (k >= CONFIG.baseZoom) return;
-
-  // what part of the map is on screen
-  let lo0 = Infinity, lo1 = -Infinity, la0 = Infinity, la1 = -Infinity, n = 0;
-  for (let j = 0; j <= 8; j++) for (let i = 0; i <= 10; i++) {
-    const p = pick(innerWidth * i / 10, innerHeight * j / 8); if (!p) continue;
+  // sample the screen and work out how much detail each part needs: with the camera
+  // tilted, the ground near the horizon is much further away than the ground below
+  const dpr = Math.min(devicePixelRatio || 1, 2), pxAng = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / innerHeight;
+  const B = [], P = new THREE.Vector3(), Q = new THREE.Vector3();
+  for (let j = 0; j <= 12; j++) for (let i = 0; i <= 12; i++) {
+    const p = pick(innerWidth * i / 12, innerHeight * j / 12); if (!p) continue;
+    place(p.lon, p.lat, P);
+    const dist = Q.copy(camera.position).sub(P).length();
+    const facing = isFlat() ? Q.dot(C) / dist : Q.dot(P.normalize()) / dist;
+    const bpp = RB * dist * pxAng / Math.max(facing, 0.25) / dpr;      // blocks per device pixel here
+    const k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);         // zoom k has 2^(k-1) blocks per texel
+    if (k >= CONFIG.baseZoom) continue;
     const lon = view.lon + (isFlat() ? p.lon - view.lon : wrap(p.lon - view.lon));
-    lo0 = Math.min(lo0, lon); lo1 = Math.max(lo1, lon); la0 = Math.min(la0, p.lat); la1 = Math.max(la1, p.lat); n++;
+    const b = B[k] || (B[k] = [Infinity, -Infinity, Infinity, -Infinity]);
+    b[0] = Math.min(b[0], lon); b[1] = Math.max(b[1], lon); b[2] = Math.min(b[2], p.lat); b[3] = Math.max(b[3], p.lat);
   }
-  if (!n) return;
-  const half = CONFIG.worldWidth / 2;
-  const x0 = clamp(lo0 * RB, -half, half), x1 = clamp(lo1 * RB, -half, half), zN = -la1 * RB, zS = -la0 * RB;
-
-  let list;
-  for (;; k++) {
-    if (k >= CONFIG.baseZoom) return;
+  const half = CONFIG.worldWidth / 2, cx = view.lon * RB / 64, cy = view.lat * RB / 64;
+  const list = [];
+  for (let k = 0; k < CONFIG.baseZoom; k++) {
+    const b = B[k]; if (!b) continue;
     const u = 1 << k;
-    const txa = Math.floor(x0 / 64 / u) * u, txb = Math.floor(x1 / 64 / u) * u;
-    const tya = Math.ceil(Math.floor(-zS / 64) / u) * u, tyb = Math.ceil(Math.floor(-zN / 64) / u) * u;
-    if (((txb - txa) / u + 1) * ((tyb - tya) / u + 1) > 300) continue;
-    list = [];
-    for (let ty = tya; ty <= tyb; ty += u) for (let tx = txa; tx <= txb; tx += u) list.push([tx, ty]);
-    break;
+    const x0 = clamp(b[0] * RB, -half, half), x1 = clamp(b[1] * RB, -half, half), zN = -b[3] * RB, zS = -b[2] * RB;
+    const txa = Math.floor(x0 / 64 / u) * u - u, txb = Math.floor(x1 / 64 / u) * u + u;
+    const tya = Math.ceil(Math.floor(-zS / 64) / u) * u - u, tyb = Math.ceil(Math.floor(-zN / 64) / u) * u + u;
+    if (((txb - txa) / u + 1) * ((tyb - tya) / u + 1) > 220) {          // too many: leave this area to the next level
+      const n = B[k + 1] || (B[k + 1] = [Infinity, -Infinity, Infinity, -Infinity]);
+      n[0] = Math.min(n[0], b[0]); n[1] = Math.max(n[1], b[1]); n[2] = Math.min(n[2], b[2]); n[3] = Math.max(n[3], b[3]);
+      continue;
+    }
+    for (let ty = tya; ty <= tyb; ty += u) for (let tx = txa; tx <= txb; tx += u) list.push([k, tx, ty, Math.hypot(tx + u / 2 - cx, ty - u / 2 + 0.5 - cy) / u]);
   }
-  const u = 1 << k, cx = view.lon * RB / 64, cy = view.lat * RB / 64;
-  list.sort((a, b) => Math.hypot(a[0] + u / 2 - cx, a[1] - u / 2 - cy) - Math.hypot(b[0] + u / 2 - cx, b[1] - u / 2 - cy));
+  list.sort((a, b) => a[3] - b[3]);
 
   const now = performance.now();
-  for (const [tx, ty] of list) {
+  for (const [k, tx, ty] of list) {
     const t = tileFor(k, tx, ty); t.used = now;
     if (t.state === 2) { t.mesh.visible = true; continue; }
     if (t.state === 0) queue.push(t);
@@ -805,21 +812,25 @@ function saveHash() {
 /* ---------- frame loop ---------- */
 const tmp = new THREE.Vector3(), sp = new THREE.Vector3();
 let prev = performance.now(), lastTiles = 0;
-function screenPos(lon, lat) {                            // -> [x, y, opacity] or null when out of sight
+function screenPos(lon, lat) {                            // -> [x, y, opacity, behind] or null when out of sight
   place(lon, lat, tmp);
-  let o = 1;
+  let o = 1, behind = false;
   if (!isFlat()) {
-    const c = Math.cos(lat), vis = c * Math.sin(lon) * camera.position.x + Math.sin(lat) * camera.position.y + c * Math.cos(lon) * camera.position.z - 1;
-    o = clamp(vis / (0.25 * Math.min(1, view.h)), 0, 1);
+    // just over the horizon things stay faintly visible through the globe
+    const c = Math.cos(lat), s = 0.25 * Math.min(1, view.h);
+    const vis = c * Math.sin(lon) * camera.position.x + Math.sin(lat) * camera.position.y + c * Math.cos(lon) * camera.position.z - 1;
+    behind = vis < 0;
+    o = behind ? 0.35 * clamp(1 + vis / (2 * s), 0, 1) : 0.35 + 0.65 * clamp(vis / s, 0, 1);
     if (o <= 0.02) return null;
   }
   sp.copy(tmp).project(camera);
   if (sp.z > 1 || Math.abs(sp.x) > 1.2 || Math.abs(sp.y) > 1.2) return null;
-  return [(sp.x * .5 + .5) * innerWidth, (-sp.y * .5 + .5) * innerHeight, o];
+  return [(sp.x * .5 + .5) * innerWidth, (-sp.y * .5 + .5) * innerHeight, o, behind];
 }
 function placeEl(el, s, extra = "") {
   if (!s) { if (el.style.visibility !== "hidden") el.style.visibility = "hidden"; return; }
   el.style.visibility = "visible"; el.style.opacity = s[2];
+  el.classList.toggle("ghost", s[3]);
   el.style.transform = `translate3d(${s[0].toFixed(1)}px,${s[1].toFixed(1)}px,0) translate(-50%,-50%)${extra}`;
 }
 
