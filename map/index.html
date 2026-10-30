@@ -41,6 +41,26 @@ body.nonav{--top:0px}
 #online:hover{color:var(--text)}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:.2em 26px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;text-transform:uppercase;line-height:1;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s;white-space:nowrap}
 .btn:hover{transform:translateY(-2px)}
+.btn.store{display:none}
+
+/* mobile menu, same as the main site */
+.burger,#scrim,#drawer{display:none}
+.burger{flex:none;flex-direction:column;justify-content:center;gap:6px;width:44px;height:44px;margin-left:-8px;padding:8px;background:none;border:0;cursor:pointer}
+.burger i{display:block;width:100%;height:2px;border-radius:1px;background:var(--text)}
+#scrim{position:fixed;inset:0;z-index:25;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .28s}
+#drawer{position:fixed;top:0;bottom:0;left:0;z-index:26;width:min(82vw,320px);padding:12px 12px 24px;overflow-y:auto;background:var(--bg2);border-right:1px solid var(--line);transform:translateX(-100%);visibility:hidden;transition:transform .28s ease,visibility .28s}
+body.menu #scrim{opacity:1;pointer-events:auto}
+body.menu #drawer{transform:none;visibility:visible}
+.dr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-left:8px}
+.dr-top img{height:34px;width:auto;display:block}
+.dr-close{display:grid;place-items:center;width:44px;height:44px;background:none;border:0;color:var(--text);cursor:pointer}
+#drawer>a,.dr-sub{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;padding:0 8px;border:0;border-radius:8px;background:none;color:var(--text);font:inherit;font-size:18px;font-weight:500;text-align:left;cursor:pointer}
+.dr-sub svg{color:var(--muted);transition:transform .25s}
+.dr-sub[aria-expanded="true"] svg{transform:rotate(90deg)}
+.dr-more{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .25s ease,visibility .25s}
+.dr-sub[aria-expanded="true"]+.dr-more{grid-template-rows:1fr;visibility:visible}
+.dr-more ul{min-height:0;overflow:hidden;list-style:none;padding:0}
+.dr-more a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 8px 0 20px;color:var(--muted);font-size:17px}
 
 /* map */
 #c{position:fixed;inset:0;width:100%;height:100%;display:block;touch-action:none;cursor:grab}
@@ -162,6 +182,13 @@ body.cine #doom .bar{height:11vh}
   .links{display:none}
   .btn{height:34px;font-size:16px;padding:.2em 16px 0;border-radius:10px}
   #list{left:12px;right:12px;width:auto}
+  .burger{display:flex}
+  #scrim,#drawer{display:block}
+  #online,#ip{display:none}
+  .btn.store{display:inline-flex}
+  #layersBtn,#panel{top:auto;right:auto;left:12px;bottom:calc(24px + env(safe-area-inset-bottom))}
+  #status{bottom:auto;top:calc(var(--top) + 44px)}
+  #coords{bottom:auto;top:calc(var(--top) + 12px)}
 }
 @media(prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
@@ -170,6 +197,7 @@ body.cine #doom .bar{height:11vh}
 
 <nav>
   <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
     <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
     <div class="links">
       <div class="dd">
@@ -188,9 +216,28 @@ body.cine #doom .bar{height:11vh}
     <div class="right">
       <button id="online" type="button" aria-haspopup="true" aria-expanded="false">0 online</button>
       <button class="btn" id="ip" type="button">Play Now</button>
+      <a class="btn store" href="https://store.jes.earth">Store</a>
     </div>
   </div>
 </nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  </div>
+  <button class="dr-sub" id="drSub" type="button" aria-expanded="false">Community<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="dr-more"><ul>
+    <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">Wiki<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+  </ul></div>
+  <a href="../#towny">How it works</a>
+  <a href="./">Map</a>
+  <a href="https://store.jes.earth">Store</a>
+  <button class="dr-sub" id="drOnline" type="button">0 online</button>
+</aside>
 
 <canvas id="c" aria-label="Map of the Just an Earth Server world"></canvas>
 <div id="markers"></div>
@@ -986,7 +1033,7 @@ function setPlayers(list) {
     if (p.onMap && p.vis === 0) { p.lon = q.lon; p.lat = q.lat; }
   }
   for (const [name, p] of players) if (!seen.has(name)) { players.delete(name); leaving.set(name, p); }
-  onlineBtn.textContent = players.size + " online";
+  onlineBtn.textContent = $("#drOnline").textContent = players.size + " online";
   $("#pCount").textContent = players.size;
   if (listEl.classList.contains("open")) renderList();
   dirty = true;
@@ -1029,6 +1076,7 @@ const panel = $("#panel"), layersBtn = $("#layersBtn");
 function setPanel(o) { panel.hidden = !o; layersBtn.hidden = o; layersBtn.setAttribute("aria-expanded", o); }
 layersBtn.addEventListener("click", () => { setPanel(true); closeList(); });
 $("#panelX").addEventListener("click", () => setPanel(false));
+setPanel(matchMedia("(max-width:800px)").matches);        // on phones the panel starts open
 const toggles = { tPlayers: true, tClaims: true, tSights: true, tChunks: false, tFlat: false, tNav: false };
 for (const id in toggles) {
   const el = $("#" + id);
@@ -1046,6 +1094,21 @@ function applyToggles(animate) {
   dirty = tilesDirty = true;
 }
 applyToggles(false);
+
+/* ---------- mobile menu ---------- */
+const burger = $("#burger"), drSub = $("#drSub");
+function setMenu(o) { document.body.classList.toggle("menu", o); burger.setAttribute("aria-expanded", o); }
+burger.addEventListener("click", () => setMenu(true));
+$("#drClose").addEventListener("click", () => setMenu(false));
+$("#scrim").addEventListener("click", () => setMenu(false));
+drSub.addEventListener("click", () => drSub.setAttribute("aria-expanded", drSub.getAttribute("aria-expanded") !== "true"));
+$("#drawer").addEventListener("click", (e) => { if (e.target.closest("a")) setMenu(false); });
+$("#drOnline").addEventListener("click", (e) => {
+  e.stopPropagation(); setMenu(false); setPanel(false);
+  listEl.classList.add("open"); onlineBtn.setAttribute("aria-expanded", true); renderList();
+});
+addEventListener("keydown", (e) => { if (e.key === "Escape") setMenu(false); });
+matchMedia("(min-width:801px)").addEventListener("change", (e) => { if (e.matches) setMenu(false); });
 
 /* ---------- links to a place: #x,z,height ---------- */
 {
@@ -1255,7 +1318,7 @@ function say(text) { sayEl.classList.remove("on"); if (text) setTimeout(() => { 
 function startDoom(now) {
   doom.on = true; doom.t0 = now; doom.rb = 0; doom.stage = 0; doom.spin = 0; doom.h0 = view.h;
   tween = zoomAnim = null; vel.lon = vel.lat = pend.lon = pend.lat = 0; ptrs.clear(); canvas.classList.remove("drag");
-  closePop(); closeList(); setPanel(false);
+  closePop(); closeList(); setPanel(false); setMenu(false);
   if (isFlat()) { $("#tFlat").checked = false; applyToggles(false); }
   document.body.classList.add("doom");
   requestAnimationFrame(() => document.body.classList.add("cine"));
