@@ -102,7 +102,7 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 .cta{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap}
 
 /* Stats under the hero */
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px;max-width:1280px;margin:0 auto;padding:72px 24px;text-align:center}
+.stats{display:grid;grid-template-columns:repeat(5,1fr);gap:32px 24px;max-width:1280px;margin:0 auto;padding:72px 24px;text-align:center}
 .stats b{display:block;font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(34px,4vw,52px);line-height:1.2;font-weight:700;background:linear-gradient(180deg,#fff 0%,#cdcbd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .stats span{display:block;margin-top:8px;color:var(--muted);font-size:18px}
 
@@ -175,6 +175,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .hero-copy{max-width:none}
   .stats{grid-template-columns:repeat(2,1fr);padding:48px 20px}
   .stats span{font-size:16px}
+  .stats div:last-child{grid-column:1/-1}
   .hero p{font-size:19px;margin:18px 0 28px}
   .cta{flex-direction:column;align-items:stretch}
   .cta .btn,.cta .btn.primary{font-size:20px;padding:calc(20px + .1em) 24px calc(20px - .1em);width:100%}
@@ -271,6 +272,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 <section class="stats" aria-label="Server stats">
   <div><b id="statOnline">–</b><span>Players online right now</span></div>
   <div><b>1:300</b><span>Map scale</span></div>
+  <div><b>300K+</b><span>Unique players</span></div>
   <div><b id="statTowns">–</b><span>Player made towns</span></div>
   <div><b>2020</b><span>Online since</span></div>
 </section>
