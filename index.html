@@ -62,6 +62,26 @@ nav .btn.primary{height:44px;padding:.2em 26px 0;font-size:20px;border-radius:12
 .cta .btn{font-size:26px;padding:calc(22px + .1em) 44px calc(22px - .1em)}
 .cta .btn.primary{padding:calc(24px + .1em) 46px calc(24px - .1em)}
 
+/* Mobile menu */
+.burger,#scrim,#drawer{display:none}
+.burger{flex:none;flex-direction:column;justify-content:center;gap:6px;width:44px;height:44px;margin-left:-8px;padding:8px;background:none;border:0;cursor:pointer}
+.burger i{display:block;width:100%;height:2px;border-radius:1px;background:var(--text)}
+#scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6);opacity:0;pointer-events:none;transition:opacity .28s}
+#drawer{position:fixed;top:0;bottom:0;left:0;z-index:21;width:min(82vw,320px);padding:12px 12px 24px;overflow-y:auto;background:var(--bg2);border-right:1px solid var(--line);transform:translateX(-100%);visibility:hidden;transition:transform .28s ease,visibility .28s}
+html.menu{overflow:hidden}
+html.menu #scrim{opacity:1;pointer-events:auto}
+html.menu #drawer{transform:none;visibility:visible}
+.dr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;padding-left:8px}
+.dr-top img{height:34px;width:auto;display:block}
+.dr-close{display:grid;place-items:center;width:44px;height:44px;background:none;border:0;color:var(--text);cursor:pointer}
+#drawer>a,.dr-sub{display:flex;align-items:center;justify-content:space-between;width:100%;min-height:48px;padding:0 8px;border:0;border-radius:8px;background:none;color:var(--text);font:inherit;font-size:18px;font-weight:500;text-align:left;cursor:pointer}
+.dr-sub svg{color:var(--muted);transition:transform .25s}
+.dr-sub[aria-expanded="true"] svg{transform:rotate(90deg)}
+.dr-more{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .25s ease,visibility .25s}
+.dr-sub[aria-expanded="true"]+.dr-more{grid-template-rows:1fr;visibility:visible}
+.dr-more ul{min-height:0;overflow:hidden;list-style:none;padding:0}
+.dr-more a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 8px 0 20px;color:var(--muted);font-size:17px}
+
 /* Shine on the IP button */
 #ip{position:relative;overflow:hidden}
 #ip::after{content:"";position:absolute;top:0;left:-60%;width:40%;height:100%;background:linear-gradient(105deg,transparent 0%,rgba(255,255,255,.55) 50%,transparent 100%);transform:skewX(-20deg);animation:shine 3.5s ease-in-out 2.2s infinite;pointer-events:none}
@@ -135,10 +155,14 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .feat,.feat.flip{grid-template-columns:1fr;gap:28px;padding:48px 0;text-align:left}
   .feat.flip .pic{order:0}
   .links a.hide,.nav-right a.hide,.dd{display:none}
-  .hero{padding:56px 0;min-height:0}
-  .hero-bg{width:100%;opacity:.3;-webkit-mask-image:none;mask-image:none}
+  .burger{display:flex}
+  #scrim,#drawer{display:block}
+  .links{margin-left:0}
+  .hero{align-items:flex-end;min-height:calc(100vh - 60px);min-height:calc(100svh - 60px);padding:32px 0 40px}
+  .hero-bg{width:100%;object-position:28% center;-webkit-mask-image:linear-gradient(to bottom,#000 30%,rgba(0,0,0,.35) 62%,transparent 88%);mask-image:linear-gradient(to bottom,#000 30%,rgba(0,0,0,.35) 62%,transparent 88%)}
   .hero-skin{display:none}
-  html,body{overflow-x:hidden}
+  html{overflow-x:hidden}
+  body{overflow-x:clip}
   body{font-size:17px}
   nav .wrap{gap:12px;height:60px}
   .brand img{height:34px}
@@ -183,6 +207,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 
 <nav>
   <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
     <a class="brand" href="#"><img src="img/logo.png" alt="Just an Earth Server"></a>
     <div class="links">
       <div class="dd">
@@ -203,6 +228,23 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     </div>
   </div>
 </nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="#"><img src="img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu"><svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 5l14 14M19 5L5 19"/></svg></button>
+  </div>
+  <button class="dr-sub" id="drSub" type="button" aria-expanded="false">Community<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
+  <div class="dr-more"><ul>
+    <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">Wiki<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+    <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok<svg class="ext" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a></li>
+  </ul></div>
+  <a href="#towny">How it works</a>
+  <a href="map/">Map</a>
+  <a href="https://store.jes.earth">Store</a>
+</aside>
 
 <header class="hero">
   <img class="hero-bg" src="img/hero.jpg" alt="" onerror="this.remove()">
@@ -313,6 +355,22 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   </div>
 </footer>
 
+<script>
+  (function(){
+    var root=document.documentElement,burger=document.getElementById("burger"),drawer=document.getElementById("drawer"),sub=document.getElementById("drSub");
+    function setMenu(o){
+      root.classList.toggle("menu",o);burger.setAttribute("aria-expanded",o);
+      if(o)document.getElementById("drClose").focus();
+    }
+    burger.addEventListener("click",function(){setMenu(true)});
+    document.getElementById("drClose").addEventListener("click",function(){setMenu(false);burger.focus()});
+    document.getElementById("scrim").addEventListener("click",function(){setMenu(false)});
+    sub.addEventListener("click",function(){sub.setAttribute("aria-expanded",sub.getAttribute("aria-expanded")!=="true")});
+    drawer.addEventListener("click",function(e){if(e.target.closest("a"))setMenu(false)});
+    addEventListener("keydown",function(e){if(e.key==="Escape"&&root.classList.contains("menu")){setMenu(false);burger.focus()}});
+    matchMedia("(min-width:801px)").addEventListener("change",function(e){if(e.matches)setMenu(false)});
+  })();
+</script>
 <script>
   function copyText(txt){
     return new Promise(function(resolve,reject){
