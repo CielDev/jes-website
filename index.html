@@ -101,6 +101,11 @@ h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text
 .hero p{margin:22px 0 34px;color:#cfc9dc;font-size:22px;line-height:1.55}
 .cta{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap}
 
+/* Stats under the hero */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:32px 24px;max-width:1280px;margin:0 auto;padding:72px 24px;text-align:center}
+.stats b{display:block;font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(34px,4vw,52px);line-height:1.2;font-weight:700;background:linear-gradient(180deg,#fff 0%,#cdcbd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stats span{display:block;margin-top:8px;color:var(--muted);font-size:18px}
+
 /* Image slots: gradient shows if the image file is missing */
 .shot,.pic{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid var(--line);background:linear-gradient(135deg,#2b1740,#5b2260 45%,#9c4a3a)}
 .shot img,.pic img{width:100%;height:100%;object-fit:cover;display:block}
@@ -168,6 +173,8 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .brand img{height:34px}
   nav .btn.primary{height:34px;font-size:16px;padding:.2em 16px 0;border-radius:10px;white-space:nowrap}
   .hero-copy{max-width:none}
+  .stats{grid-template-columns:repeat(2,1fr);padding:48px 20px}
+  .stats span{font-size:16px}
   .hero p{font-size:19px;margin:18px 0 28px}
   .cta{flex-direction:column;align-items:stretch}
   .cta .btn,.cta .btn.primary{font-size:20px;padding:calc(20px + .1em) 24px calc(20px - .1em);width:100%}
@@ -260,6 +267,13 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     </div>
   </div>
 </header>
+
+<section class="stats" aria-label="Server stats">
+  <div><b id="statOnline">–</b><span>Players online right now</span></div>
+  <div><b>1:300</b><span>Map scale</span></div>
+  <div><b id="statTowns">–</b><span>Player made towns</span></div>
+  <div><b>2020</b><span>Online since</span></div>
+</section>
 
 <main class="wrap">
   <section class="feat flip" id="towny">
@@ -369,6 +383,26 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     drawer.addEventListener("click",function(e){if(e.target.closest("a"))setMenu(false)});
     addEventListener("keydown",function(e){if(e.key==="Escape"&&root.classList.contains("menu")){setMenu(false);burger.focus()}});
     matchMedia("(min-width:801px)").addEventListener("change",function(e){if(e.matches)setMenu(false)});
+  })();
+</script>
+<script>
+  /* live numbers from Dynmap, same source as the map page */
+  (function(){
+    var MAP="https://legacymap.jes.earth";
+    function online(){
+      fetch(MAP+"/up/world/Earth/0",{cache:"no-store"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
+        document.getElementById("statOnline").textContent=j.currentcount;
+      }).catch(function(){});
+    }
+    function towns(){
+      fetch(MAP+"/tiles/_markers_/marker_Earth.json",{cache:"no-cache"}).then(function(r){if(!r.ok)throw 0;return r.json()}).then(function(j){
+        var s=j.sets&&j.sets["towny.markerset"];if(!s)return;
+        var names={};Object.values(s.areas||{}).forEach(function(a){names[a.label]=1});   // a town can have several claim areas
+        document.getElementById("statTowns").textContent=Object.keys(names).length;
+      }).catch(function(){});
+    }
+    online();towns();
+    setInterval(online,10000);
   })();
 </script>
 <script>
