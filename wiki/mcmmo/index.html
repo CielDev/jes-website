@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>mcMMO | JES Wiki</title>
+<meta name="description" content="Guides for Just an Earth Server: towns, nations, gold, shops and more.">
+<link rel="icon" type="image/png" href="../../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../site.css">
+<style>
+@font-face{font-family:"Minecraft";src:url("../../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+.doc{display:grid;grid-template-columns:220px 1fr;gap:40px;padding-top:40px;padding-bottom:56px;max-width:1140px}
+aside.side{position:sticky;top:88px;align-self:start}
+aside.side a{display:block;padding:6px 12px;border-left:2px solid var(--line);color:var(--muted)}
+aside.side a:hover,aside.side a.on{border-color:var(--pink);color:var(--text)}
+article{min-width:0}
+section{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
+section:last-child{border:0}
+h2{font-size:26px;margin-bottom:10px}
+h3{font-size:19px;margin:16px 0 8px}
+article p,article ul{margin-bottom:12px;color:#d9d3e6}
+article ul{padding-left:22px}
+article li{margin-bottom:6px}
+article a{color:#ff7fc2}
+article a:hover{text-decoration:underline}
+table{border-collapse:collapse;margin-bottom:14px}
+td{padding:6px 24px 6px 0;border-bottom:1px solid var(--line)}
+td:first-child{color:var(--muted)}
+h1{margin-bottom:24px}
+@media(max-width:800px){.doc{grid-template-columns:1fr;gap:20px}aside.side{position:static;display:flex;flex-wrap:wrap;gap:6px}aside.side a{padding:4px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px}}
+td code{white-space:normal}
+.crumb{margin-bottom:10px;color:var(--muted);font-size:15px}
+.crumb a{color:var(--muted)}
+.t{width:100%}
+th{padding:6px 16px 6px 0;border-bottom:1px solid var(--line);color:var(--muted);text-align:left;font-weight:600}
+td{padding:7px 16px 7px 0}
+td:first-child{color:var(--text)}
+article ol{padding-left:22px;margin-bottom:12px;color:#d9d3e6}
+h2{margin-top:30px}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+    <a class="brand" href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a></li>
+          <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+      <a href="../../store/">Store</a>
+      <a class="on" href="../../wiki/">Wiki</a>
+      <a href="../../map/">Map</a>
+      <a href="../../how-to-join/">How to Join</a>
+    </div>
+    <a class="btn" href="../../how-to-join/">Play Now</a>
+  </div>
+</nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu">&times;</button>
+  </div>
+  <a href="../../store/">Store</a>
+  <a href="../../wiki/">Wiki</a>
+  <a href="../../map/">Map</a>
+  <a href="../../how-to-join/">How to Join</a>
+  <small>Community</small>
+  <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>
+  <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>
+  <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a>
+  <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a>
+</aside>
+
+<div class="wrap doc">
+  <aside class="side" aria-label="Wiki pages">
+    <a href="../../wiki/">Welcome</a>
+    <a href="../../wiki/ip/">How to join</a>
+    <a href="../../wiki/town/">Town guide</a>
+    <a href="../../wiki/how-to-claim-land/">Claiming land</a>
+    <a href="../../wiki/nation/">Nation guide</a>
+    <a href="../../wiki/map/">Map guide</a>
+    <a href="../../wiki/how-to-teleport/">Teleporting</a>
+    <a href="../../wiki/chat/">Chat</a>
+    <a href="../../wiki/gold/">Gold</a>
+    <a href="../../wiki/shops/">Shops</a>
+    <a href="../../wiki/quarters/">Quarters</a>
+    <a class="on" href="../../wiki/mcmmo/">mcMMO</a>
+    <a href="../../wiki/ranks/">Ranks and store</a>
+    <a href="../../wiki/rules/">Server rules</a>
+  </aside>
+  <article>
+    <div class="crumb"><a href="../../wiki/">Wiki</a> &rsaquo; mcMMO</div>
+    <h1>mcMMO</h1>
+    <p>mcMMO lets you level skills like mining, woodcutting and fishing, unlocking abilities that make them easier.</p>
+<h2>Skills and abilities</h2>
+<p><code>/&lt;skill&gt;</code>, like <code>/mining</code>, shows your level and abilities. <code>/&lt;skill&gt; ? &lt;page&gt;</code> shows more detail.</p>
+<p>To use an ability, right-click with the skill's tool to ready it, then hit a matching block. For example, ready a pickaxe and break stone for Super Breaker. If you've got something in your offhand, crouch and right-click.</p>
+<p>Some skills are passive only. Fishing shortens waits and improves catches, and Alchemy unlocks more potions and speeds up brewing.</p>
+<h2>Skills</h2>
+<table class="t"><tr><th>Skill</th><th>How to gain XP</th></tr><tr><td>Mining</td><td>Mine stone and ores</td></tr><tr><td>Woodcutting</td><td>Break logs and wood</td></tr><tr><td>Herbalism</td><td>Harvest crops and plants</td></tr><tr><td>Excavation</td><td>Dig dirt, sand and gravel</td></tr><tr><td>Fishing</td><td>Fish</td></tr><tr><td>Unarmed</td><td>Fight with no tool</td></tr><tr><td>Archery</td><td>Deal damage with bows and crossbows</td></tr><tr><td>Swords</td><td>Fight with swords</td></tr><tr><td>Axes</td><td>Attack with axes</td></tr><tr><td>Taming</td><td>Tame animals</td></tr><tr><td>Repair</td><td>Right-click an iron block with a damaged item</td></tr><tr><td>Acrobatics</td><td>Take fall damage</td></tr><tr><td>Alchemy</td><td>Brew potions</td></tr><tr><td>Salvage</td><td>Master Fishing and Repair</td></tr><tr><td>Smelting</td><td>Master Mining and Repair</td></tr></table>
+<h2>Disabled for balance</h2>
+<ul><li><b>Skills:</b> Unarmed, Axes and Swords in PvP, and Salvage on gold.</li><li><b>Abilities:</b> Second Smelt on gold ore, Blast Mining, and Double Drops on gold and diamond ore.</li></ul>
+<h2>Leaderboard and commands</h2>
+<table class="t"><tr><th>Command</th><th>What it does</th></tr><tr><td><code>/[skill]</code></td><td>Your stats in a skill</td></tr><tr><td><code>/mctop</code></td><td>Global ranking</td></tr><tr><td><code>/mctop [skill]</code></td><td>Top players in a skill</td></tr><tr><td><code>/mcrank</code></td><td>Your rank in each skill</td></tr><tr><td><code>/inspect [player]</code></td><td>Another player's stats</td></tr></table>
+<h2>Parties</h2>
+<p>Parties turn off friendly fire, add private chat and share mcMMO XP.</p>
+<table class="t"><tr><th>Command</th><th>What it does</th></tr><tr><td><code>/party create [name]</code></td><td>Create a party</td></tr><tr><td><code>/party invite [player]</code></td><td>Invite a player</td></tr><tr><td><code>/party info</code></td><td>View your party</td></tr><tr><td><code>/pc</code></td><td>Toggle party chat</td></tr><tr><td><code>/party join [leader] [password]</code></td><td>Join a party</td></tr><tr><td><code>/party quit</code></td><td>Leave a party</td></tr><tr><td><code>/party disband</code></td><td>Disband it (leader)</td></tr><tr><td><code>/party lock</code></td><td>Set invite-only (leader)</td></tr><tr><td><code>/party unlock</code></td><td>Remove invite-only (leader)</td></tr><tr><td><code>/party password [password]</code></td><td>Set a password (leader)</td></tr><tr><td><code>/party kick [player]</code></td><td>Remove a player (leader)</td></tr><tr><td><code>/party leader [player]</code></td><td>Transfer leadership (leader)</td></tr></table>
+  </article>
+</div>
+
+<footer><div class="wrap">Copyright © 2026 Just an Earth Server. Not affiliated with Mojang or Microsoft.</div></footer>
+
+<script src="../../site.js"></script>
+</body>
+</html>
