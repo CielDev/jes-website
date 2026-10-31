@@ -123,7 +123,8 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 .egg-step span{color:var(--muted);font-size:15px}
 /* fit the shop in the first screen, with the footer as the floor */
 .above{display:flex;flex-direction:column;min-height:calc(100vh - 64px)}
-.above>#grid,.above>#premium{flex:1}
+.above>.banner{flex:1 1 auto;max-height:420px}
+#grid{align-content:start}
 @media(min-width:801px) and (min-height:700px){
   .banner{min-height:200px;margin:22px 0}
   .ranks{margin-bottom:14px}
