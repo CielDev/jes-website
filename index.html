@@ -124,21 +124,21 @@ main.wrap{max-width:1280px}
 
 
 /* Meet the team */
-.team{max-width:1080px;margin:0 auto;padding:96px 24px 0}
+.team{max-width:1280px;margin:0 auto;padding:96px 24px 0}
 .team>h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,3.6vw,46px);line-height:1.2;background:linear-gradient(180deg,#fff 0%,#cdcbd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .team>p{margin:10px 0 28px;color:var(--muted)}
-.t-card{display:grid;grid-template-columns:1fr 320px;min-height:380px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);border-radius:14px;transition:opacity .3s}
+.t-card{display:grid;grid-template-columns:1fr 380px;min-height:320px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);border-radius:14px;transition:opacity .3s}
 .t-card.out{opacity:0}
 .t-info{display:flex;flex-direction:column;align-items:flex-start;padding:32px 36px}
 .t-head{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
 .t-role{padding:5px 10px 3px;border-radius:6px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-size:13px;line-height:1.2;letter-spacing:.04em;text-transform:uppercase}
 .t-name{font-family:"Minecraft","Outfit",sans-serif;font-size:32px;line-height:1.2;overflow-wrap:anywhere}
 .t-sub{margin-top:4px;color:var(--muted);font-size:15px}
-.t-bio{margin:18px 0;padding-left:16px;border-left:2px solid var(--pink);color:#d9d3e6;font-size:18px;line-height:1.55}
-.t-dc{margin-top:auto;display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:14px}
+.t-bio{margin:16px 0 20px;padding-left:16px;border-left:2px solid var(--pink);color:#d9d3e6;font-size:18px;line-height:1.55}
+.t-dc{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:14px}
 .t-pic{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden;background:radial-gradient(circle at 50% 70%,#3a1b4d,#0d0b12 75%)}
-.t-pic b{position:absolute;top:18px;left:8px;right:8px;text-align:center;font-family:"Minecraft","Outfit",sans-serif;font-size:20px;overflow-wrap:anywhere}
-.t-pic img{display:block;width:280px;height:auto;margin-bottom:-70px;image-rendering:pixelated}
+.t-pic b{position:absolute;z-index:1;top:14px;left:8px;right:8px;text-align:center;font-family:"Minecraft","Outfit",sans-serif;font-size:20px;overflow-wrap:anywhere}
+.t-pic img{position:absolute;top:8px;left:50%;width:470px;max-width:none;height:auto;transform:translateX(-50%);image-rendering:pixelated}
 .t-bar{height:3px;margin-top:18px;border-radius:2px;background:var(--line);overflow:hidden}
 .t-bar i{display:block;height:100%;width:0;background:var(--grad)}
 .t-nav{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
@@ -209,7 +209,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .t-card{grid-template-columns:1fr}
   .t-info{padding:24px 20px}
   .t-pic{order:-1;height:240px}
-  .t-pic img{width:200px;margin-bottom:-60px}
+  .t-pic img{width:400px}
   .t-name{font-size:26px}
   .t-bio{font-size:17px}
   .quotes figure{margin:0 auto 56px}
@@ -440,7 +440,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   /* team carousel */
   (function(){
     var TEAM=[
-      {role:"Owner & Founder",name:"Ciel",ign:"ciel0beats",dc:"ciel0beats",img:"ciel0beats",sub:"Built it, designed it, still fixing it",bio:"Ciel made JES for one reason: a place to meet people, build something together and not get yelled at by a stranger for it. The whole server, top to bottom, is Ciel's doing. So yes, this is who to thank. Also who to blame."},
+      {role:"Founder",name:"Ciel",ign:"ciel0beats",dc:"ciel0beats",img:"ciel0beats",sub:"Built it, designed it, still fixing it",bio:"Ciel made JES for one reason: a place to meet people, build something together and not get yelled at by a stranger for it. The whole server, top to bottom, is Ciel's doing. So yes, this is who to thank. Also who to blame."},
       {role:"Senior Mod",name:"Roylitai",ign:"Roylitai",dc:"roylitai",img:"roylitai",sub:"Here since 2022",bio:"Ciel's right hand since 2022. Tests the plugins before they reach you, keeps the peace, and handles moral support for when those plugins explode anyway. If something works today, Roylitai probably broke it first."},
       {role:"Mod",name:"cosmicbread",ign:"cosmicbread3898",dc:"cosmicbread",img:"cosmicbread",sub:"German. Likes trains.",bio:"He's German and he likes trains, and honestly that's the whole brief. Keeps things on schedule, keeps chat on the rails, and has been around long enough to know where all the bodies are buried. In a build-friendly way."},
       {role:"Senior (by age)",name:"Tempest",ign:"X_stormrage_x",dc:"tempestrising1",img:"tempest",sub:"Formerly known in-game as Tempest",bio:"The elder of the group, and no, we don't know the exact number. He drives trucks in real life and settles arguments in here, because he's the best communicator we have. Wisdom on tap, possibly from a truck stop."},
