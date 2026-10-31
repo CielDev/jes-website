@@ -114,6 +114,27 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 .p-side .btn{width:100%;margin-top:6px}
 .p-save{min-height:1.5em;color:#7be08a;font-size:15px;text-align:center}
 .egg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.egg-info{position:relative;grid-column:span 2;display:flex;flex-direction:column;justify-content:center;gap:22px;padding:32px 36px;overflow:hidden;background:linear-gradient(135deg,#2a1636,#15121d 60%);border:1px solid var(--line);border-radius:14px}
+.egg-info::after{content:"";position:absolute;right:-60px;bottom:-60px;width:300px;height:300px;background:var(--egg) center/contain no-repeat;image-rendering:pixelated;opacity:.12;transform:rotate(-14deg);animation:bob 5s ease-in-out infinite}
+.egg-info h3{position:relative;font-family:"Minecraft","Outfit",sans-serif;font-size:22px;letter-spacing:.03em}
+.egg-step{position:relative;display:flex;gap:16px;align-items:flex-start}
+.egg-step b{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:10px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-size:18px}
+.egg-step strong{display:block;font-size:17px}
+.egg-step span{color:var(--muted);font-size:15px}
+/* fit the shop in the first screen, with the footer as the floor */
+.above{display:flex;flex-direction:column;min-height:calc(100vh - 64px)}
+.above>#grid,.above>#premium{flex:1}
+@media(min-width:801px) and (min-height:700px){
+  .banner{min-height:200px;margin:22px 0}
+  .ranks{margin-bottom:14px}
+  .tabs{margin-bottom:22px}
+  #grid{min-height:0;margin-bottom:10px}
+  .card{padding:18px 20px}
+  .card img{max-width:150px}
+  .card h2{margin-top:6px}
+  .card p{margin-bottom:12px;font-size:14px}
+  .above+.studio{margin-top:0}
+}
 .msg{grid-column:1/-1;padding:48px 0;color:var(--muted);text-align:center}
 
 #scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6)}
@@ -191,6 +212,8 @@ dialog .btn{width:100%}
   .p-wrap{grid-template-columns:1fr}
   .p-stage{min-height:260px}
   .egg-grid{grid-template-columns:1fr}
+  .egg-info{grid-column:auto;padding:24px 20px}
+  .above{min-height:0}
   .tabs button{padding:9px 14px 7px;font-size:14px}
   .studio{grid-template-columns:1fr;justify-items:center;text-align:center}
   .studio{gap:18px}
@@ -243,6 +266,7 @@ dialog .btn{width:100%}
 </aside>
 
 <main class="wrap">
+  <div class="above">
   <header class="banner">
     <i class="b-sun"></i>
     <img class="b-crate a" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
@@ -275,6 +299,7 @@ dialog .btn{width:100%}
     <div class="p-head"><h2>Premium Egg</h2><p id="eggDesc"></p></div>
     <div class="egg-grid" id="eggGrid"></div>
   </section>
+  </div>
   <footer class="studio">
     <img src="../img/logo.png" alt="">
     <div class="s-mid">
@@ -646,7 +671,16 @@ dialog .btn{width:100%}
       });
       pick(plan);
       var egg=products[EGG];
-      if(egg){$("eggDesc").textContent=plain(egg.description);card(egg,{},0,$("eggGrid"))}
+      if(egg){
+        $("eggDesc").textContent=plain(egg.description);card(egg,{},0,$("eggGrid"));
+        var info=el("div","egg-info");info.style.setProperty("--egg",'url("'+egg.image_url+'")');
+        info.appendChild(el("h3","","Gift Premium, or keep it"));
+        [["Buy an egg","It lands in your inventory as a real item."],["Keep or pass it on","Trade it, gift it to a friend, or sell it for gold in your shop."],["Activate it","Whoever activates it gets one month of JES Premium."]].forEach(function(s,i){
+          var r=el("div","egg-step"),t=el("div");
+          r.appendChild(el("b","",i+1));t.appendChild(el("strong","",s[0]));t.appendChild(el("span","",s[1]));r.appendChild(t);info.appendChild(r);
+        });
+        $("eggGrid").appendChild(info);
+      }
     }
     function pick(id){
       var p=products[id],m=products[PLANS[0]],n=p.subscription_interval_value,full=m.pricing.price_final*n,save=full-p.pricing.price_final;
