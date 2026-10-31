@@ -273,7 +273,7 @@ dialog .btn{width:100%}
       }
       bloom(x,y);if(w<3)bloom(x-14,y+8);
     }
-    tree.width=340;tree.height=240;
+    tree.width=560;tree.height=240;
     grow(-5,16,.08,56,3);
     function size(){dpr=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr}
     function spawn(p,top){
@@ -366,7 +366,7 @@ dialog .btn{width:100%}
       }
       parkour(dt,s);
       var ts=W<=800?.6:1;
-      g.drawImage(tree,0,TOP,340*ts,240*ts);
+      g.drawImage(tree,0,TOP,560*ts,240*ts);
       P.forEach(function(p){
         var dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
         if(d2<14400){var d=Math.sqrt(d2)||1,f=(1-d/120)*260;p.vx+=dx/d*f*dt;p.vy+=dy/d*f*dt}
