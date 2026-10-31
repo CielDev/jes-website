@@ -73,7 +73,9 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 #petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
 .banner p{color:var(--gold);font-weight:600}
 
-#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;min-height:488px;margin-bottom:64px}
+.studio{opacity:0;transition:opacity .8s ease}
+.studio.in{opacity:1}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .card{opacity:0;transform:translateX(60px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
 .card.in{opacity:1;transform:none}
@@ -196,7 +198,7 @@ dialog .btn{width:100%}
   .b-skin{right:-20px;height:270px;bottom:-90px}
   .b-crate.a{right:auto;left:42%;top:96px;width:60px}
   .b-crate.b,.b-crate.c{display:none}
-  #grid{grid-template-columns:1fr}
+  #grid{grid-template-columns:1fr;min-height:0}
   .p-wrap{grid-template-columns:1fr}
   .p-stage{min-height:260px}
   .egg-grid{grid-template-columns:1fr}
@@ -552,10 +554,10 @@ dialog .btn{width:100%}
       var floor=document.documentElement.scrollHeight-scrollY;
       ts=Math.max(.42,Math.min(1,(ban.left+70)/250));
       if(floor<H+60)g.drawImage(ground,0,floor-56);
-      opener(mates[0],foot.left+46,foot.top,dt,s);
+      if(document.querySelector(".studio.in")){opener(mates[0],foot.left+46,foot.top,dt,s);
       if(W>800)opener(mates[2],foot.left+foot.width*.45,foot.top,dt,s);
       opener(mates[1],foot.right-46,foot.top,dt,s);
-      if(dragon)flyDragon(dt,s,foot.right-46,foot.top,foot.right-82);
+      if(dragon)flyDragon(dt,s,foot.right-46,foot.top,foot.right-82);}
       parkour(dt,s);
       g.drawImage(tree,0,TOP,600*ts,480*ts);
       P.forEach(function(p){
@@ -692,7 +694,7 @@ dialog .btn{width:100%}
         // slide in only once the picture is ready
         (function(c,img,n){
           var done=false;
-          function show(){if(done)return;done=true;c.style.transitionDelay=.45+n*.15+"s";requestAnimationFrame(function(){c.classList.add("in")})}
+          function show(){if(done)return;done=true;c.style.transitionDelay=.45+n*.15+"s";requestAnimationFrame(function(){c.classList.add("in");document.querySelector(".studio").classList.add("in")})}
           img.onload=img.onerror=show;
           setTimeout(show,3000);
         })(c,img,n);
