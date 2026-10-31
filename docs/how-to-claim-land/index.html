@@ -105,16 +105,16 @@ h2{margin-top:30px}
     <h1>Claiming land</h1>
     <p>Land is split into claims of 16x16 blocks, exactly one Minecraft chunk. Each one costs <b>16g</b>.</p>
 <h2>How to claim</h2>
-<ol><li>Join or create a town.</li><li>Have a rank that can claim. Mayors can by default, and so can Settlers.</li><li>Deposit at least 16g with <code>/t deposit &lt;amount&gt;</code>. The town bank pays all town costs.</li><li>Stand in a chunk touching your town. Press F3+G to see borders.</li><li>Run <code>/t claim</code>.</li></ol>
+<ol><li>Join or create a town.</li><li>Have a rank that can claim. Mayors can by default, and so can Assistants.</li><li>Deposit at least 16g with <code>/t deposit &lt;amount&gt;</code>. The town bank pays all town costs.</li><li>Stand in a chunk touching your town. Press F3+G to see borders.</li><li>Run <code>/t claim</code>.</li></ol>
 <h2>Claim limits</h2>
-<ul><li>A new town can claim <b>12 chunks</b>.</li><li>Each resident adds <b>12 more</b>.</li><li>Being in a nation adds <b>10 to 100</b> extra chunks to every town, depending on total residents. The maximum needs 200 residents.</li></ul>
+<ul><li>A new town can claim <b>16 chunks</b>.</li><li>Each resident adds <b>16 more</b>.</li><li>Being in a nation adds a bonus to every town, based on total nation residents.</li></ul>
+<table class="t"><tr><th>Nation residents</th><th>Bonus chunks per town</th></tr><tr><td>0</td><td>10</td></tr><tr><td>10</td><td>20</td></tr><tr><td>20</td><td>40</td></tr><tr><td>30</td><td>60</td></tr><tr><td>40</td><td>100</td></tr><tr><td>60</td><td>140</td></tr></table>
 <p><code>/t &lt;name&gt;</code> shows your limit on the Town Size line. For example, 90/152 means 90 claimed out of 152 possible.</p>
-<h2>Outposts</h2>
-<p>An outpost is a claim away from your town, and it costs <b>1,028g</b>.</p>
-<h2>Overclaiming</h2>
-<p>A town can end up over its limit when residents leave, for example 90/60. Another town can then take chunks with <code>/t takeoverclaim</code> until it's back within the limit.</p>
-<ul><li>Only towns larger than 12 chunks can be overclaimed.</li><li>A town's homeblock can't be taken.</li><li>A town must be over 30 days old to overclaim others.</li><li>A town can overclaim up to 24 times a day.</li></ul>
-  </article>
+<h2>Distance between towns</h2>
+<p>Your claims must stay at least <b>5 chunks</b> from another town, unless you're in the same nation.</p>
+<h2>Unclaiming</h2>
+<p><code>/t unclaim</code> refunds <b>4g</b> per chunk.</p>
+</article>
 </div>
 
 <footer><div class="wrap">Copyright © 2026 Just an Earth Server. Not affiliated with Mojang or Microsoft.</div></footer>
