@@ -20,6 +20,7 @@ article{min-width:0}
 section{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
 section:last-child{border:0}
 h2{font-size:26px;margin-bottom:10px}
+h3{font-size:19px;margin:16px 0 8px}
 article p,article ul{margin-bottom:12px;color:#d9d3e6}
 article ul{padding-left:22px}
 article li{margin-bottom:6px}
@@ -81,17 +82,20 @@ h1{margin-bottom:24px}
     <a href="#claim">Claiming land</a>
     <a href="#nation">Nation guide</a>
     <a href="#map">Map guide</a>
+    <a href="#teleport">Teleporting</a>
+    <a href="#chat">Chat</a>
     <a href="#gold">Gold</a>
     <a href="#shops">Shops</a>
     <a href="#mcmmo">mcMMO</a>
     <a href="#ranks">Ranks and store</a>
+    <a href="#rules">Server rules</a>
   </aside>
   <article>
     <h1>JES Wiki</h1>
     <section id="welcome">
       <h2>Welcome</h2>
       <p>Just an Earth Server (JES) is a Minecraft Earth server at 1:300 scale. Pick a spot on the map, build a town, grow it into a nation and trade with everyone else. The world never resets, and it has been running since 2020.</p>
-<table><tr><td>IP</td><td><code>jes.earth</code></td></tr><tr><td>Bedrock port</td><td><code>19132</code></td></tr><tr><td>Online since</td><td>2020</td></tr><tr><td>Map scale</td><td>1:300</td></tr><tr><td>Version</td><td>Latest</td></tr></table>
+<table><tr><td>IP</td><td><code>jes.earth</code></td></tr><tr><td>Bedrock port</td><td><code>19132</code></td></tr><tr><td>Online since</td><td>2020</td></tr><tr><td>Map scale</td><td>1:300</td></tr><tr><td>Version</td><td>Java 26.2, Bedrock latest</td></tr></table>
 <p>New here? Read <a href="#town">Town guide</a> first, then <a href="#gold">Gold</a>. For server history and lore, see the <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>.</p>
     </section>
     <section id="join">
@@ -102,23 +106,36 @@ h1{margin-bottom:24px}
       <h2>Town guide</h2>
       <p>Towns run on the Towny plugin. A town is a group of players sharing claimed land, and it's the best way to protect your builds.</p>
 <ul><li><code>/town new &lt;name&gt;</code> creates a town where you stand.</li><li><code>/town add &lt;player&gt;</code> invites someone.</li><li><code>/town join &lt;name&gt;</code> joins an open town.</li><li><code>/town spawn</code> takes you home.</li><li><code>/town leave</code> leaves your town.</li></ul>
+<table><tr><td>New town</td><td>64g</td></tr><tr><td>Town reclaim</td><td>4g</td></tr><tr><td>Town merge</td><td>8g per plot</td></tr><tr><td>Town upkeep</td><td>0g</td></tr></table>
 <p>Not ready to found one? Find a town near you on the <a href="../map/">map</a> and ask to join. Selling houses and apartments to members is a great way to earn.</p>
     </section>
     <section id="claim">
       <h2>Claiming land</h2>
       <p>Land is claimed in chunks, the 16x16 squares of the world. Turn on Chunks in the <a href="../map/">map</a> panel to see them.</p>
 <ul><li><code>/town claim</code> claims the chunk you're standing in.</li><li><code>/town unclaim</code> gives it back.</li><li><code>/plot forsale &lt;price&gt;</code> puts a plot up for sale.</li><li><code>/plot claim</code> buys the plot you're on.</li></ul>
+<table><tr><td>Town block</td><td>16g</td></tr><tr><td>Outpost</td><td>1,028g</td></tr></table>
 <p>Claimed land is protected from anyone outside your town.</p>
     </section>
     <section id="nation">
       <h2>Nation guide</h2>
       <p>When towns team up, they form a nation. Nations are where the politics starts: alliances, treaties and years of diplomacy.</p>
 <ul><li><code>/nation new &lt;name&gt;</code> founds a nation with your town as capital.</li><li><code>/nation add &lt;town&gt;</code> invites a town.</li><li><code>/nation ally add &lt;nation&gt;</code> adds an ally.</li><li><code>/nation leave</code> takes your town out.</li></ul>
+<table><tr><td>New nation</td><td>1,024g</td></tr><tr><td>Nation upkeep</td><td>0g</td></tr></table>
     </section>
     <section id="map">
       <h2>Map guide</h2>
       <p>The <a href="../map/">live map</a> shows the whole world as a globe that unrolls into a flat map when you zoom in.</p>
 <ul><li>Player heads show who is online and where. Click one to fly to them.</li><li>Colored areas are claims. Click one for town details.</li><li>The Map panel toggles players, claims, landmarks, chunks and the flat view.</li><li>Use the online counter to open the full player list.</li></ul>
+    </section>
+    <section id="teleport">
+      <h2>Teleporting</h2>
+      <p>There's no player to player teleporting. You can reach your town, your nation, allied capitals and your bed.</p>
+<ul><li><code>/t spawn</code> or <code>/t spawn &lt;town&gt;</code> goes to a town spawn.</li><li><code>/t warp &lt;warp&gt;</code> or <code>/t warp &lt;town&gt; &lt;warp&gt;</code> goes to a town warp.</li><li><code>/n spawn</code> goes to your nation capital, the star on the map.</li><li><code>/n spawn &lt;nation&gt;</code> goes to an allied capital.</li><li><code>/res spawn</code> or <code>/home</code> goes to your bed.</li><li><code>/rtp</code> sends new players to a random spot.</li><li><code>/rtp to region &lt;region&gt;</code> sends new players to a random spot in a region, such as Africa.</li></ul>
+<p>New towns can't teleport to other nations until the owner joins a nearby nation with <code>/n join &lt;nation&gt;</code>.</p>
+    </section>
+    <section id="chat">
+      <h2>Chat</h2>
+      <ul><li><code>/global</code> is the default channel. Keep it in English.</li><li><code>/local</code> only reaches nearby players.</li><li><code>/tradechat</code> is for buying and selling.</li><li><code>/tc</code> is town chat and <code>/nc</code> is nation chat.</li><li><code>/ch list</code> shows your channels. <code>/ch join</code> and <code>/ch leave</code> change them.</li><li><code>/msg &lt;player&gt; &lt;message&gt;</code> sends a private message and <code>/r</code> replies.</li><li><code>/mail send &lt;player&gt; &lt;message&gt;</code> reaches offline players. <code>/mail read</code> and <code>/mail clear</code> manage your inbox.</li><li><code>/ignore &lt;player&gt;</code> and <code>/unignore &lt;player&gt;</code> hide or restore someone.</li></ul>
     </section>
     <section id="gold">
       <h2>Gold</h2>
@@ -137,6 +154,15 @@ h1{margin-bottom:24px}
     <section id="ranks">
       <h2>Ranks and store</h2>
       <p>Ranks are a free thank you for supporting the server. They're based on your total spend in the <a href="../store/">store</a>, from Seed up to Astral. Open "How does the rank system work?" there for the full list.</p>
+    </section>
+    <section id="rules">
+      <h2>Server rules</h2>
+      <h3>1. Cheating, exploits and alts</h3>
+      <ul><li><b>1.1 Cheats:</b> No cheat clients, macros or stolen accounts. Performance, HUD, minimap and cosmetic mods are fine, as is Litematica without a printer.</li><li><b>1.2 Assisting:</b> Knowingly helping or benefiting from a rule break counts as breaking it.</li><li><b>1.3 Exploits:</b> Using bugs without telling staff can mean a permanent ban.</li><li><b>1.4 Alts:</b> One account per player, no sharing. Deliberate alts get banned.</li><li><b>1.5 Disruption:</b> Causing lag on purpose or harming our services can mean a permanent ban.</li></ul>
+      <h3>2. Behavior and chat</h3>
+      <ul><li><b>2.1 Naming:</b> Nations must match a real current or past nation, region, province or large area, with the capital inside those borders. Town names can't be inappropriate, toxic or offensive, and a real place name goes to the town closest to that place. Usernames, nicknames, skins and titles can't be advertising, explicit or inappropriate.</li><li><b>2.2 Raiding:</b> Raiding and stealing are allowed. Protect your stuff.</li><li><b>2.3 Spam:</b> Don't repeat messages or disrupt chat.</li><li><b>2.4 Behavior:</b> No bullying, hate speech, encouraging self-harm or violence, sexual content or harmful false claims about people. Grooming or inappropriate relationships are strictly banned, on and off the server.</li><li><b>2.5 Impersonation:</b> Don't impersonate players, towns or nations.</li><li><b>2.6 Personal information:</b> Never share someone's personal information without explicit permission, or use it to threaten anyone.</li><li><b>2.7 Links:</b> No malicious, sexual or extremely violent links, or links that help break rules.</li><li><b>2.8 Advertising:</b> Only server-related advertising.</li><li><b>2.9 Real-money trading:</b> No selling in-game items or services for real money, or the reverse.</li><li><b>2.10 Language:</b> Keep global chat in English. Other languages go in private channels.</li></ul>
+      <h3>3. Griefing</h3>
+      <ul><li><b>3.1 Near claims:</b> Don't damage land in or within 5 chunks of a claim, and don't found towns near others to disrupt them. That's a warning and rollback first, and repeat offenses can mean a permanent ban.</li><li><b>3.2 Wilderness:</b> Changing unclaimed land away from claims is allowed, but anyone can ask for major damage to be rolled back. Don't break railways or ice roads linking two towns.</li><li><b>3.3 Claims:</b> No claim blocking. Towns can't have unclaimed chunks inside their borders, and overclaims can't split a town. Ships are exempt, and ocean outpost arms are fine if unclaimed later.</li><li><b>3.4 Blocks:</b> Taking valuable blocks is allowed, unless they're easy to get.</li><li><b>3.5 Terraforming:</b> Don't make changes visible on the map, like draining lakes or building islands. Vertical terraforming is fine.</li><li><b>3.6 Map art:</b> Allowed if it doesn't interfere with towns or involve major terraforming, and it must follow section 2. Greenland is recommended. Elsewhere, claim it.</li></ul>
     </section>
   </article>
 </div>
