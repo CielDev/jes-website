@@ -108,6 +108,10 @@ dialog .btn{width:100%}
 .ranks i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--muted);color:var(--bg);font-style:normal;font-weight:800;font-size:15px}
 #rankInfo{width:min(calc(100vw - 32px),980px)}
 #rankInfo .top{margin-bottom:8px}
+@keyframes fadeIn{from{opacity:0}}
+@keyframes fadeOut{to{opacity:0}}
+#rankInfo[open],#rankInfo[open]::backdrop{animation:fadeIn .25s ease}
+#rankInfo.closing,#rankInfo.closing::backdrop{animation:fadeOut .25s ease forwards}
 #rankGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
 .rank{overflow:hidden;background:var(--bg);border:1px solid var(--line);border-radius:10px}
 .rank header{padding:10px;background:var(--grad);color:#1a1020;text-align:center}
@@ -389,7 +393,14 @@ dialog .btn{width:100%}
       c.appendChild(h);c.appendChild(u);$("rankGrid").appendChild(c);
     });
     $("ranksBtn").addEventListener("click",function(){$("rankInfo").showModal()});
-    $("rankX").addEventListener("click",function(){$("rankInfo").close()});
+    function closeRanks(){
+      var d=$("rankInfo");
+      d.classList.add("closing");
+      setTimeout(function(){d.classList.remove("closing");d.close()},250);
+    }
+    $("rankX").addEventListener("click",closeRanks);
+    $("rankInfo").addEventListener("cancel",function(e){e.preventDefault();closeRanks()});
+    $("rankInfo").addEventListener("click",function(e){if(e.target===this)closeRanks()});
     $("ipBox").addEventListener("click",function(){
       navigator.clipboard.writeText("jes.earth").then(function(){
         $("ipText").textContent="Copied!";
