@@ -65,13 +65,13 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 .banner p{color:var(--gold);font-weight:600}
 
 #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
-.card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;overflow:hidden;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .card img{width:100%;max-width:220px;aspect-ratio:1;object-fit:contain;image-rendering:pixelated}
 .card h2{margin-top:12px;font-size:20px}
 .card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
-.ribbon{position:absolute;top:30px;right:-52px;width:220px;padding:6px 0;background:var(--red);color:#fff;font-weight:700;font-size:15px;text-align:center;transform:rotate(45deg)}
+.ribbon{position:absolute;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
 .msg{grid-column:1/-1;padding:48px 0;color:var(--muted);text-align:center}
 
 #scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6)}
@@ -352,6 +352,13 @@ dialog .btn{width:100%}
         steve(bx,by,face,0,false,0);
       }
     }
+    var S=[],SPARK=["#b05cff","#e43a96","#ff7ad9","#d6b3ff","#fff"];
+    window.sparkle=function(x,y){
+      for(var i=0;i<46;i++){
+        var a=Math.random()*6.283,v=120+Math.random()*420;
+        S.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v-160,s:5+Math.random()*10,l:0,d:.6+Math.random()*.7,c:SPARK[i%5]});
+      }
+    };
     var last=performance.now();
     function tick(t){
       requestAnimationFrame(tick);
@@ -380,6 +387,16 @@ dialog .btn{width:100%}
         g.beginPath();g.moveTo(0,-p.s);g.quadraticCurveTo(p.s,0,0,p.s);g.quadraticCurveTo(-p.s,0,0,-p.s);g.fill();
         g.restore();
       });
+      for(var i=S.length-1;i>=0;i--){
+        var q=S[i];q.l+=dt/q.d;
+        if(q.l>=1){S.splice(i,1);continue}
+        q.vx*=1-2.2*dt;q.vy=q.vy*(1-2.2*dt)+260*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;
+        var z=q.s*Math.sin(Math.PI*Math.min(1,q.l*1.3+.15))*(.75+.25*Math.sin(s*30+q.d*40));
+        g.save();g.translate(q.x,q.y);g.rotate(q.l*4);g.globalAlpha=1-q.l*q.l;g.fillStyle=q.c;g.shadowColor=q.c;g.shadowBlur=10;
+        g.beginPath();
+        for(var k=0;k<8;k++){var a=k*.7854,e=k%2?z*.28:z;g[k?"lineTo":"moveTo"](Math.cos(a)*e,Math.sin(a)*e)}
+        g.closePath();g.fill();g.restore();
+      }
     }
     requestAnimationFrame(tick);
   })();
@@ -444,7 +461,7 @@ dialog .btn{width:100%}
         c.appendChild(el("div","price",money(p.pricing.price_final)));
         c.appendChild(el("p","",plain(p.description)));
         var b=el("button","btn","Add to cart");b.type="button";
-        b.addEventListener("click",function(){add(p.id)});
+        b.addEventListener("click",function(e){if(window.sparkle)window.sparkle(e.clientX,e.clientY);add(p.id)});
         c.appendChild(b);g.appendChild(c);
       });
     }).catch(function(){$("grid").innerHTML='<p class="msg">The store could not load. Please try again in a moment.</p>'});
