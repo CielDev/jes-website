@@ -106,7 +106,14 @@ dialog .btn{width:100%}
 .ranks{display:flex;align-items:center;gap:10px;margin:0 auto 32px;padding:6px;background:none;border:0;color:var(--muted);font-weight:600}
 .ranks:hover{color:var(--text)}
 .ranks i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--muted);color:var(--bg);font-style:normal;font-weight:800;font-size:15px}
+#rankInfo{width:min(calc(100vw - 32px),980px)}
 #rankInfo .top{margin-bottom:8px}
+#rankGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:12px}
+.rank{overflow:hidden;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+.rank header{padding:10px;background:var(--grad);color:#1a1020;text-align:center}
+.rank h4{font-family:"Minecraft","Outfit",sans-serif;font-size:20px;line-height:1.2;letter-spacing:.04em;text-transform:uppercase}
+.rank header span{font-size:14px;font-weight:700}
+.rank ul{padding:12px 12px 12px 30px;color:var(--muted);font-size:14px}
 
 .studio{display:grid;grid-template-columns:auto 1fr auto;gap:12px 24px;align-items:start;margin-bottom:40px;padding:24px 28px;border-radius:14px;background:linear-gradient(90deg,#7c2bb8,var(--pink) 55%,#f08a4b);color:#fff}
 .studio>img{grid-row:span 3;width:120px;height:auto;align-self:center}
@@ -196,7 +203,8 @@ dialog .btn{width:100%}
 
 <dialog id="rankInfo">
   <div class="top"><h3>Rank System</h3><button class="x" id="rankX" type="button" aria-label="Close">&times;</button></div>
-  <p>Rank details are coming soon.</p>
+  <p>Your rank is a free thank you for supporting the server. It depends on how much you have spent in total on the store, so every purchase moves you closer to the next one. Each rank gives its rewards once, when you reach it.</p>
+  <div id="rankGrid"></div>
 </dialog>
 
 <div id="scrim" hidden></div>
@@ -370,6 +378,15 @@ dialog .btn{width:100%}
     $("cartX").addEventListener("click",closeCart);
     $("scrim").addEventListener("click",closeCart);
     $("thanksX").addEventListener("click",function(){$("thanks").close()});
+    // name, total spent, gold ingots, uncommon keys for everyone online
+    [["Seed",2,64,0],["Leaf",10,128,1],["Blossom",15,256,2],["Earth",25,256,4],["Sky",30,256,2],["Lunar",40,256,2],["Solar",70,269,4],["Nebula",90,1024,6],["Galaxy",130,1024,8],["Stellar",179,1024,16],["Astral",259,2048,32]].forEach(function(r){
+      var c=el("article","rank"),h=el("header"),u=el("ul");
+      h.appendChild(el("h4","",r[0]));h.appendChild(el("span","","€"+r[1]+"+ total"));
+      u.appendChild(el("li","",r[2]+" gold ingots"));
+      if(r[3])u.appendChild(el("li","",r[3]+" uncommon "+(r[3]>1?"keys":"key")+" for everyone online"));
+      u.appendChild(el("li","","More perks coming soon"));
+      c.appendChild(h);c.appendChild(u);$("rankGrid").appendChild(c);
+    });
     $("ranksBtn").addEventListener("click",function(){$("rankInfo").showModal()});
     $("rankX").addEventListener("click",function(){$("rankInfo").close()});
     $("ipBox").addEventListener("click",function(){
