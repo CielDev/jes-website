@@ -77,7 +77,11 @@ html.menu #drawer{transform:none;visibility:visible}
 .ranks{animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .2s both}
 h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(32px,5vw,52px);line-height:1.2}
 h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.65))}
-#petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
+#petals,#actors{position:fixed;inset:0;width:100%;height:100%;pointer-events:none}
+#petals{z-index:1}
+#actors{z-index:5}
+main>*:not(.studio){position:relative;z-index:2}
+main>.studio{position:relative;z-index:0}
 .banner p{color:var(--gold);font-weight:600}
 
 #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;min-height:488px;margin-bottom:64px}
@@ -381,11 +385,12 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   })();
 </script>
 <canvas id="petals" aria-hidden="true"></canvas>
+<canvas id="actors" aria-hidden="true"></canvas>
 <script>
   /* cherry blossom branch and petals, pushed by the mouse, plus mini players around the page */
   (function(){
     if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-    var cv=document.getElementById("petals"),g=cv.getContext("2d"),W,H,dpr,mx=-999,my=-999,P=[];
+    var cv=document.getElementById("petals"),gb=cv.getContext("2d"),cf=document.getElementById("actors"),gf=cf.getContext("2d"),g=gb,W,H,dpr,mx=-999,my=-999,P=[];
     var COLORS=["#ffc4dd","#ffb0d0","#f99cc4","#ffd9e8"];
     var ts=1,ground=document.createElement("canvas"),blooms=[],tree=document.createElement("canvas"),T=tree.getContext("2d"),TOP=56,seed=7,PX=5;
     function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
@@ -414,7 +419,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     }
     grow(70,150,-.05,30,3);grow(100,88,-.12,62,3);grow(44,235,.02,30,2);grow(30,300,.08,16,2);grow(222,10,.05,44,2);
     function size(){
-      dpr=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr;
+      dpr=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=cf.width=W*dpr;cv.height=cf.height=H*dpr;
       ground.width=W;ground.height=56;
       var c=ground.getContext("2d");
       for(var i=0,n=W/2.2;i<n;i++){
@@ -586,16 +591,19 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       requestAnimationFrame(tick);
       var dt=Math.min(.05,(t-last)/1000),s=t/1000;last=t;
       var wind=12+Math.sin(s*.23)*18+Math.sin(s*.61)*8;
-      g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+      g=gf;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+      g=gb;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
       var ban=document.querySelector(".banner").getBoundingClientRect(),foot=document.querySelector(".studio").getBoundingClientRect();
       var floor=document.documentElement.scrollHeight-scrollY;
       ts=Math.max(.42,Math.min(1,(ban.left+70)/250));
       if(floor<H+60)g.drawImage(ground,0,floor-56);
+      g=gf;
       if(document.querySelector(".studio.in")){opener(mates[0],foot.left+46,foot.top,dt,s);
       if(W>800)opener(mates[2],foot.left+foot.width*.45,foot.top,dt,s);
       opener(mates[1],foot.right-46,foot.top,dt,s);
       if(dragon)flyDragon(dt,s,foot.right-46,foot.top,foot.right-82);}
       parkour(dt,s);
+      g=gb;
       g.drawImage(tree,0,TOP,600*ts,480*ts);
       P.forEach(function(p){
         var dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
@@ -610,6 +618,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
         g.beginPath();g.moveTo(0,-p.s);g.quadraticCurveTo(p.s,0,0,p.s);g.quadraticCurveTo(-p.s,0,0,-p.s);g.fill();
         g.restore();
       });
+      g=gf;
       for(var i=S.length-1;i>=0;i--){
         var q=S[i];q.l+=dt/q.d;
         if(q.l>=1){S.splice(i,1);continue}
