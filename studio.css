@@ -15,6 +15,7 @@
 .socials a:hover{background:var(--bg2);color:var(--gold);transform:translateY(-3px) rotate(-7deg)}
 .socials svg{width:22px;height:22px;fill:currentColor}
 @media(max-width:800px){
+  .studio-wrap .studio{text-align:center}
   .studio{grid-template-columns:1fr;justify-items:center;text-align:center}
   .studio{gap:18px}
   .s-mid,.s-side{align-items:center}
