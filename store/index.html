@@ -19,7 +19,7 @@ body{min-height:100vh;display:flex;flex-direction:column;background:var(--bg);co
 a{color:inherit;text-decoration:none}
 button{font:inherit;color:inherit;cursor:pointer}
 :focus-visible{outline:2px solid var(--gold);outline-offset:3px}
-.wrap{width:100%;max-width:1140px;margin:0 auto;padding:0 24px}
+.wrap{width:100%;max-width:1100px;margin:0 auto;padding:0 24px}
 
 nav{position:sticky;top:0;z-index:10;background:rgba(13,11,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
 nav .wrap{display:flex;align-items:center;gap:28px;height:64px;max-width:1600px}
@@ -56,7 +56,7 @@ html.menu #drawer{transform:none;visibility:visible}
 .btn:disabled{opacity:.5;cursor:default;transform:none}
 #cartBtn{margin-left:auto;height:44px;padding:.15em 18px 0}
 
-.banner{position:relative;display:flex;align-items:center;min-height:260px;margin:32px 0;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(100deg,#1a0f2e 0%,#3b1a5e 38%,#b52f8c 72%,#f08a4b 100%);animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
+.banner{position:relative;display:flex;align-items:center;height:260px;margin:24px 0 20px;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(100deg,#1a0f2e 0%,#3b1a5e 38%,#b52f8c 72%,#f08a4b 100%);animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
 .banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:repeating-linear-gradient(90deg,#2d1a12 0 16px,#3a2418 16px 32px);border-top:6px solid #4fae5a}
 .banner>div{position:relative;z-index:1}
 .b-sun{position:absolute;right:16%;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#ffe27a 0,rgba(255,210,100,.5) 45%,transparent 70%)}
@@ -73,7 +73,7 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 #petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
 .banner p{color:var(--gold);font-weight:600}
 
-#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;min-height:520px;margin-bottom:64px}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .card{opacity:0;transform:translateX(60px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
 .card.in{opacity:1;transform:none}
@@ -84,7 +84,7 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 .card .btn{width:100%}
 .ribbon{position:absolute;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
 /* tabs and premium */
-.tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 32px;padding:6px;width:fit-content;background:var(--bg2);border:1px solid var(--line);border-radius:14px;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .3s both}
+.tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 22px;padding:6px;width:fit-content;background:var(--bg2);border:1px solid var(--line);border-radius:14px;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .3s both}
 .tabs button{padding:10px 22px 8px;background:none;border:0;border-radius:10px;color:var(--muted);font-family:"Minecraft","Outfit",sans-serif;font-size:16px;letter-spacing:.04em;text-transform:uppercase;transition:color .2s,background .2s}
 .tabs button.on{background:var(--grad);color:#1a1020}
 .tabs button:not(.on):hover{color:var(--text)}
@@ -154,7 +154,7 @@ dialog label{display:flex;align-items:center;gap:8px;margin:12px 0 16px;color:va
 dialog .btn{width:100%}
 .err{margin:-6px 0 12px;color:#ff6b6b;font-size:14px}
 
-.ranks{display:flex;align-items:center;gap:10px;margin:0 auto 32px;padding:6px;background:none;border:0;color:var(--muted);font-weight:600}
+.ranks{display:flex;align-items:center;gap:10px;margin:0 auto 14px;padding:6px;background:none;border:0;color:var(--muted);font-weight:600}
 .ranks:hover{color:var(--text)}
 .ranks i{display:grid;place-items:center;width:24px;height:24px;border-radius:50%;background:var(--muted);color:var(--bg);font-style:normal;font-weight:800;font-size:15px}
 #rankInfo{width:min(calc(100vw - 32px),980px)}
@@ -190,7 +190,7 @@ dialog .btn{width:100%}
   #menuScrim,#drawer{display:block}
   .brand img{height:34px}
   #cartBtn{height:34px;font-size:15px;padding:.15em 12px 0;border-radius:10px}
-  .banner{min-height:190px;margin:20px 0;padding:24px;align-items:flex-start}
+  .banner{height:auto;min-height:190px;margin:20px 0;padding:24px;align-items:flex-start}
   .b-skin{right:-20px;height:270px;bottom:-90px}
   .b-crate.a{right:auto;left:42%;top:96px;width:60px}
   .b-crate.b,.b-crate.c{display:none}
