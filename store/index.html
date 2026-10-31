@@ -56,8 +56,8 @@ html.menu #drawer{transform:none;visibility:visible}
 .btn:disabled{opacity:.5;cursor:default;transform:none}
 #cartBtn{margin-left:auto;height:44px;padding:.15em 18px 0}
 
-.banner{position:relative;display:flex;align-items:center;height:260px;margin:24px 0 20px;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(100deg,#1a0f2e 0%,#3b1a5e 38%,#b52f8c 72%,#f08a4b 100%);animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
-.banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:repeating-linear-gradient(90deg,#2d1a12 0 16px,#3a2418 16px 32px);border-top:6px solid #4fae5a}
+.banner{position:relative;display:flex;align-items:center;height:260px;margin:24px 0 20px;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#2a1636 url("../img/store-banner.png") center/cover;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,15,46,.8),rgba(26,15,46,.35) 40%,transparent 60%)}
 .banner>div{position:relative;z-index:1}
 .b-sun{position:absolute;right:16%;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#ffe27a 0,rgba(255,210,100,.5) 45%,transparent 70%)}
 .b-skin{position:absolute;z-index:1;right:17%;bottom:-120px;height:390px;image-rendering:pixelated}
@@ -260,11 +260,6 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 
 <main class="wrap">
   <header class="banner">
-    <i class="b-sun"></i>
-    <img class="b-crate a" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
-    <img class="b-crate b" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
-    <img class="b-crate c" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
-    <img class="b-skin" src="../img/staff/ciel0beats.png" alt="">
     <div><h1>Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
   <div class="tabs" role="tablist">
@@ -824,5 +819,6 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     }else if(token)loadCart().catch(function(){});
   })();
 </script>
+<script src="../cursor.js"></script>
 </body>
 </html>
