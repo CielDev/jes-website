@@ -64,8 +64,10 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 #petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
 .banner p{color:var(--gold);font-weight:600}
 
-#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;min-height:520px;margin-bottom:64px}
 .card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+.card{opacity:0;transform:translateX(60px);transition:opacity .9s cubic-bezier(.2,.7,.2,1),transform .9s cubic-bezier(.2,.7,.2,1)}
+.card.in{opacity:1;transform:none}
 .card img{width:100%;max-width:220px;aspect-ratio:1;object-fit:contain;image-rendering:pixelated}
 .card h2{margin-top:12px;font-size:20px}
 .card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
@@ -193,7 +195,7 @@ dialog .btn{width:100%}
 <main class="wrap">
   <header class="banner"><div><h1>Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
-  <section id="grid"><p class="msg">Loading...</p></section>
+  <section id="grid"></section>
   <footer class="studio">
     <img src="../img/logo.png" alt="">
     <button class="ipbox" id="ipBox" type="button" title="Click to copy"><b id="ipText">jes.earth</b><span id="onlineNow">–</span></button>
@@ -538,12 +540,20 @@ dialog .btn{width:100%}
     /* products */
     api("/store/products",{guest:true}).then(function(list){
       var g=$("grid");g.textContent="";
-      PACKAGES.forEach(function(k){
+      PACKAGES.forEach(function(k,n){
         var p=list.find(function(x){return x.id===k.id});
         if(!p)return;
         products[p.id]=p;
         var c=el("article","card"),img=el("img");
-        img.src=p.image_url;img.alt="";
+        img.alt="";
+        // slide in only once the picture is ready
+        (function(c,img,n){
+          var done=false;
+          function show(){if(done)return;done=true;c.style.transitionDelay=n*.15+"s";requestAnimationFrame(function(){c.classList.add("in")})}
+          img.onload=img.onerror=show;
+          setTimeout(show,3000);
+        })(c,img,n);
+        img.src=p.image_url;
         c.appendChild(img);
         if(k.ribbon)c.appendChild(el("div","ribbon",k.ribbon));
         c.appendChild(el("h2","",p.name));
