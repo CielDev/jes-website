@@ -55,9 +55,6 @@ nav .wrap{display:flex;align-items:center;gap:28px;height:64px}
 .btn.primary{background:var(--grad);color:#1a1020;border:0;padding:calc(20px + .1em) 36px calc(20px - .1em);box-shadow:inset 0 -4px 0 rgba(0,0,0,.3)}
 .btn.discord{position:relative;overflow:hidden;isolation:isolate;color:#d6ecff;border-color:#a8d4ff;background:rgba(168,212,255,.08);transition:transform .15s,background .3s,border-color .3s,color .3s,box-shadow .3s}
 .btn.discord:hover{background:#5865F2;border-color:#5865F2;color:#fff;box-shadow:0 6px 24px rgba(88,101,242,.45)}
-.btn.discord .bub{position:absolute;bottom:-20px;left:var(--x);width:var(--s);height:var(--s);border-radius:50%;background:rgba(255,255,255,.28);border:1px solid rgba(255,255,255,.45);opacity:0;z-index:-1;pointer-events:none}
-.btn.discord:hover .bub{animation:bubble var(--d) ease-in infinite var(--l)}
-@keyframes bubble{0%{transform:translateY(0) scale(.6);opacity:0}15%{opacity:1}100%{transform:translateY(-130px) scale(1.1);opacity:0}}
 nav .btn.primary{height:44px;padding:.2em 26px 0;font-size:20px;border-radius:12px;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);color:#1a1020}
 .cta .btn{font-size:26px;padding:calc(22px + .1em) 44px calc(22px - .1em)}
 .cta .btn.primary{padding:calc(24px + .1em) 46px calc(24px - .1em)}
@@ -82,13 +79,6 @@ html.menu #drawer{transform:none;visibility:visible}
 .dr-more ul{min-height:0;overflow:hidden;list-style:none;padding:0}
 .dr-more a{display:flex;align-items:center;justify-content:space-between;min-height:44px;padding:0 8px 0 20px;color:var(--muted);font-size:17px}
 
-/* Cherry petals around the IP button */
-.ipwrap{position:relative;display:inline-flex;isolation:isolate}
-.ipwrap #ip{z-index:1}
-.ipwrap canvas{position:absolute;left:-40px;top:-34px;width:calc(100% + 80px);height:calc(100% + 68px);z-index:-1;image-rendering:pixelated;pointer-events:none}
-.ipwrap .pt{position:absolute;z-index:-1;width:var(--s);height:var(--s);background:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%206%206%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%222%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%225%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%225%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3C%2Fsvg%3E") center/contain no-repeat;image-rendering:pixelated;pointer-events:none;animation:petal var(--d) ease-in-out var(--l) infinite}
-.ipwrap .pt.b{background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%206%206%22%20shape-rendering%3D%22crispEdges%22%3E%3Crect%20x%3D%221%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%220%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%221%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%220%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23ffc4dd%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%222%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%221%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%223%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%222%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23f99cc4%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%224%22%20y%3D%224%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3Crect%20x%3D%223%22%20y%3D%225%22%20width%3D%221%22%20height%3D%221%22%20fill%3D%22%23d9578f%22%2F%3E%3C%2Fsvg%3E")}
-@keyframes petal{0%,100%{transform:translate(0,0) rotate(var(--r))}50%{transform:translate(var(--x),-7px) rotate(calc(var(--r) + 25deg))}}
 
 /* Hero */
 .hero{position:relative;display:flex;align-items:center;min-height:clamp(520px,80vh,740px);padding:72px 0;overflow:hidden;border-bottom:1px solid var(--line);background:#000}
@@ -102,7 +92,7 @@ nav .wrap,.hero .wrap{max-width:1600px}
 h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(34px,5.2vw,68px);line-height:1.2;font-weight:700}
 h1 span{background:linear-gradient(90deg,var(--pink),var(--gold),var(--pink)) 0 0/200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent}
 .hero p{margin:22px 0 34px;color:#cfc9dc;font-size:22px;line-height:1.55}
-.cta{display:flex;gap:30px 48px;justify-content:flex-start;flex-wrap:wrap}
+.cta{display:flex;gap:14px;justify-content:flex-start;flex-wrap:wrap}
 
 /* Stats under the hero */
 .stats{display:grid;grid-template-columns:repeat(5,1fr);gap:32px 24px;max-width:1280px;margin:0 auto;padding:72px 24px;text-align:center}
@@ -206,7 +196,6 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .stats div:last-child{grid-column:1/-1}
   .hero p{font-size:19px;margin:18px 0 28px}
   .cta{flex-direction:column;align-items:stretch}
-  .ipwrap{display:flex}
   .cta .btn,.cta .btn.primary{font-size:20px;padding:calc(20px + .1em) 24px calc(20px - .1em);width:100%}
   .feat h2{font-size:clamp(24px,7.5vw,34px)}
   .feat p{font-size:18px}
@@ -302,8 +291,8 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       <h1>The <span>Earth</span>,<br>in Minecraft.</h1>
       <p>Explore a 1:300 scale Minecraft Earth. Build a town, trade for gold, and lead your nation.</p>
       <div class="cta">
-        <span class="ipwrap"><canvas aria-hidden="true"></canvas><button class="btn primary" id="ip" type="button" title="Click to copy">IP: jes.earth</button><i class="pt" style="left:-10px;top:-12px;--s:18px;--r:-20deg;--x:4px;--d:5s;--l:0s"></i><i class="pt b" style="left:18%;top:-14px;--s:14px;--r:40deg;--x:-5px;--d:6s;--l:-2s"></i><i class="pt" style="left:62%;top:-13px;--s:16px;--r:10deg;--x:6px;--d:5.5s;--l:-1s"></i><i class="pt b" style="left:-13px;top:calc(100% - 16px);--s:16px;--r:60deg;--x:-4px;--d:6.5s;--l:-3s"></i><i class="pt" style="left:30%;top:calc(100% - 4px);--s:14px;--r:-35deg;--x:5px;--d:5s;--l:-4s"></i><i class="pt b" style="left:78%;top:calc(100% - 8px);--s:18px;--r:15deg;--x:-6px;--d:6s;--l:-1.5s"></i><i class="pt" style="left:calc(100% - 6px);top:-10px;--s:16px;--r:-50deg;--x:5px;--d:5.5s;--l:-2.5s"></i><i class="pt b" style="left:calc(100% - 10px);top:55%;--s:14px;--r:80deg;--x:-4px;--d:6s;--l:-.5s"></i></span>
-        <a class="btn discord" href="https://discord.gg/8ngbqfhkWt"><i class="bub" style="--x:34%;--s:10px;--d:1.5s;--l:-0.9s"></i><i class="bub" style="--x:23%;--s:7px;--d:1.5s;--l:-0.9s"></i><i class="bub" style="--x:41%;--s:6px;--d:1.6s;--l:-1.2s"></i><i class="bub" style="--x:39%;--s:8px;--d:2.2s;--l:-0.6s"></i><i class="bub" style="--x:7%;--s:10px;--d:2.2s;--l:-0.4s"></i><i class="bub" style="--x:43%;--s:10px;--d:2.0s;--l:-1.6s"></i><i class="bub" style="--x:51%;--s:7px;--d:2.2s;--l:-0.7s"></i><i class="bub" style="--x:53%;--s:14px;--d:1.6s;--l:-0.5s"></i><i class="bub" style="--x:39%;--s:7px;--d:2.3s;--l:-1.8s"></i><i class="bub" style="--x:74%;--s:10px;--d:1.4s;--l:-0.6s"></i><i class="bub" style="--x:43%;--s:14px;--d:1.6s;--l:-0.9s"></i><i class="bub" style="--x:40%;--s:12px;--d:1.9s;--l:-0.5s"></i>Discord</a>
+        <button class="btn primary" id="ip" type="button" title="Click to copy">IP: jes.earth</button>
+        <a class="btn discord" href="https://discord.gg/8ngbqfhkWt">Discord</a>
       </div>
     </div>
   </div>
@@ -503,40 +492,6 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     }
     online();towns();
     setInterval(online,10000);
-  })();
-</script>
-<script>
-  /* pixel cherry blossom branches framing the IP button */
-  (function(){
-    var cv=document.querySelector(".ipwrap canvas");if(!cv)return;
-    var g=cv.getContext("2d"),PX=4,PINK=["#ffd9e8","#ffc4dd","#ffb0d0","#f99cc4","#e9789f"];
-    function draw(){
-      var W=cv.clientWidth,H=cv.clientHeight,seed=11;
-      function rnd(){seed=(seed*16807)%2147483647;return seed/2147483647}
-      cv.width=Math.round(W/PX);cv.height=Math.round(H/PX);
-      var w=cv.width,hh=cv.height,ox=10,oy=8.5,bw=w-20,bh=hh-17;   // button area in canvas pixels
-      g.clearRect(0,0,w,hh);
-      function dot(x,y,c){g.fillStyle=c;g.fillRect(Math.round(x),Math.round(y),1,1)}
-      function bloom(x,y,r){for(var i=0;i<r*r*2.2;i++){var a=rnd()*6.283,d=rnd()*r;dot(x+Math.cos(a)*d,y+Math.sin(a)*d*.8,PINK[Math.floor(rnd()*PINK.length)])}}
-      function branch(pts){
-        for(var i=0;i<pts.length-1;i++){
-          var a=pts[i],b=pts[i+1],n=Math.max(Math.abs(b[0]-a[0]),Math.abs(b[1]-a[1]));
-          for(var k=0;k<=n;k++){var x=a[0]+(b[0]-a[0])*k/n,y=a[1]+(b[1]-a[1])*k/n;dot(x,y,"#6b4230");dot(x,y+1,"#4a2c20")}
-        }
-        pts.forEach(function(p,i){if(i)bloom(p[0],p[1],3+rnd()*2.5)});
-      }
-      // one branch hugging the top-left corner, one the bottom-right
-      branch([[ox-9,oy+bh*.9],[ox-6,oy+bh*.5],[ox-4,oy+2],[ox+2,oy-5],[ox+bw*.18,oy-6],[ox+bw*.34,oy-4],[ox+bw*.5,oy-6]]);
-      branch([[ox+bw+9,oy+bh*.1],[ox+bw+6,oy+bh*.5],[ox+bw+4,oy+bh-2],[ox+bw-2,oy+bh+5],[ox+bw*.82,oy+bh+6],[ox+bw*.66,oy+bh+4],[ox+bw*.5,oy+bh+6]]);
-      // loose petals all round the edge
-      for(var i=0;i<70;i++){
-        var t=rnd(),side=Math.floor(rnd()*4),x,y,o=2+rnd()*7;
-        if(side===0){x=ox+t*bw;y=oy-o}else if(side===1){x=ox+t*bw;y=oy+bh+o}else if(side===2){x=ox-o;y=oy+t*bh}else{x=ox+bw+o;y=oy+t*bh}
-        dot(x,y,PINK[Math.floor(rnd()*PINK.length)]);if(rnd()<.5)dot(x+1,y,PINK[1]);
-      }
-    }
-    draw();addEventListener("resize",draw);
-    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(draw);
   })();
 </script>
 <script>

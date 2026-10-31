@@ -20,3 +20,7 @@
   .studio{gap:18px}
   .s-mid,.s-side{align-items:center}
 }
+
+/* diamond spear cursor */
+html,body{cursor:url("img/spear.png") 1 1,auto}
+a,button,label,summary,[role=button],.btn{cursor:url("img/spear.png") 1 1,pointer}
