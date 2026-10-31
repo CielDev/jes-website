@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Wiki | Just an Earth Server</title>
+<meta name="description" content="Guides for Just an Earth Server: towns, nations, gold, shops and more.">
+<link rel="icon" type="image/png" href="../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../site.css">
+<style>
+@font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+.doc{display:grid;grid-template-columns:220px 1fr;gap:40px;padding-top:40px;padding-bottom:56px;max-width:1140px}
+aside.side{position:sticky;top:88px;align-self:start}
+aside.side a{display:block;padding:6px 12px;border-left:2px solid var(--line);color:var(--muted)}
+aside.side a:hover,aside.side a.on{border-color:var(--pink);color:var(--text)}
+article{min-width:0}
+section{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
+section:last-child{border:0}
+h2{font-size:26px;margin-bottom:10px}
+article p,article ul{margin-bottom:12px;color:#d9d3e6}
+article ul{padding-left:22px}
+article li{margin-bottom:6px}
+article a{color:#ff7fc2}
+article a:hover{text-decoration:underline}
+table{border-collapse:collapse;margin-bottom:14px}
+td{padding:6px 24px 6px 0;border-bottom:1px solid var(--line)}
+td:first-child{color:var(--muted)}
+h1{margin-bottom:24px}
+@media(max-width:800px){.doc{grid-template-columns:1fr;gap:20px}aside.side{position:static;display:flex;flex-wrap:wrap;gap:6px}aside.side a{padding:4px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+    <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a></li>
+          <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+      <a href="../store/">Store</a>
+      <a class="on" href="../wiki/">Wiki</a>
+      <a href="../map/">Map</a>
+      <a href="../how-to-join/">How to Join</a>
+    </div>
+    <a class="btn" href="../how-to-join/">Play Now</a>
+  </div>
+</nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu">&times;</button>
+  </div>
+  <a href="../store/">Store</a>
+  <a href="../wiki/">Wiki</a>
+  <a href="../map/">Map</a>
+  <a href="../how-to-join/">How to Join</a>
+  <small>Community</small>
+  <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>
+  <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>
+  <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a>
+  <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a>
+</aside>
+
+<div class="wrap doc">
+  <aside class="side" aria-label="Wiki pages">
+    <a href="#welcome">Welcome</a>
+    <a href="#join">How to join</a>
+    <a href="#town">Town guide</a>
+    <a href="#claim">Claiming land</a>
+    <a href="#nation">Nation guide</a>
+    <a href="#map">Map guide</a>
+    <a href="#gold">Gold</a>
+    <a href="#shops">Shops</a>
+    <a href="#mcmmo">mcMMO</a>
+    <a href="#ranks">Ranks and store</a>
+  </aside>
+  <article>
+    <h1>JES Wiki</h1>
+    <section id="welcome">
+      <h2>Welcome</h2>
+      <p>Just an Earth Server (JES) is a Minecraft Earth server at 1:300 scale. Pick a spot on the map, build a town, grow it into a nation and trade with everyone else. The world never resets, and it has been running since 2020.</p>
+<table><tr><td>IP</td><td><code>jes.earth</code></td></tr><tr><td>Bedrock port</td><td><code>19132</code></td></tr><tr><td>Online since</td><td>2020</td></tr><tr><td>Map scale</td><td>1:300</td></tr><tr><td>Version</td><td>Latest</td></tr></table>
+<p>New here? Read <a href="#town">Town guide</a> first, then <a href="#gold">Gold</a>. For server history and lore, see the <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>.</p>
+    </section>
+    <section id="join">
+      <h2>How to join</h2>
+      <p>Add <code>jes.earth</code> to your server list. Bedrock players also need port <code>19132</code>. Full steps are on the <a href="../how-to-join/">How to Join</a> page.</p>
+    </section>
+    <section id="town">
+      <h2>Town guide</h2>
+      <p>Towns run on the Towny plugin. A town is a group of players sharing claimed land, and it's the best way to protect your builds.</p>
+<ul><li><code>/town new &lt;name&gt;</code> creates a town where you stand.</li><li><code>/town add &lt;player&gt;</code> invites someone.</li><li><code>/town join &lt;name&gt;</code> joins an open town.</li><li><code>/town spawn</code> takes you home.</li><li><code>/town leave</code> leaves your town.</li></ul>
+<p>Not ready to found one? Find a town near you on the <a href="../map/">map</a> and ask to join. Selling houses and apartments to members is a great way to earn.</p>
+    </section>
+    <section id="claim">
+      <h2>Claiming land</h2>
+      <p>Land is claimed in chunks, the 16x16 squares of the world. Turn on Chunks in the <a href="../map/">map</a> panel to see them.</p>
+<ul><li><code>/town claim</code> claims the chunk you're standing in.</li><li><code>/town unclaim</code> gives it back.</li><li><code>/plot forsale &lt;price&gt;</code> puts a plot up for sale.</li><li><code>/plot claim</code> buys the plot you're on.</li></ul>
+<p>Claimed land is protected from anyone outside your town.</p>
+    </section>
+    <section id="nation">
+      <h2>Nation guide</h2>
+      <p>When towns team up, they form a nation. Nations are where the politics starts: alliances, treaties and years of diplomacy.</p>
+<ul><li><code>/nation new &lt;name&gt;</code> founds a nation with your town as capital.</li><li><code>/nation add &lt;town&gt;</code> invites a town.</li><li><code>/nation ally add &lt;nation&gt;</code> adds an ally.</li><li><code>/nation leave</code> takes your town out.</li></ul>
+    </section>
+    <section id="map">
+      <h2>Map guide</h2>
+      <p>The <a href="../map/">live map</a> shows the whole world as a globe that unrolls into a flat map when you zoom in.</p>
+<ul><li>Player heads show who is online and where. Click one to fly to them.</li><li>Colored areas are claims. Click one for town details.</li><li>The Map panel toggles players, claims, landmarks, chunks and the flat view.</li><li>Use the online counter to open the full player list.</li></ul>
+    </section>
+    <section id="gold">
+      <h2>Gold</h2>
+      <p>Gold ingots are the server currency. There's no fake money to grind. Prices are set by players, not the server.</p>
+<p>You earn gold by mining, voting and selling goods in player shops.</p>
+    </section>
+    <section id="shops">
+      <h2>Shops</h2>
+      <p>Everything on the market is player-run, so what something costs depends on who is selling it. Set up a shop in your town, price your goods fairly and undercut your rivals.</p>
+    </section>
+    <section id="mcmmo">
+      <h2>mcMMO</h2>
+      <p>mcMMO adds skills that level up as you play: mine to get better at mining, fight to get better at fighting. Higher levels unlock abilities.</p>
+<ul><li><code>/mcstats</code> shows your skills.</li><li><code>/mctop</code> shows the top players.</li></ul>
+    </section>
+    <section id="ranks">
+      <h2>Ranks and store</h2>
+      <p>Ranks are a free thank you for supporting the server. They're based on your total spend in the <a href="../store/">store</a>, from Seed up to Astral. Open "How does the rank system work?" there for the full list.</p>
+    </section>
+  </article>
+</div>
+
+<footer><div class="wrap">Copyright © 2026 Just an Earth Server. Not affiliated with Mojang or Microsoft.</div></footer>
+
+<script src="../site.js"></script>
+</body>
+</html>
