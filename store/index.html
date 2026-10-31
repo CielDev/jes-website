@@ -378,9 +378,10 @@ dialog .btn{width:100%}
     $("cartX").addEventListener("click",closeCart);
     $("scrim").addEventListener("click",closeCart);
     $("thanksX").addEventListener("click",function(){$("thanks").close()});
-    // name, total spent, gold ingots, uncommon keys for everyone online
-    [["Seed",2,64,0],["Leaf",10,128,1],["Blossom",15,256,2],["Earth",25,256,4],["Sky",30,256,2],["Lunar",40,256,2],["Solar",70,269,4],["Nebula",90,1024,6],["Galaxy",130,1024,8],["Stellar",179,1024,16],["Astral",259,2048,32]].forEach(function(r){
+    // name, total spent, gold ingots, uncommon keys for everyone online, in-game tag colors
+    [["Seed",2,64,0,"#8fbf8f,#a5d0a0"],["Leaf",10,128,1,"#6fdc7f,#8fe89a"],["Blossom",15,256,2,"#e6b3f0,#f3c6ee"],["Earth",25,256,4,"#2fb457,#4fce6f"],["Sky",30,256,2,"#a8dcf0,#c4ecf8"],["Lunar",40,256,2,"#b9a4f0,#cdbcf7"],["Solar",70,269,4,"#ffd23c,#ff9a4a"],["Nebula",90,1024,6,"#ff4d4d,#ff8a5a"],["Galaxy",130,1024,8,"#b07cff,#e81fd0"],["Stellar",179,1024,16,"#ff8a3c,#e81fb0"],["Astral",259,2048,32,"#7df0ff,#22e0d0"]].forEach(function(r){
       var c=el("article","rank"),h=el("header"),u=el("ul");
+      h.style.background="linear-gradient(90deg,"+r[4]+")";
       h.appendChild(el("h4","",r[0]));h.appendChild(el("span","","€"+r[1]+"+ total"));
       u.appendChild(el("li","",r[2]+" gold ingots"));
       if(r[3])u.appendChild(el("li","",r[3]+" uncommon "+(r[3]>1?"keys":"key")+" for everyone online"));
