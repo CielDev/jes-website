@@ -56,9 +56,18 @@ html.menu #drawer{transform:none;visibility:visible}
 .btn:disabled{opacity:.5;cursor:default;transform:none}
 #cartBtn{margin-left:auto;height:44px;padding:.15em 18px 0}
 
-.banner{position:relative;display:flex;align-items:center;min-height:240px;margin:32px 0;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#000 url("../img/banner.jpg") center/cover}
-.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,11,18,.85),rgba(13,11,18,.2))}
-.banner div{position:relative;z-index:1}
+.banner{position:relative;display:flex;align-items:center;min-height:260px;margin:32px 0;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:linear-gradient(100deg,#1a0f2e 0%,#3b1a5e 38%,#b52f8c 72%,#f08a4b 100%);animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
+.banner::after{content:"";position:absolute;left:0;right:0;bottom:0;height:34px;background:repeating-linear-gradient(90deg,#2d1a12 0 16px,#3a2418 16px 32px);border-top:6px solid #4fae5a}
+.banner>div{position:relative;z-index:1}
+.b-sun{position:absolute;right:16%;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#ffe27a 0,rgba(255,210,100,.5) 45%,transparent 70%)}
+.b-skin{position:absolute;z-index:1;right:17%;bottom:-120px;height:390px;image-rendering:pixelated}
+.b-crate{position:absolute;z-index:1;image-rendering:pixelated;animation:bob 4s ease-in-out infinite}
+.b-crate.a{right:6%;top:64px;width:110px}
+.b-crate.b{right:39%;top:32px;width:76px;animation-delay:-1.3s}
+.b-crate.c{right:44%;bottom:44px;width:96px;animation-delay:-2.6s}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-12px) rotate(3deg)}}
+@keyframes slideIn{from{opacity:0;transform:translateX(60px)}to{opacity:1;transform:none}}
+.ranks{animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .2s both}
 h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(32px,5vw,52px);line-height:1.2}
 h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 0 rgba(0,0,0,.65))}
 #petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
@@ -143,7 +152,10 @@ dialog .btn{width:100%}
   #menuScrim,#drawer{display:block}
   .brand img{height:34px}
   #cartBtn{height:34px;font-size:15px;padding:.15em 12px 0;border-radius:10px}
-  .banner{min-height:170px;margin:20px 0;padding:24px}
+  .banner{min-height:190px;margin:20px 0;padding:24px;align-items:flex-start}
+  .b-skin{right:-20px;height:270px;bottom:-90px}
+  .b-crate.a{right:auto;left:42%;top:96px;width:60px}
+  .b-crate.b,.b-crate.c{display:none}
   #grid{grid-template-columns:1fr}
   .studio{grid-template-columns:1fr;justify-items:center;text-align:center}
   .studio{gap:18px}
@@ -196,7 +208,13 @@ dialog .btn{width:100%}
 </aside>
 
 <main class="wrap">
-  <header class="banner"><div><h1>Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
+  <header class="banner">
+    <i class="b-sun"></i>
+    <img class="b-crate a" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
+    <img class="b-crate b" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
+    <img class="b-crate c" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt="">
+    <img class="b-skin" src="../img/staff/ciel0beats.png" alt="">
+    <div><h1>Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
   <section id="grid"></section>
   <footer class="studio">
@@ -556,7 +574,7 @@ dialog .btn{width:100%}
         // slide in only once the picture is ready
         (function(c,img,n){
           var done=false;
-          function show(){if(done)return;done=true;c.style.transitionDelay=n*.15+"s";requestAnimationFrame(function(){c.classList.add("in")})}
+          function show(){if(done)return;done=true;c.style.transitionDelay=.45+n*.15+"s";requestAnimationFrame(function(){c.classList.add("in")})}
           img.onload=img.onerror=show;
           setTimeout(show,3000);
         })(c,img,n);
