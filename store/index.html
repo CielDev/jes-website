@@ -56,9 +56,17 @@ html.menu #drawer{transform:none;visibility:visible}
 .btn:disabled{opacity:.5;cursor:default;transform:none}
 #cartBtn{margin-left:auto;height:44px;padding:.15em 18px 0}
 
-.banner{position:relative;display:flex;align-items:center;height:260px;margin:24px 0 20px;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#2a1636 url("../img/store-banner3.png") center/cover;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
+.banner{position:relative;display:flex;align-items:center;height:260px;margin:24px 0 20px;padding:32px 64px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#2a1636 center/cover;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) both}
 .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(26,15,46,.8),rgba(26,15,46,.35) 40%,transparent 60%)}
 .banner>div{position:relative;z-index:1}
+.banner{touch-action:pan-y;transition:background-image .35s ease}
+.b-arrow{position:absolute;z-index:2;top:50%;width:38px;height:38px;margin-top:-19px;border:0;border-radius:10px;background:rgba(13,11,18,.55);color:#fff;font-size:22px;line-height:1}
+.b-arrow:hover{background:rgba(13,11,18,.85)}
+.b-arrow.l{left:10px}
+.b-arrow.r{right:10px}
+.banner>.b-dots{position:absolute;z-index:2;left:0;right:0;bottom:10px;display:flex;justify-content:center;gap:6px}
+.b-dots button{width:9px;height:9px;padding:0;border:0;border-radius:5px;background:rgba(255,255,255,.55);transition:width .25s}
+.b-dots button.on{width:26px;background:#fff}
 .b-sun{position:absolute;right:16%;top:-70px;width:240px;height:240px;border-radius:50%;background:radial-gradient(circle,#ffe27a 0,rgba(255,210,100,.5) 45%,transparent 70%)}
 .b-skin{position:absolute;z-index:1;right:17%;bottom:-120px;height:390px;image-rendering:pixelated}
 .b-crate{position:absolute;z-index:1;image-rendering:pixelated;animation:bob 4s ease-in-out infinite}
@@ -259,7 +267,10 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 </aside>
 
 <main class="wrap">
-  <header class="banner">
+  <header class="banner" id="banner">
+    <button class="b-arrow l" id="bPrev" type="button" aria-label="Previous banner">&#8249;</button>
+    <button class="b-arrow r" id="bNext" type="button" aria-label="Next banner">&#8250;</button>
+    <div class="b-dots" id="bDots"></div>
     <div><h1>Lucky<br>Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
   <div class="tabs" role="tablist">
@@ -342,6 +353,34 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <button class="btn" id="thanksX" type="button">Close</button>
 </dialog>
 
+<script>
+  /* banner picker: add a file to BANNERS to add a banner; the choice is remembered */
+  (function(){
+    var BANNERS=["store-banner4.png","store-banner3.png","store-banner2.png","store-banner1.png"];
+    var el=document.getElementById("banner"),dots=document.getElementById("bDots"),i=0,x0=null;
+    try{i=Math.min(BANNERS.length-1,+localStorage.getItem("jesBanner")||0)}catch(e){}
+    function show(n){
+      i=(n+BANNERS.length)%BANNERS.length;
+      el.style.backgroundImage='url("../img/'+BANNERS[i]+'")';
+      [].forEach.call(dots.children,function(d,k){d.classList.toggle("on",k===i)});
+      try{localStorage.setItem("jesBanner",i)}catch(e){}
+    }
+    BANNERS.forEach(function(f,k){
+      new Image().src="../img/"+f;
+      var d=document.createElement("button");d.type="button";d.setAttribute("aria-label","Banner "+(k+1));
+      d.addEventListener("click",function(){show(k)});dots.appendChild(d);
+    });
+    document.getElementById("bPrev").addEventListener("click",function(){show(i-1)});
+    document.getElementById("bNext").addEventListener("click",function(){show(i+1)});
+    el.addEventListener("pointerdown",function(e){x0=e.clientX});
+    addEventListener("pointerup",function(e){
+      if(x0===null)return;
+      var d=e.clientX-x0;x0=null;
+      if(Math.abs(d)>50)show(i+(d<0?1:-1));
+    });
+    show(i);
+  })();
+</script>
 <canvas id="petals" aria-hidden="true"></canvas>
 <script>
   /* cherry blossom branch and petals, pushed by the mouse, plus mini players around the page */
