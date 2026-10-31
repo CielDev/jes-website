@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Store | Just an Earth Server</title>
+<meta name="description" content="Get Lucky Crates for Just an Earth Server.">
+<link rel="icon" type="image/png" href="../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.paynow.gg/paynow-js/bundle.js" defer></script>
+<style>
+@font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+:root{--bg:#0d0b12;--bg2:#15121d;--line:#2a2536;--text:#f3f0f7;--muted:#a39db3;--pink:#E43A96;--gold:#FCD05C;--red:#dc2626;--grad:linear-gradient(90deg,var(--pink),var(--gold))}
+*{box-sizing:border-box;margin:0}
+[hidden]{display:none!important}
+body{min-height:100vh;display:flex;flex-direction:column;background:var(--bg);color:var(--text);font-family:"Outfit",system-ui,sans-serif;line-height:1.5;font-size:17px}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wrap{width:100%;max-width:1140px;margin:0 auto;padding:0 24px}
+
+nav{position:sticky;top:0;z-index:10;background:rgba(13,11,18,.88);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+nav .wrap{display:flex;align-items:center;gap:24px;height:64px;max-width:1600px}
+.brand img{height:44px;width:auto;display:block}
+.links{display:flex;gap:24px;font-size:16px;color:var(--muted)}
+.links a:hover{color:var(--text)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:48px;padding:.15em 24px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-weight:700;font-size:18px;line-height:1;letter-spacing:.04em;text-transform:uppercase;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s}
+.btn:hover{transform:translateY(-2px)}
+.btn:disabled{opacity:.5;cursor:default;transform:none}
+#cartBtn{margin-left:auto;height:44px;padding:.15em 18px 0}
+
+.banner{position:relative;display:flex;align-items:center;min-height:240px;margin:32px 0;padding:32px 40px;border:1px solid var(--line);border-radius:18px;overflow:hidden;background:#000 url("../img/banner.jpg") center/cover}
+.banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,11,18,.85),rgba(13,11,18,.2))}
+.banner div{position:relative;z-index:1}
+h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(32px,5vw,52px);line-height:1.2}
+.banner p{color:var(--gold);font-weight:600}
+
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
+.card{position:relative;display:flex;flex-direction:column;align-items:center;padding:24px;overflow:hidden;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+.card img{width:100%;max-width:220px;aspect-ratio:1;object-fit:contain;image-rendering:pixelated}
+.card h2{margin-top:12px;font-size:20px}
+.card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
+.card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
+.card .btn{width:100%}
+.ribbon{position:absolute;top:30px;right:-52px;width:220px;padding:6px 0;background:var(--red);color:#fff;font-weight:700;font-size:15px;text-align:center;transform:rotate(45deg)}
+.msg{grid-column:1/-1;padding:48px 0;color:var(--muted);text-align:center}
+
+#scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6)}
+#cart{position:fixed;top:0;right:0;bottom:0;z-index:21;display:flex;flex-direction:column;width:min(100vw,400px);padding:20px;background:var(--bg2);border-left:1px solid var(--line);transform:translateX(100%);visibility:hidden;transition:transform .28s ease,visibility .28s}
+#cart.open{transform:none;visibility:visible}
+.top{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.top h3{font-size:22px}
+.x{width:44px;height:44px;margin-right:-10px;background:none;border:0;font-size:28px;line-height:1;color:var(--muted)}
+#lines{flex:1;overflow-y:auto}
+.line{display:grid;grid-template-columns:56px 1fr auto;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--line)}
+.line img{width:56px;height:56px;object-fit:contain;image-rendering:pixelated}
+.line small{display:block;color:var(--muted);font-size:14px}
+.qty{display:flex;align-items:center;gap:6px}
+.qty button{width:32px;height:32px;padding:0;background:var(--line);border:0;border-radius:8px}
+.qty span{min-width:20px;text-align:center}
+.rm{grid-column:2;justify-self:start;padding:0;background:none;border:0;color:var(--muted);font-size:14px;text-decoration:underline}
+.deliver{display:flex;gap:12px;align-items:center;padding:14px 0}
+.deliver img{width:48px;height:48px;border-radius:6px;image-rendering:pixelated;background:var(--line)}
+.deliver b{display:block}
+.deliver small{display:block;color:var(--muted);font-size:13px;line-height:1.35}
+.link{padding:0;background:none;border:0;color:var(--gold);font-size:14px;font-weight:600}
+.total{display:flex;justify-content:space-between;margin-bottom:12px;font-size:20px;font-weight:700}
+#checkout{width:100%}
+
+dialog{width:min(calc(100vw - 32px),400px);margin:auto;padding:24px;color:var(--text);background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+dialog::backdrop{background:rgba(0,0,0,.6)}
+dialog h3{font-size:22px;margin-bottom:6px}
+dialog p{margin-bottom:16px;color:var(--muted);font-size:15px}
+dialog input[type=text]{width:100%;height:48px;padding:0 14px;font:inherit;color:var(--text);background:var(--bg);border:1px solid var(--line);border-radius:10px}
+dialog label{display:flex;align-items:center;gap:8px;margin:12px 0 16px;color:var(--muted);font-size:15px;cursor:pointer}
+dialog .btn{width:100%}
+.err{margin:-6px 0 12px;color:#ff6b6b;font-size:14px}
+
+footer{margin-top:auto;padding:28px 0;border-top:1px solid var(--line);background:var(--bg2);color:var(--muted);font-size:14px;text-align:center}
+footer div div{display:flex;flex-wrap:wrap;justify-content:center;gap:6px 20px;margin-bottom:10px}
+footer a:hover{color:var(--text)}
+
+@media(max-width:800px){
+  nav .wrap{gap:14px;height:60px}
+  .brand img{height:34px}
+  #cartBtn{height:34px;font-size:15px;padding:.15em 12px 0;border-radius:10px}
+  .banner{min-height:170px;margin:20px 0;padding:24px}
+  #grid{grid-template-columns:1fr}
+}
+@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a class="brand" href="../"><img src="../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links"><a href="../">Home</a><a href="../map/">Map</a></div>
+    <button class="btn" id="cartBtn" type="button">Cart <span id="count">0</span></button>
+  </div>
+</nav>
+
+<main class="wrap">
+  <header class="banner"><div><h1>Lucky Crates</h1><p>Open your luck on JES</p></div></header>
+  <section id="grid"><p class="msg">Loading...</p></section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <a href="https://paynow.gg/legal/terms-of-use" target="_blank" rel="noopener">Terms of Use</a>
+      <a href="https://paynow.gg/legal/buyer-agreement" target="_blank" rel="noopener">Buyer Agreement</a>
+      <a href="https://paynow.gg/legal/privacy-policy" target="_blank" rel="noopener">Privacy Policy</a>
+    </div>
+    <a href="https://paynow.gg" target="_blank" rel="noopener">Powered by PayNow.gg</a>
+    <p>Not affiliated with Mojang or Microsoft.</p>
+  </div>
+</footer>
+
+<div id="scrim" hidden></div>
+<aside id="cart" aria-label="Cart">
+  <div class="top"><h3>Your Cart</h3><button class="x" id="cartX" type="button" aria-label="Close cart">&times;</button></div>
+  <div id="lines"></div>
+  <div class="deliver" id="deliver" hidden>
+    <img id="head" alt="">
+    <div>
+      <b id="who"></b>
+      <small>Items are non transferable and non-refundable. Check this is your exact username.</small>
+      <button class="link" id="change" type="button">Change</button>
+    </div>
+  </div>
+  <div class="total"><span>Total</span><span id="total"></span></div>
+  <button class="btn" id="checkout" type="button" disabled>Checkout</button>
+</aside>
+
+<dialog id="login">
+  <form id="loginForm">
+    <h3>Who is this for?</h3>
+    <p>Enter the Minecraft username that gets the crates.</p>
+    <input type="text" id="username" placeholder="Username" maxlength="17" autocomplete="off" spellcheck="false" required>
+    <label><input type="checkbox" id="bedrock"> I play on Bedrock</label>
+    <p class="err" id="loginErr" hidden></p>
+    <button class="btn" type="submit">Continue</button>
+  </form>
+</dialog>
+
+<dialog id="thanks">
+  <h3>Thank you!</h3>
+  <p>Your crates are on the way. Keep a free inventory slot so they can be delivered.</p>
+  <button class="btn" id="thanksX" type="button">Close</button>
+</dialog>
+
+<script>
+  (function(){
+    var API="https://api.paynow.gg/v1",STORE="619669854303031296",BEDROCK="_";
+    // the packages on sale here, in display order
+    var PACKAGES=[
+      {id:"620068924448313344",ribbon:"40 extra crates!"},
+      {id:"620068296078655488"},
+      {id:"620039387698176000"}
+    ];
+    var $=function(id){return document.getElementById(id)};
+    var token=null,name=null,products={},cart=null,pending=null;
+    try{token=localStorage.getItem("jesToken");name=localStorage.getItem("jesName")}catch(e){}
+
+    function api(path,opts){
+      opts=opts||{};
+      var h={"x-paynow-store-id":STORE};
+      if(opts.body)h["content-type"]="application/json";
+      if(token&&!opts.guest)h.Authorization="customer "+token;
+      return fetch(API+path,{method:opts.method||"GET",headers:h,body:opts.body?JSON.stringify(opts.body):undefined}).then(function(r){
+        if(r.status===401&&token&&!opts.guest){logout();throw new Error("auth")}
+        if(!r.ok)throw new Error(r.status);
+        return r.status===204?null:r.json();
+      });
+    }
+    function money(c){return new Intl.NumberFormat("en-IE",{style:"currency",currency:"EUR"}).format(c/100)}
+    function logout(){
+      token=name=null;cart=null;
+      try{localStorage.removeItem("jesToken");localStorage.removeItem("jesName")}catch(e){}
+      render();
+    }
+    function plain(html){return (new DOMParser().parseFromString(html||"","text/html").querySelector("p")||{}).textContent||""}
+    function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+
+    /* products */
+    api("/store/products",{guest:true}).then(function(list){
+      var g=$("grid");g.textContent="";
+      PACKAGES.forEach(function(k){
+        var p=list.find(function(x){return x.id===k.id});
+        if(!p)return;
+        products[p.id]=p;
+        var c=el("article","card"),img=el("img");
+        img.src=p.image_url;img.alt="";
+        c.appendChild(img);
+        if(k.ribbon)c.appendChild(el("div","ribbon",k.ribbon));
+        c.appendChild(el("h2","",p.name));
+        c.appendChild(el("div","price",money(p.pricing.price_final)));
+        c.appendChild(el("p","",plain(p.description)));
+        var b=el("button","btn","Add to cart");b.type="button";
+        b.addEventListener("click",function(){add(p.id)});
+        c.appendChild(b);g.appendChild(c);
+      });
+    }).catch(function(){$("grid").innerHTML='<p class="msg">The store could not load. Please try again in a moment.</p>'});
+
+    /* cart */
+    function setLine(id,qty,increment){
+      return api("/store/cart/lines?product_id="+id+"&quantity="+qty+"&subscription=false&increment="+increment,{method:"PUT"}).then(loadCart);
+    }
+    function loadCart(){return api("/store/cart").then(function(c){cart=c;render()})}
+    function add(id){
+      if(!token){pending=id;$("login").showModal();return}
+      setLine(id,1,true).then(openCart).catch(function(){});
+    }
+    function openCart(){$("cart").classList.add("open");$("scrim").hidden=false}
+    function closeCart(){$("cart").classList.remove("open");$("scrim").hidden=true}
+    function render(){
+      var ls=(cart&&cart.lines)||[],box=$("lines"),n=0,sum=0;
+      box.textContent="";
+      ls.forEach(function(l){
+        var id=l.product_id,p=products[id]||{},q=l.quantity,row=el("div","line"),img=el("img"),t=el("div");
+        n+=q;sum+=l.price*q;
+        img.src=p.image_url||"";img.alt="";
+        t.appendChild(el("b","",l.name||p.name));t.appendChild(el("small","",money(l.price)));
+        var qty=el("div","qty"),m=el("button","","−"),s=el("span","",q),a=el("button","","+");
+        m.type=a.type="button";m.setAttribute("aria-label","One less");a.setAttribute("aria-label","One more");
+        m.addEventListener("click",function(){setLine(id,q-1,false)});
+        a.addEventListener("click",function(){setLine(id,q+1,false)});
+        qty.appendChild(m);qty.appendChild(s);qty.appendChild(a);
+        var rm=el("button","rm","Remove");rm.type="button";
+        rm.addEventListener("click",function(){setLine(id,0,false)});
+        row.appendChild(img);row.appendChild(t);row.appendChild(qty);row.appendChild(rm);box.appendChild(row);
+      });
+      if(!ls.length)box.appendChild(el("p","msg","Your cart is empty."));
+      $("count").textContent=n;$("total").textContent=money(sum);
+      $("checkout").disabled=!n;
+      $("deliver").hidden=!name;
+      if(name){$("who").textContent=name;$("head").src="https://crafthead.net/helm/"+encodeURIComponent(name)+"/48"}
+    }
+
+    /* login */
+    $("loginForm").addEventListener("submit",function(e){
+      e.preventDefault();
+      var u=$("username").value.trim(),err=$("loginErr");
+      err.hidden=true;
+      if($("bedrock").checked&&u.charAt(0)!==BEDROCK)u=BEDROCK+u;
+      api("/store/customer/auth",{method:"POST",guest:true,body:{platform:"minecraft",id:u}}).then(function(r){
+        token=r.customer_token;name=u;
+        try{localStorage.setItem("jesToken",token);localStorage.setItem("jesName",name)}catch(e){}
+        $("login").close();
+        if(pending){var id=pending;pending=null;return setLine(id,1,true).then(openCart)}
+        return loadCart();
+      }).catch(function(){err.textContent="That username did not work. Check it and try again.";err.hidden=false});
+    });
+    $("change").addEventListener("click",function(){
+      closeCart();logout();$("username").value="";$("login").showModal();
+    });
+
+    /* checkout */
+    function done(){
+      closeCart();
+      api("/store/cart",{method:"DELETE"}).then(loadCart).catch(function(){});
+      $("thanks").showModal();
+    }
+    $("checkout").addEventListener("click",function(){
+      var b=$("checkout"),here=location.origin+location.pathname;
+      b.disabled=true;
+      api("/store/cart/checkout",{method:"POST",body:{return_url:here+"?thanks=1",cancel_url:here,auto_redirect:true}}).then(function(s){
+        window.PayNow.checkout.on("completed",done);
+        window.PayNow.checkout.open({token:s.token,theme:"dark"});
+      }).catch(function(){location.reload()});
+      setTimeout(function(){b.disabled=false},3000);
+    });
+
+    $("cartBtn").addEventListener("click",function(){if(token)loadCart().catch(function(){});openCart()});
+    $("cartX").addEventListener("click",closeCart);
+    $("scrim").addEventListener("click",closeCart);
+    $("thanksX").addEventListener("click",function(){$("thanks").close()});
+    addEventListener("keydown",function(e){if(e.key==="Escape")closeCart()});
+
+    render();
+    if(/[?&]thanks=1/.test(location.search)){
+      history.replaceState(null,"",location.pathname);
+      if(token)done();else $("thanks").showModal();
+    }else if(token)loadCart().catch(function(){});
+  })();
+</script>
+</body>
+</html>
