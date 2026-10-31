@@ -135,7 +135,8 @@ main.wrap{max-width:1280px}
 .t-name{position:relative;top:.12em;font-family:"Minecraft","Outfit",sans-serif;font-size:32px;line-height:1.2;overflow-wrap:anywhere}
 .t-sub{margin-top:4px;color:var(--muted);font-size:15px}
 .t-bio{margin:16px 0 20px;padding-left:16px;border-left:2px solid var(--pink);color:#d9d3e6;font-size:18px;line-height:1.55}
-.t-dc{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--line);border-radius:8px;color:var(--muted);font-size:14px}
+.t-dc{display:inline-flex;align-items:center;gap:8px;padding:5px 12px;border:1px solid var(--pink);border-radius:8px;color:#ff7fc2;font-size:14px;transition:background .15s,color .15s}
+.t-dc:hover{background:var(--pink);color:#fff}
 .t-pic{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;overflow:hidden;background:radial-gradient(circle at 50% 70%,#3a1b4d,#0d0b12 75%)}
 .t-pic b{position:absolute;z-index:1;top:14px;left:8px;right:8px;text-align:center;font-family:"Minecraft","Outfit",sans-serif;font-size:20px;overflow-wrap:anywhere}
 .t-pic img{position:absolute;top:8px;left:50%;width:470px;max-width:none;height:auto;transform:translateX(-50%);image-rendering:pixelated}
@@ -349,7 +350,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
       <div class="t-head"><span class="t-role" id="tRole"></span><span class="t-name" id="tName"></span></div>
       <div class="t-sub" id="tSub"></div>
       <p class="t-bio" id="tBio"></p>
-      <span class="t-dc">Discord: <span id="tDc"></span></span>
+      <a class="t-dc" id="tLink" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.8732.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg><span id="tDc"></span></a>
     </div>
     <div class="t-pic"><b id="tIgn"></b><img id="tImg" alt=""></div>
   </div>
@@ -440,12 +441,12 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   /* team carousel */
   (function(){
     var TEAM=[
-      {role:"Founder",name:"Ciel",ign:"ciel0beats",dc:"ciel0beats",img:"ciel0beats",sub:"Built it, designed it, still fixing it",bio:"Ciel made JES for one reason: a place to meet people, build something together and not get yelled at by a stranger for it. The whole server, top to bottom, is Ciel's doing. So yes, this is who to thank. Also who to blame."},
-      {role:"Senior Mod",name:"Roylitai",ign:"Roylitai",dc:"roylitai",img:"roylitai",sub:"Here since 2022",bio:"Ciel's right hand since 2022. Tests the plugins before they reach you, keeps the peace, and handles moral support for when those plugins explode anyway. If something works today, Roylitai probably broke it first."},
-      {role:"Mod",name:"cosmicbread",ign:"cosmicbread3898",dc:"cosmicbread",img:"cosmicbread",sub:"German. Likes trains.",bio:"He's German and he likes trains, and honestly that's the whole brief. Keeps things on schedule, keeps chat on the rails, and has been around long enough to know where all the bodies are buried. In a build-friendly way."},
-      {role:"Senior (by age)",name:"Tempest",ign:"Tempest",dc:"tempestrising1",img:"tempest",sub:"Formerly known in-game as x_stormrage_x",bio:"The elder of the group, and no, we don't know the exact number. He drives trucks in real life and settles arguments in here, because he's the best communicator we have. Wisdom on tap, possibly from a truck stop."},
-      {role:"Guest Dev",name:"HeyItZyztem",ign:"HeyItZyztem",dc:"heyitzyztem",img:"heyitzyztem",sub:"A friend with a compiler",bio:"Officially a dev on another server. Unofficially the friend we message with \"quick question\" before it turns into forty minutes. Drops in to fix the small stuff, then vanishes like a helpful ghost."},
-      {role:"Helper",name:"Vlad",ign:"Vlad_HD1234",dc:"Vlad_HD1234",img:"vlad",sub:"Chief Meme Officer",bio:"Does he do much? Not really. Is he always there? Absolutely. Vlad supplies memes, moral support and a steady stream of bothering everyone else, and we wouldn't change a thing."}
+      {role:"Founder",name:"Ciel",ign:"ciel0beats",dc:"ciel0beats",id:"604981060157308929",img:"ciel0beats",sub:"Built it, designed it, still fixing it",bio:"Ciel made JES for one reason: a place to meet people, build something together and not get yelled at by a stranger for it. The whole server, top to bottom, is Ciel's doing. So yes, this is who to thank. Also who to blame."},
+      {role:"Senior Mod",name:"Roylitai",ign:"Roylitai",dc:"roylitai",id:"747522889783312537",img:"roylitai",sub:"Here since 2022",bio:"Ciel's right hand since 2022. Tests the plugins before they reach you, keeps the peace, and handles moral support for when those plugins explode anyway. If something works today, Roylitai probably broke it first."},
+      {role:"Mod",name:"cosmicbread",ign:"cosmicbread3898",dc:"cosmicbread",id:"770941424635609118",img:"cosmicbread",sub:"German. Likes trains.",bio:"He's German and he likes trains, and honestly that's the whole brief. Keeps things on schedule, keeps chat on the rails, and has been around long enough to know where all the bodies are buried. In a build-friendly way."},
+      {role:"Senior (by age)",name:"Tempest",ign:"Tempest",dc:"tempestrising1",id:"220325281615970305",img:"tempest",sub:"Formerly known in-game as x_stormrage_x",bio:"The elder of the group, and no, we don't know the exact number. He drives trucks in real life and settles arguments in here, because he's the best communicator we have. Wisdom on tap, possibly from a truck stop."},
+      {role:"Guest Dev",name:"HeyItZyztem",ign:"HeyItZyztem",dc:"heyitzyztem",id:"1280982693286379523",img:"heyitzyztem",sub:"A friend with a compiler",bio:"Officially a dev on another server. Unofficially the friend we message with \"quick question\" before it turns into forty minutes. Drops in to fix the small stuff, then vanishes like a helpful ghost."},
+      {role:"Helper",name:"Vlad",ign:"Vlad_HD1234",dc:"Vlad_HD1234",id:"817484178731302922",img:"vlad",sub:"Chief Meme Officer",bio:"Does he do much? Not really. Is he always there? Absolutely. Vlad supplies memes, moral support and a steady stream of bothering everyone else, and we wouldn't change a thing."}
     ];
     var $=function(id){return document.getElementById(id)},i=0,t0=0,el=0,paused=false,DUR=8000;
     var still=matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -457,7 +458,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     function show(){
       var m=TEAM[i];
       $("tRole").textContent=m.role;$("tName").textContent=m.name;$("tSub").textContent=m.sub;$("tBio").textContent=m.bio;
-      $("tDc").textContent=m.dc;$("tIgn").textContent=m.ign;$("tImg").src="img/staff/"+m.img+".png";
+      $("tDc").textContent=m.dc;$("tLink").href="https://discord.com/users/"+m.id;$("tIgn").textContent=m.ign;$("tImg").src="img/staff/"+m.img+".png";
       [].forEach.call($("tDots").children,function(d,k){d.classList.toggle("on",k===i)});
     }
     function go(n){
