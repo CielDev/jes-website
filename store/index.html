@@ -60,6 +60,9 @@ html.menu #drawer{transform:none;visibility:visible}
 .banner::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(13,11,18,.85),rgba(13,11,18,.2))}
 .banner div{position:relative;z-index:1}
 h1{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(32px,5vw,52px);line-height:1.2}
+h1{position:relative;isolation:isolate}
+h1::before{content:attr(data-t);position:absolute;inset:0;z-index:-1;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-stroke:8px transparent}
+#petals{position:fixed;inset:0;z-index:5;width:100%;height:100%;pointer-events:none}
 .banner p{color:var(--gold);font-weight:600}
 
 #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-bottom:64px}
@@ -189,7 +192,7 @@ dialog .btn{width:100%}
 </aside>
 
 <main class="wrap">
-  <header class="banner"><div><h1>Lucky Crates</h1><p>Open your luck on JES</p></div></header>
+  <header class="banner"><div><h1 data-t="Lucky Crates">Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
   <section id="grid"><p class="msg">Loading...</p></section>
   <footer class="studio">
@@ -244,6 +247,48 @@ dialog .btn{width:100%}
   <button class="btn" id="thanksX" type="button">Close</button>
 </dialog>
 
+<canvas id="petals" aria-hidden="true"></canvas>
+<script>
+  /* cherry blossom petals drifting on the wind, pushed away by the mouse */
+  (function(){
+    if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
+    var cv=document.getElementById("petals"),g=cv.getContext("2d"),W,H,dpr,mx=-999,my=-999,P=[];
+    var COLORS=["#ffc4dd","#ffb0d0","#f99cc4","#ffd9e8"];
+    function size(){dpr=devicePixelRatio||1;W=innerWidth;H=innerHeight;cv.width=W*dpr;cv.height=H*dpr}
+    function spawn(p,top){
+      p.x=Math.random()*W*1.2-W*.1;p.y=top?-20:Math.random()*H;
+      p.vx=p.vy=0;p.fall=14+Math.random()*18;p.s=4+Math.random()*5;
+      p.a=Math.random()*6.3;p.spin=(Math.random()-.5)*1.2;p.ph=Math.random()*6.3;
+      p.c=COLORS[Math.floor(Math.random()*COLORS.length)];
+      return p;
+    }
+    size();addEventListener("resize",size);
+    for(var i=0,n=Math.min(40,Math.round(W/35));i<n;i++)P.push(spawn({},false));
+    addEventListener("mousemove",function(e){mx=e.clientX;my=e.clientY},{passive:true});
+    document.addEventListener("mouseleave",function(){mx=my=-999});
+    var last=performance.now();
+    function tick(t){
+      requestAnimationFrame(tick);
+      var dt=Math.min(.05,(t-last)/1000),s=t/1000;last=t;
+      var wind=12+Math.sin(s*.23)*18+Math.sin(s*.61)*8;
+      g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
+      P.forEach(function(p){
+        var dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
+        if(d2<14400){var d=Math.sqrt(d2)||1,f=(1-d/120)*260;p.vx+=dx/d*f*dt;p.vy+=dy/d*f*dt}
+        p.vx*=1-1.6*dt;p.vy*=1-1.6*dt;
+        p.x+=(wind+Math.sin(s*.8+p.ph)*14+p.vx)*dt;
+        p.y+=(p.fall+p.vy)*dt;
+        p.a+=p.spin*dt;
+        if(p.y>H+20||p.x>W+40||p.x<-40)spawn(p,true);
+        g.save();g.translate(p.x,p.y);g.rotate(p.a);g.scale(1,.55+.45*Math.sin(s*1.4+p.ph));
+        g.globalAlpha=.8;g.fillStyle=p.c;
+        g.beginPath();g.moveTo(0,-p.s);g.quadraticCurveTo(p.s,0,0,p.s);g.quadraticCurveTo(-p.s,0,0,-p.s);g.fill();
+        g.restore();
+      });
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
 <script>
   (function(){
     var root=document.documentElement,burger=document.getElementById("burger"),sub=document.getElementById("drSub");
