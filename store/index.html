@@ -83,6 +83,37 @@ h1{letter-spacing:.04em;background:var(--grad);-webkit-background-clip:text;back
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
 .ribbon{position:absolute;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+/* tabs and premium */
+.tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 32px;padding:6px;width:fit-content;background:var(--bg2);border:1px solid var(--line);border-radius:14px;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .3s both}
+.tabs button{padding:10px 22px 8px;background:none;border:0;border-radius:10px;color:var(--muted);font-family:"Minecraft","Outfit",sans-serif;font-size:16px;letter-spacing:.04em;text-transform:uppercase;transition:color .2s,background .2s}
+.tabs button.on{background:var(--grad);color:#1a1020}
+.tabs button:not(.on):hover{color:var(--text)}
+#premium{margin-bottom:64px;animation:slideIn .7s cubic-bezier(.2,.7,.2,1) both}
+.p-head{margin-bottom:20px}
+.p-head h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,3.4vw,38px);line-height:1.2;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;width:fit-content}
+.p-head p{color:var(--muted)}
+.p-wrap{display:grid;grid-template-columns:1.6fr 1fr;gap:24px;margin-bottom:56px}
+.p-show{display:flex;flex-direction:column;overflow:hidden;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+.p-stage{position:relative;flex:1;display:grid;place-items:center;min-height:340px;overflow:hidden;background:radial-gradient(circle at 50% 55%,#4a1d5e 0,#15121d 70%)}
+.p-stage::before{content:"";position:absolute;width:420px;height:420px;border-radius:50%;background:conic-gradient(from 0deg,transparent,rgba(228,58,150,.35),transparent 30%,rgba(252,208,92,.3),transparent 60%,rgba(228,58,150,.35),transparent 90%);animation:spin 14s linear infinite}
+.p-stage img{position:relative;width:230px;max-width:70%;image-rendering:pixelated;filter:drop-shadow(0 10px 30px rgba(228,58,150,.55));animation:bob 4s ease-in-out infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.p-foot{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;padding:18px 22px;border-top:1px solid var(--line)}
+.p-foot small{display:block;color:var(--gold);font-size:15px}
+.p-foot b{font-size:22px;font-weight:600}
+.p-foot s{display:block;text-align:right;color:var(--muted);font-size:15px}
+.p-foot .big{color:var(--gold);font-size:28px;font-weight:700}
+.p-side{display:flex;flex-direction:column;gap:10px}
+.plan{position:relative;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 20px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;text-align:left;transition:border-color .2s,background .2s}
+.plan:hover{border-color:#4a3d5c}
+.plan.on{border-color:var(--pink);background:linear-gradient(90deg,rgba(228,58,150,.14),rgba(252,208,92,.06))}
+.plan b{display:block;font-weight:600}
+.plan small{color:var(--gold);font-size:15px}
+.plan span{color:var(--gold);font-weight:600}
+.plan i{position:absolute;top:-10px;right:14px;padding:1px 8px;border-radius:6px;background:#ff4545;color:#fff;font-style:normal;font-size:12px;font-weight:700;text-transform:uppercase}
+.p-side .btn{width:100%;margin-top:6px}
+.p-save{min-height:1.5em;color:#7be08a;font-size:15px;text-align:center}
+.egg-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
 .msg{grid-column:1/-1;padding:48px 0;color:var(--muted);text-align:center}
 
 #scrim{position:fixed;inset:0;z-index:20;background:rgba(0,0,0,.6)}
@@ -157,6 +188,10 @@ dialog .btn{width:100%}
   .b-crate.a{right:auto;left:42%;top:96px;width:60px}
   .b-crate.b,.b-crate.c{display:none}
   #grid{grid-template-columns:1fr}
+  .p-wrap{grid-template-columns:1fr}
+  .p-stage{min-height:260px}
+  .egg-grid{grid-template-columns:1fr}
+  .tabs button{padding:9px 14px 7px;font-size:14px}
   .studio{grid-template-columns:1fr;justify-items:center;text-align:center}
   .studio{gap:18px}
   .s-mid,.s-side{align-items:center}
@@ -216,7 +251,30 @@ dialog .btn{width:100%}
     <img class="b-skin" src="../img/staff/ciel0beats.png" alt="">
     <div><h1>Lucky Crates</h1><p>GET SOME NOW!</p></div></header>
   <div style="display:flex"><button class="ranks" id="ranksBtn" type="button"><i>i</i>How does the rank system work?</button></div>
+  <div class="tabs" role="tablist">
+    <button type="button" class="on" data-tab="grid">Lucky Crates</button>
+    <button type="button" data-tab="premium">JES Premium</button>
+  </div>
   <section id="grid"></section>
+  <section id="premium" hidden>
+    <div class="p-head"><h2>JES Premium</h2><p id="pDesc"></p></div>
+    <div class="p-wrap">
+      <div class="p-show">
+        <div class="p-stage"><img id="pImg" alt=""></div>
+        <div class="p-foot">
+          <div><small id="pMo"></small><b id="pName"></b></div>
+          <div><s id="pWas"></s><span class="big" id="pPrice"></span></div>
+        </div>
+      </div>
+      <div class="p-side">
+        <div class="p-side" id="pPlans"></div>
+        <button class="btn" id="pAdd" type="button">Add to cart</button>
+        <p class="p-save" id="pSave"></p>
+      </div>
+    </div>
+    <div class="p-head"><h2>Premium Egg</h2><p id="eggDesc"></p></div>
+    <div class="egg-grid" id="eggGrid"></div>
+  </section>
   <footer class="studio">
     <img src="../img/logo.png" alt="">
     <div class="s-mid">
@@ -563,12 +621,53 @@ dialog .btn{width:100%}
     function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
 
     /* products */
+    // premium plans, shortest first; the egg is a one-time item
+    var PLANS=["620124376615882752","620124931828486144","620125346569650176","620125648475652096"],EGG="620123536882671616",plan=PLANS[3];
     api("/store/products",{guest:true}).then(function(list){
       var g=$("grid");g.textContent="";
-      PACKAGES.forEach(function(k,n){
-        var p=list.find(function(x){return x.id===k.id});
-        if(!p)return;
-        products[p.id]=p;
+      list.forEach(function(p){products[p.id]=p});
+      PACKAGES.forEach(function(k,n){var p=products[k.id];if(p)card(p,k,n,g)});
+      premium();
+    }).catch(function(){$("grid").innerHTML='<p class="msg">The store could not load. Please try again in a moment.</p>'});
+    function premium(){
+      var month=products[PLANS[0]];
+      if(!month)return;
+      $("pDesc").textContent=plain(month.description);
+      PLANS.forEach(function(id){
+        var p=products[id];if(!p)return;
+        var mo=p.pricing.price_final/p.subscription_interval_value,b=el("button","plan"),l=el("div");
+        b.type="button";b.dataset.id=id;
+        l.appendChild(el("b","",p.subscription_interval_value+" Month Premium"));
+        l.appendChild(el("small","",money(mo)+" /mo"));
+        b.appendChild(l);b.appendChild(el("span","",money(p.pricing.price_final)));
+        if(id===PLANS[3])b.appendChild(el("i","","Best value"));
+        b.addEventListener("click",function(){pick(id)});
+        $("pPlans").appendChild(b);
+      });
+      pick(plan);
+      var egg=products[EGG];
+      if(egg){$("eggDesc").textContent=plain(egg.description);card(egg,{},0,$("eggGrid"))}
+    }
+    function pick(id){
+      var p=products[id],m=products[PLANS[0]],n=p.subscription_interval_value,full=m.pricing.price_final*n,save=full-p.pricing.price_final;
+      plan=id;
+      [].forEach.call($("pPlans").children,function(b){b.classList.toggle("on",b.dataset.id===id)});
+      $("pImg").src=p.image_url;
+      $("pName").textContent=n+" Month Premium";
+      $("pMo").textContent=money(p.pricing.price_final/n)+" /mo";
+      $("pPrice").textContent=money(p.pricing.price_final);
+      $("pWas").textContent=save>0?money(full):"";
+      $("pSave").textContent=save>0?"Save "+money(save)+" over monthly":"Renews every month. Cancel anytime.";
+    }
+    $("pAdd").addEventListener("click",function(e){if(window.sparkle)window.sparkle(e.clientX,e.clientY);add(plan,true)});
+    [].forEach.call(document.querySelectorAll("[data-tab]"),function(b,i,all){
+      b.addEventListener("click",function(){
+        [].forEach.call(all,function(x){x.classList.toggle("on",x===b);$(x.dataset.tab).hidden=x!==b});
+        history.replaceState(null,"",b.dataset.tab==="premium"?"#premium":location.pathname+location.search);
+      });
+      if(location.hash==="#premium"&&b.dataset.tab==="premium")b.click();
+    });
+    function card(p,k,n,g){
         var c=el("article","card"),img=el("img");
         img.alt="";
         // slide in only once the picture is ready
@@ -587,17 +686,16 @@ dialog .btn{width:100%}
         var b=el("button","btn","Add to cart");b.type="button";
         b.addEventListener("click",function(e){if(window.sparkle)window.sparkle(e.clientX,e.clientY);add(p.id)});
         c.appendChild(b);g.appendChild(c);
-      });
-    }).catch(function(){$("grid").innerHTML='<p class="msg">The store could not load. Please try again in a moment.</p>'});
+    }
 
     /* cart */
-    function setLine(id,qty,increment){
-      return api("/store/cart/lines?product_id="+id+"&quantity="+qty+"&subscription=false&increment="+increment,{method:"PUT"}).then(loadCart);
+    function setLine(id,qty,increment,sub){
+      return api("/store/cart/lines?product_id="+id+"&quantity="+qty+"&subscription="+!!sub+"&increment="+increment,{method:"PUT"}).then(loadCart);
     }
     function loadCart(){return api("/store/cart").then(function(c){cart=c;render()})}
-    function add(id){
-      if(!token){pending=id;$("login").showModal();return}
-      setLine(id,1,true).then(openCart).catch(function(){});
+    function add(id,sub){
+      if(!token){pending={id:id,sub:sub};$("login").showModal();return}
+      setLine(id,sub?1:1,!sub,sub).then(openCart).catch(function(){});
     }
     function openCart(){$("cart").classList.add("open");$("scrim").hidden=false}
     function closeCart(){$("cart").classList.remove("open");$("scrim").hidden=true}
@@ -605,17 +703,17 @@ dialog .btn{width:100%}
       var ls=(cart&&cart.lines)||[],box=$("lines"),n=0,sum=0;
       box.textContent="";
       ls.forEach(function(l){
-        var id=l.product_id,p=products[id]||{},q=l.quantity,row=el("div","line"),img=el("img"),t=el("div");
+        var id=l.product_id,p=products[id]||{},q=l.quantity,sub=l.subscription,row=el("div","line"),img=el("img"),t=el("div");
         n+=q;sum+=l.price*q;
         img.src=p.image_url||"";img.alt="";
-        t.appendChild(el("b","",l.name||p.name));t.appendChild(el("small","",money(l.price)));
+        t.appendChild(el("b","",l.name||p.name));t.appendChild(el("small","",money(l.price)+(sub?" every "+(p.subscription_interval_value>1?p.subscription_interval_value+" months":"month"):"")));
         var qty=el("div","qty"),m=el("button","","−"),s=el("span","",q),a=el("button","","+");
         m.type=a.type="button";m.setAttribute("aria-label","One less");a.setAttribute("aria-label","One more");
         m.addEventListener("click",function(){setLine(id,q-1,false)});
         a.addEventListener("click",function(){setLine(id,q+1,false)});
-        qty.appendChild(m);qty.appendChild(s);qty.appendChild(a);
+        if(!sub){qty.appendChild(m);qty.appendChild(s);qty.appendChild(a)}
         var rm=el("button","rm","Remove");rm.type="button";
-        rm.addEventListener("click",function(){setLine(id,0,false)});
+        rm.addEventListener("click",function(){setLine(id,0,false,sub)});
         row.appendChild(img);row.appendChild(t);row.appendChild(qty);row.appendChild(rm);box.appendChild(row);
       });
       if(!ls.length)box.appendChild(el("p","msg","Your cart is empty."));
@@ -635,7 +733,7 @@ dialog .btn{width:100%}
         token=r.customer_token;name=u;
         try{localStorage.setItem("jesToken",token);localStorage.setItem("jesName",name)}catch(e){}
         $("login").close();
-        if(pending){var id=pending;pending=null;return setLine(id,1,true).then(openCart)}
+        if(pending){var pd=pending;pending=null;return setLine(pd.id,1,!pd.sub,pd.sub).then(openCart)}
         return loadCart();
       }).catch(function(){err.textContent="That username did not work. Check it and try again.";err.hidden=false});
     });
