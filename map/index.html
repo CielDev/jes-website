@@ -80,16 +80,8 @@ body.menu #drawer{transform:none;visibility:visible}
 /* landmarks, animals and birds */
 .sg{pointer-events:auto;z-index:1}
 .sg img{display:block;image-rendering:pixelated;filter:drop-shadow(1px 0 0 rgba(255,255,255,.55)) drop-shadow(-1px 0 0 rgba(255,255,255,.55)) drop-shadow(0 1px 0 rgba(255,255,255,.55)) drop-shadow(0 -1px 0 rgba(255,255,255,.55)) drop-shadow(0 2px 2px rgba(0,0,0,.6))}
-.bird{width:21px;height:9px;background-size:42px 9px;image-rendering:pixelated;pointer-events:none;animation:flap .45s steps(2) infinite;filter:drop-shadow(0 2px 1px rgba(0,0,0,.5))}
-@keyframes flap{to{background-position:-42px 0}}
-.flyer{pointer-events:auto;z-index:3}
-.flyer img{display:block;image-rendering:pixelated;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55))}
-.spark{width:4px;height:4px;border-radius:1px;background:#fff;box-shadow:0 0 6px 1px rgba(255,210,120,.9);pointer-events:none;z-index:2}
-
-/* the wooden warning sign */
-.sign{pointer-events:auto;z-index:2;display:flex;flex-direction:column;align-items:center;filter:drop-shadow(0 3px 3px rgba(0,0,0,.5))}
-.sign b{display:block;width:104px;padding:6px 6px 5px;background:#a2793f;background-image:repeating-linear-gradient(0deg,rgba(0,0,0,.09) 0 1px,transparent 1px 7px),linear-gradient(90deg,rgba(255,255,255,.05),rgba(0,0,0,.08));border:3px solid #6b4a22;font:400 8px/1.5 "Minecraftia",monospace;color:#1d140a;text-align:center;white-space:pre-line;image-rendering:pixelated}
-.sign i{display:block;width:8px;height:22px;background:#6b4a22;border-left:2px solid #835c2c}
+.bird{width:11px;height:5px;background-size:22px 5px;image-rendering:pixelated;pointer-events:none;animation:flap .45s steps(2) infinite;filter:drop-shadow(0 2px 1px rgba(0,0,0,.5))}
+@keyframes flap{to{background-position:-22px 0}}
 
 /* the end of the world */
 body.doom nav,body.doom .ctl,body.doom #markers,body.doom #pop,body.doom #list,body.doom #coords,body.doom #status{opacity:0;pointer-events:none;transition:opacity 1.2s}
@@ -114,7 +106,7 @@ body.cine #doom .bar{height:11vh}
 
 /* towns */
 .tw{display:flex;align-items:center;gap:4px;pointer-events:auto;cursor:pointer;z-index:1}
-.tw svg{width:14px;height:14px;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
+.tw svg{width:28px;height:28px;flex:none;filter:drop-shadow(0 1px 2px rgba(0,0,0,.8))}
 .tw b{display:block;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 0 1px rgba(0,0,0,.5)}
 .tw span{display:none;font-size:12px;font-weight:600;text-shadow:0 1px 2px #000,0 0 4px #000}
 .tw.near span{display:block}
@@ -532,11 +524,8 @@ const ART = {
   penguins: ["..kkkk.........", ".kkkkkk...kkkk.", ".kwkkwk..kkkkkk", ".kkookk..kwkkwk", "kkwwwwkk.kkookk", "kwwwwwwkkkwwwwk",
     "kwwwwwwkkwwwwww", ".wwwwww..wwwwww", "..oo.oo...oo.oo"],
 };
-// a player gliding with an elytra, holding a firework, facing right
-const FLYER = ["......eeeeeee........", "....eeEEEEEEEe.......", "xxBBBBBBCCCCCChhhh...", "xxBBBBBBCCCCCCShSS...",
-  "xxBBBBBBCCCCCCSSSS...", ".........SSSSSSSRRRwy"];
 const BIRD = [["n.....n", ".n...n.", "..nnn.."], ["..nnn..", ".n...n.", "n.....n"]];   // wings up, wings down
-function pixelArt(rows, px = 3) {
+function pixelArt(rows, px = 1.5) {
   const w = Math.max(...rows.map((r) => r.length)), c = document.createElement("canvas");
   c.width = w; c.height = rows.length; const g = c.getContext("2d");
   rows.forEach((r, y) => [...r].forEach((ch, x) => { if (PAL[ch]) { g.fillStyle = PAL[ch]; g.fillRect(x, y, 1, 1); } }));
@@ -578,20 +567,6 @@ const sights = [], birds = [];
     birds.push({ el, lat0: lat * Math.PI / 180, lon0: lon * Math.PI / 180, r: (2.2 + Math.random() * 1.6) * Math.PI / 180, a: i * 0.35 + Math.random() * 0.2, sp: 0.05 + Math.random() * 0.02 });
   }
 }
-// the elytra flyer: laps the planet on a tilted great circle, a firework trail sparkling behind
-const flyer = { a: Math.random() * 6.28, u: new THREE.Vector3(), v: new THREE.Vector3(), el: null, sparks: [] };
-{
-  const ll = (lat, lon) => new THREE.Vector3(Math.cos(lat) * Math.sin(lon), Math.sin(lat), Math.cos(lat) * Math.cos(lon));
-  flyer.u.copy(ll(0.35, -0.7));
-  flyer.v.copy(ll(0.9, 1.0)).addScaledVector(flyer.u, -ll(0.9, 1.0).dot(flyer.u)).normalize();
-  const a = pixelArt(FLYER, 2), el = document.createElement("div");
-  el.className = "flyer"; el.title = "Someone with an elytra";
-  el.innerHTML = `<img src="${a.url}" width="${a.w}" height="${a.h}" alt="">`;
-  const layer = $("#markers");
-  for (let i = 0; i < 18; i++) { const s = document.createElement("div"); s.className = "spark"; layer.appendChild(s); flyer.sparks.push(s); }
-  layer.appendChild(el); flyer.el = el;
-}
-
 const starMat = new THREE.PointsMaterial({ color: 0xffffff, size: 1.4, sizeAttenuation: false, transparent: true, opacity: .75, depthWrite: false });
 {
   const n = 1400, pos = new Float32Array(n * 3);
@@ -610,7 +585,6 @@ new THREE.TextureLoader().load(
     tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
     baseMat.uniforms.uTex.value = tex; dirty = true;
-    try { placeSign(tex.image); } catch (e) {}
     requestAnimationFrame(() => requestAnimationFrame(() => loading.classList.add("done")));
   },
   undefined,
@@ -1139,33 +1113,46 @@ function saveHash() {
   });
 }
 
-/* ---------- the wooden warning sign, somewhere different for everyone ---------- */
-const sign = { el: null, lat: 0, lon: 0 };
-function placeSign(img) {
-  let s = null;
-  try { s = JSON.parse(localStorage.getItem("jessign") || "null"); } catch (e) {}
-  if (!s) {
-    // find a random spot on land: read the base image small and skip anything blue
-    const c = document.createElement("canvas"); c.width = 512; c.height = 256;
-    const g = c.getContext("2d"); g.drawImage(img, 0, 0, 512, 256);
-    const px = g.getImageData(0, 0, 512, 256).data;
-    for (let i = 0; i < 2000 && !s; i++) {
-      const lat = -45 + Math.random() * 120, lon = -130 + Math.random() * 305;
-      const x = Math.floor((lon / 360 + 0.5) * 511), y = Math.floor((0.5 - lat / 180) * 255), k = (y * 512 + x) * 4;
-      const r = px[k], gr = px[k + 1], b = px[k + 2];
-      if (!(b > r * 1.25 && b > gr * 1.02) && r + gr + b > 60) s = { lat, lon };
-    }
-    s = s || { lat: 48, lon: 10 };
-    try { localStorage.setItem("jessign", JSON.stringify(s)); } catch (e) {}
-  }
-  sign.lat = s.lat * Math.PI / 180; sign.lon = s.lon * Math.PI / 180;
-  const el = document.createElement("div"); el.className = "sign"; el.title = "A warning";
-  el.innerHTML = `<div class="in"><b>Don't quickly\nspin the Earth\n10 times</b><i></i></div>`;
-  el.firstChild.style.cssText = "display:flex;flex-direction:column;align-items:center;transform-origin:50% 100%";
-  markersEl.appendChild(el); sign.el = el;
+/* ---------- rarely, a UFO abducts a cow; pressing 6 ten times calls one ---------- */
+const UFO = ["......QQQQ......", ".....QQwwQQ.....", "....QQwwwwQQ....", "..ssssssssssss..", "ssyssyssyssyssss", ".gggggggggggggg.", "...gggggggggg..."];
+const COW = ["k............", "kkwwkkwwwkkw.", ".wwwwkkwwwwww", "pwkwwwwwkkwww", "ppwwwwwwkkwww", "..w.w...w.w..", "..k.k...k.k.."];
+let ufoBusy = false;
+function abduction() {
+  if (ufoBusy || doom.on) return;
+  ufoBusy = true;
+  const x = innerWidth * (0.3 + Math.random() * 0.4), y = innerHeight * (0.5 + Math.random() * 0.15), top = y - 170;
+  const box = document.createElement("div"); box.style.cssText = "position:fixed;inset:0;z-index:7;pointer-events:none;overflow:hidden";
+  const sprite = (rows, px) => { const a = pixelArt(rows, px), i = new Image(a.w, a.h); i.src = a.url; i.alt = ""; i.style.cssText = "position:absolute;left:0;top:0;image-rendering:pixelated;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))"; box.appendChild(i); return i; };
+  const beam = document.createElement("div");
+  beam.style.cssText = `position:absolute;left:${x - 26}px;top:${top + 14}px;width:52px;height:${y - top - 4}px;background:linear-gradient(rgba(150,255,190,.7),rgba(150,255,190,.15));clip-path:polygon(35% 0,65% 0,100% 100%,0 100%);opacity:0`;
+  box.appendChild(beam);
+  const cow = sprite(COW, 2), ufo = sprite(UFO, 3);
+  const cx = x - 13, ux = x - 24, at = (px, py) => `translate(${px}px,${py}px)`;
+  document.body.appendChild(box);
+  cow.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 500, fill: "forwards" });
+  cow.style.transform = at(cx, y);
+  ufo.animate([{ transform: at(-80, top - 120) }, { transform: at(ux, top) }], { duration: 1600, easing: "ease-out", fill: "forwards" });
+  beam.animate([{ opacity: 0 }, { opacity: 1 }], { duration: 300, delay: 1700, fill: "forwards" });
+  const up = cow.animate([{ transform: at(cx, y) }, { transform: at(cx - 4, y - 50) + " rotate(-12deg)" }, { transform: at(cx + 4, top + 10) + " rotate(14deg) scale(.5)" }], { duration: 2200, delay: 2100, easing: "ease-in", fill: "forwards" });
+  up.finished.then(() => {
+    cow.remove();
+    beam.animate([{ opacity: 1 }, { opacity: 0 }], { duration: 250, fill: "forwards" });
+    const off = ufo.animate([{ transform: at(ux, top) }, { transform: at(ux - 16, top + 8) }, { transform: at(innerWidth + 80, -100) }], { duration: 900, delay: 300, easing: "ease-in", fill: "forwards" });
+    return off.finished;
+  }).then(() => { box.remove(); ufoBusy = false; });
+}
+const rollUfo = () => { if (!document.hidden && !reduce && Math.random() < 0.1) abduction(); };
+setTimeout(rollUfo, 8000); setInterval(rollUfo, 60000);
+{
+  let sixes = 0, t;
+  addEventListener("keydown", (e) => {
+    if (e.key !== "6" || e.repeat) return;
+    clearTimeout(t); t = setTimeout(() => (sixes = 0), 3000);
+    if (++sixes >= 10) { sixes = 0; abduction(); }
+  });
 }
 
-/* ---------- spin the world 10 times fast and it ends ----------
+/* ---------- spin the world 10 times/* ---------- spin the world 10 times fast and it ends ----------
    0s    the screen turns cinematic, the controls fade away
    1.8s  a meteorite drifts in from deep space, slowly at first
    10s   impact: flash, shock wave, the planet cracks open from the crater
@@ -1370,7 +1357,6 @@ function crumble() {
   }
   for (const t of towns) { const el = document.createElement("span"); el.textContent = (t.el.querySelector("svg") ? "★ " : "") + t.label; add(el, t.lat, t.lon); }
   for (const s of sights) { const el = s.el.firstChild.cloneNode(true); add(el, s.lat, s.lon); }
-  if (sign.el) { const el = sign.el.cloneNode(true); el.style.cssText = ""; add(el, sign.lat, sign.lon); }
 }
 
 function endDoom() {
@@ -1599,7 +1585,7 @@ function frame(now) {
   for (const t of towns) {
     if (!showT) { placeEl(t.el, null); continue; }
     t.el.classList.toggle("near", labels);
-    placeEl(t.el, screenPos(t.lon, t.lat), labels ? " translateX(calc(50% - 7px))" : "");
+    placeEl(t.el, screenPos(t.lon, t.lat), labels ? ` translateX(calc(50% - ${t.el.querySelector("svg") ? 14 : 7}px))` : "");
   }
   // landmarks stand on their spot; animals bob a little; birds circle
   const sf = sightsOn ? THREE.MathUtils.smoothstep(view.h, 0.08, 0.2) : 0, ts = now / 1000;
@@ -1614,38 +1600,6 @@ function frame(now) {
     const p = sf ? screenPos(b.lon0 + b.r * Math.cos(b.a) / Math.cos(b.lat0), b.lat0 + b.r * 0.6 * Math.sin(b.a)) : null;
     if (!p || p[3]) { placeEl(b.el, null); continue; }
     p[2] *= sf * 0.9; placeEl(b.el, p);
-  }
-  // the elytra flyer, a little above the ground, hidden when it goes round the back
-  flyer.a += dt * 0.11;
-  const flyAt = (a) => {
-    const d = flyer.u.clone().multiplyScalar(Math.cos(a)).addScaledVector(flyer.v, Math.sin(a));
-    const lat = Math.asin(clamp(d.y, -1, 1)), lon = Math.atan2(d.x, d.z);
-    if (isFlat()) return screenPos(lon, lat);
-    const P = d.multiplyScalar(1.035), cam = camera.position, dd = P.clone().sub(cam);
-    const tc = -cam.dot(dd) / dd.lengthSq();
-    if (tc > 0 && tc < 1 && cam.clone().addScaledVector(dd, tc).length() < 1) return null;   // the planet is in the way
-    sp.copy(P).project(camera);
-    if (sp.z > 1 || Math.abs(sp.x) > 1.2 || Math.abs(sp.y) > 1.2) return null;
-    return [(sp.x * .5 + .5) * innerWidth, (-sp.y * .5 + .5) * innerHeight, 1, false];
-  };
-  const fp = sf ? flyAt(flyer.a) : null, fq = fp && flyAt(flyer.a + 0.004);
-  if (!fp || !fq) placeEl(flyer.el, null);
-  else {
-    let ang = Math.atan2(fq[1] - fp[1], fq[0] - fp[0]) * 180 / Math.PI;
-    const flip = Math.abs(ang) > 90 ? " scaleY(-1)" : "";
-    fp[2] = sf; placeEl(flyer.el, fp, ` rotate(${ang.toFixed(1)}deg)${flip}`);
-  }
-  flyer.sparks.forEach((s, i) => {
-    const p = fp ? flyAt(flyer.a - 0.006 - i * 0.0055) : null;
-    if (!p) { placeEl(s, null); return; }
-    p[2] = sf * (1 - i / flyer.sparks.length) * (0.55 + 0.45 * Math.random());     // twinkle
-    p[0] += (Math.random() - 0.5) * 3; p[1] += (Math.random() - 0.5) * 3;
-    placeEl(s, p, ` scale(${(1.3 - i * 0.05).toFixed(2)})`);
-  });
-  if (sign.el) {
-    const p = screenPos(sign.lon, sign.lat);
-    if (!p || p[3]) placeEl(sign.el, null);
-    else { placeEl(sign.el, p, " translateY(-50%)"); sign.el.firstChild.style.transform = `scale(${clamp(1.25 - view.h * 0.22, 0.45, 1.1).toFixed(2)})`; }
   }
   if (popAt) {
     const s = screenPos(popAt.lon, popAt.lat);
