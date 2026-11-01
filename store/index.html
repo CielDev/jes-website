@@ -88,6 +88,8 @@ main>.studio{position:relative;z-index:0}
 .card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
+#say{position:fixed;left:0;top:0;z-index:6;width:270px;padding:10px 14px 12px;background:#f8f6ef;border:3px solid #2a2230;border-radius:8px;box-shadow:inset 0 0 0 2px #c9c3d6,0 3px 0 rgba(0,0,0,.4);color:#2a2230;font-size:15px;font-weight:600;line-height:1.35;min-height:62px;pointer-events:none}
+#say::after{content:"";position:absolute;left:18px;bottom:-10px;width:12px;height:12px;background:#f8f6ef;border:solid #2a2230;border-width:0 3px 3px 0;transform:rotate(45deg)}
 @property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
 .card.hot::before{content:"";position:absolute;inset:-1px;padding:2px;border-radius:15px;background:conic-gradient(from var(--spin),transparent 0 62%,var(--pink) 78%,var(--gold) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:spinLine 20s linear infinite}
 @keyframes spinLine{to{--spin:360deg}}
@@ -350,6 +352,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <button class="btn" id="thanksX" type="button">Close</button>
 </dialog>
 
+<div id="say" hidden></div>
 <canvas id="petals" aria-hidden="true"></canvas>
 <canvas id="actors" aria-hidden="true"></canvas>
 <script>
@@ -433,22 +436,42 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       SKIN=a[0];HAIR=a[1];SHIRT=a[2];PANTS=a[3];
     }
     /* a pensive player on the first card, deciding how many crates to get */
-    var think={x:60,to:60,dir:1,wait:5};
+    var think={x:60,to:60,dir:1,wait:5,sx:-99,sy:-99,line:0,timer:0,tick:0};
+    var LINES=[
+      "Hmm... 15 crates is a good deal, but if I get 100... uhhh that would be... \u20AC1 each??!",
+      "Wait. 100 crates PLUS 40 extra? Who is doing the maths here?",
+      "My mum said I could have one crate. She never said what size.",
+      "Okay, okay. Just 3 crates. Just to see. ...That's what I said last time."
+    ];
+    var say=document.getElementById("say");
+    function hush(){clearTimeout(think.timer);clearInterval(think.tick);say.hidden=true}
+    addEventListener("click",function(e){
+      if(Math.abs(e.clientX-think.sx)>18||e.clientY<think.sy-38||e.clientY>think.sy+6)return;
+      hush();
+      var t=LINES[think.line++%LINES.length],n=0;
+      say.textContent="";say.hidden=false;
+      think.tick=setInterval(function(){
+        say.textContent=t.slice(0,++n);
+        if(n>=t.length){clearInterval(think.tick);think.timer=setTimeout(hush,4000)}
+      },28);
+    });
     function thinker(dt,s){
       var c=document.querySelector(".card.in");
       if(!c||W<=800)return;
       var r=c.getBoundingClientRect();
-      if(!r.width)return;
-      var moving=Math.abs(think.to-think.x)>.5;
+      if(!r.width){think.sx=-99;hush();return}
+      var moving=say.hidden&&Math.abs(think.to-think.x)>.5;
       if(moving)think.x+=think.dir*12*dt;
-      else if((think.wait-=dt)<0){
+      else if(say.hidden&&(think.wait-=dt)<0){
         think.wait=7+Math.random()*7;
         think.to=40+Math.random()*(Math.min(r.width,220)-80);
         think.dir=think.to>think.x?1:-1;
       }
       var x=r.left+think.x,y=r.top;
+      think.sx=x;think.sy=y;
+      if(!say.hidden)say.style.transform="translate("+Math.round(x-24)+"px,calc("+Math.round(y-46)+"px - 100%))";
       steve(x,y,think.dir,moving?Math.round(Math.sin(s*6)):0,false,0);
-      if(moving)return;
+      if(moving||!say.hidden)return;
       var bx=x+think.dir*20,by=y-52+Math.sin(s*1.2)*2;
       g.fillStyle="rgba(243,240,247,.92)";
       g.fillRect(x+think.dir*9-1,y-34,3,3);g.fillRect(x+think.dir*13-2,y-40,4,4);
