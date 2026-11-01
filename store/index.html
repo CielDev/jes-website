@@ -438,17 +438,17 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     /* a pensive player on the first card, deciding how many crates to get */
     var think={x:60,to:60,dir:1,wait:5,sx:-99,sy:-99,line:0,timer:0,tick:0};
     var LINES=[
+      "Okay, okay. Just 3 crates. Just to see. ...That's what I said last time.",
       "Hmm... 15 crates is a good deal, but if I get 100... uhhh that would be... hella cheap??!",
       "Wait. 100 crates for what 60 would cost in small packs? Who is doing the maths here?",
-      "My mum said I could have one crate. She never said what size.",
-      "Okay, okay. Just 3 crates. Just to see. ...That's what I said last time."
+      "My mum said I could have one crate. She never said what size."
     ];
     var say=document.getElementById("say");
     function hush(){clearTimeout(think.timer);clearInterval(think.tick);say.hidden=true}
     addEventListener("click",function(e){
       if(Math.abs(e.clientX-think.sx)>18||e.clientY<think.sy-38||e.clientY>think.sy+6)return;
       hush();
-      var t=LINES[think.line++%LINES.length],n=0;
+      var l=think.line++,t=LINES[l?1+(l-1)%(LINES.length-1):0],n=0;
       say.textContent="";say.hidden=false;
       think.tick=setInterval(function(){
         say.textContent=t.slice(0,++n);
