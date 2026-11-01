@@ -600,7 +600,7 @@ const C = new THREE.Vector3(), E = new THREE.Vector3(), N = new THREE.Vector3();
 let dirty = true, tilesDirty = true, lastInput = -1e9, tween = null, zoomAnim = null, flatAnim = null;
 // the globe unrolls into the flat map on the way in (and stays flat if the "Flat map" switch is on)
 let flatManual = 0;
-const autoFlat = () => 1 - THREE.MathUtils.smoothstep(view.h, 0.09, 0.28);
+const autoFlat = () => 1 - THREE.MathUtils.smoothstep(view.h, 0.22, 0.6);
 const isFlat = () => U.uFlat.value > 0.5;
 const clampH = (v) => clamp(v, H_MIN, H_MAX);
 const clampView = () => {
