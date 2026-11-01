@@ -88,7 +88,10 @@ main>.studio{position:relative;z-index:0}
 .card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
-.ribbon{position:absolute;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
+@property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
+.card.hot::before{content:"";position:absolute;inset:-1px;padding:2px;border-radius:15px;background:conic-gradient(from var(--spin),transparent 0 62%,var(--pink) 78%,var(--gold) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:spinLine 5s linear infinite}
+@keyframes spinLine{to{--spin:360deg}}
+.ribbon{position:absolute;z-index:1;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
 /* tabs and premium */
 .tabs{display:flex;justify-content:center;gap:8px;margin:0 auto 22px;padding:6px;width:fit-content;background:var(--bg2);border:1px solid var(--line);border-radius:14px;animation:slideIn .9s cubic-bezier(.2,.7,.2,1) .3s both}
 .tabs button{padding:10px 22px 8px;background:none;border:0;border-radius:10px;color:var(--muted);font-family:"Minecraft","Outfit",sans-serif;font-size:16px;letter-spacing:.04em;text-transform:uppercase;transition:color .2s,background .2s}
@@ -428,60 +431,46 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       steve(x,y,face,swing,armUp,0);
       SKIN=a[0];HAIR=a[1];SHIRT=a[2];PANTS=a[3];
     }
-    var run={i:0,u:0,dir:1,j:-1,x0:0,x1:0,off:0,land:0};
-    function bump(x,top){                       // height of the badge under the runner, if any
-      var b=document.querySelector(".ribbon");
-      if(!b)return 0;
-      var q=b.getBoundingClientRect();
-      return x>q.left-6&&x<q.right+6&&Math.abs(q.top-top)<30?q.top-top:0;
-    }
-    function parkour(dt,s){
-      var cs=document.querySelectorAll(".card");
-      if(cs.length<2||W<=800)return;
-      var r=cs[run.i].getBoundingClientRect(),x,y;
-      if(run.j>=0){
-        run.j+=dt/.65;
-        var k=Math.min(1,run.j);
-        x=run.x0+(run.x1-run.x0)*k;
-        y=r.top+run.off*(1-k)+run.land*k-46*4*k*(1-k);
-        if(run.j>=1){run.j=-1;run.i+=run.dir;run.u=run.dir>0?0:1;run.off=run.land}
-        steve(x,y,run.dir,0,true,0);
-        return;
+    /* a pensive player on the first card, deciding how many crates to get */
+    var think={x:60,to:60,dir:1,wait:5};
+    function thinker(dt,s){
+      var c=document.querySelector(".card.in");
+      if(!c||W<=800)return;
+      var r=c.getBoundingClientRect();
+      if(!r.width)return;
+      var moving=Math.abs(think.to-think.x)>.5;
+      if(moving)think.x+=think.dir*12*dt;
+      else if((think.wait-=dt)<0){
+        think.wait=7+Math.random()*7;
+        think.to=40+Math.random()*(Math.min(r.width,220)-80);
+        think.dir=think.to>think.x?1:-1;
       }
-      run.u+=run.dir*90*dt/r.width;
-      if(run.u>1||run.u<0){
-        var n=run.i+run.dir;
-        if(n<0||n>=cs.length){run.dir=-run.dir;run.u=run.u>1?1:0}
-        else{
-          var q=cs[n].getBoundingClientRect();
-          run.x0=run.dir>0?r.right-12:r.left+12;run.x1=run.dir>0?q.left+12:q.right-12;
-          run.land=bump(run.x1,q.top);run.j=0;
-        }
-      }
-      x=r.left+12+Math.max(0,Math.min(1,run.u))*(r.width-24);
-      run.off+=(bump(x,r.top)-run.off)*Math.min(1,dt*16);
-      steve(x,r.top+run.off,run.dir,Math.round(Math.sin(s*12)*1.5),false,0);
+      var x=r.left+think.x,y=r.top;
+      steve(x,y,think.dir,moving?Math.round(Math.sin(s*6)):0,false,0);
+      if(moving)return;
+      var bx=x+think.dir*20,by=y-52+Math.sin(s*1.2)*2;
+      g.fillStyle="rgba(243,240,247,.92)";
+      g.fillRect(x+think.dir*9-1,y-34,3,3);g.fillRect(x+think.dir*13-2,y-40,4,4);
+      g.fillRect(bx-13,by-11,26,20);g.fillRect(bx-15,by-8,30,14);
+      crate(bx,by+6,6);
     }
     function reward(x,y,kind,s){
       if(kind==="bad"){g.fillStyle="#6b4a2b";g.fillRect(x-4,y-4,8,8);g.fillStyle="#3c7a2c";g.fillRect(x-4,y-4,8,3);return}
-      if(kind==="good"){g.fillStyle="#ffd23c";g.fillRect(x-5,y-2,10,5);g.fillStyle="#fff3b0";g.fillRect(x-3,y-2,6,2);return}
-      g.fillStyle="hsl("+(s*300%360)+",100%,65%)";g.fillRect(x-6,y-6,12,12);g.fillStyle="#fff";g.fillRect(x-2,y-2,4,4);
+      g.fillStyle="#ffd23c";g.fillRect(x-5,y-2,10,5);g.fillStyle="#fff3b0";g.fillRect(x-3,y-2,6,2);
     }
     function burst(cx,cy,p,kind,s){
-      var n=kind==="mega"?34:14;
+      var n=14;
       for(var i=0;i<n;i++){
-        var a=i*2.4,d=4+p*(kind==="mega"?90:34)*(.6+(i%3)*.25);
+        var a=i*2.4,d=4+p*34*(.6+(i%3)*.25);
         g.globalAlpha=1-p;
-        g.fillStyle=kind==="mega"?"hsl("+(i*40+s*200)%360+",100%,65%)":kind==="good"?["#ffd23c","#fff","#3fe0d0"][i%3]:"#666";
+        g.fillStyle=kind==="good"?["#ffd23c","#fff","#3fe0d0"][i%3]:"#666";
         g.fillRect(cx+Math.cos(a)*d,cy-3+Math.sin(a)*d*.8+(kind==="bad"?-p*20:p*p*22),3,3);
       }
       g.globalAlpha=1;
     }
     function opener(o,bx,by,dt,s){
-      if(o.fly)return;
       o.t+=dt;
       var f=o.face,T=o.t,cx=bx+f*10,cy=by-17,ax=bx+f*36;
-      if(T>=(o.kind==="mega"&&o.t<7?5.4:6)&&o.kind==="mega"){o.fly=true;dragon={t:0,o:o,bx:bx,by:by,ax:ax,trail:[]};return}
       if(T>=6){o.t=T=0;o.kind=null}
       if(T<2.4){
         crate(cx+Math.sin(T*30)*(.5+T*.6),cy,3);
@@ -489,56 +478,24 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
         if(o.alex)alex(ax,by,-f,0,false);
         return;
       }
-      if(!o.kind){var r=Math.random();o.kind=o.alex&&r<.1?"mega":r<.55?"good":"bad"}
-      if(T<(o.kind==="mega"?5.4:4)){
-        var k=o.kind,p=(T-2.4)/(k==="mega"?3:1.6);
-        burst(cx,cy,(p*(k==="mega"?3:1))%1,k,s);
+      if(!o.kind){var r=Math.random();o.kind=r<.55?"good":"bad"}
+      if(T<4){
+        var k=o.kind,p=(T-2.4)/1.6;
+        burst(cx,cy,p,k,s);
         reward(bx,by-40-p*10,k,s);
         if(k==="bad"){
           steve(bx,by+1,f,0,false,0);
           if(o.alex)alex(ax+Math.sin(T*16)*1.5,by,-f,0,false);
         }else{
-          var v=k==="mega"?22:12,w=k==="mega"?18:7;
-          steve(bx+(k==="mega"?Math.sin(T*20)*5:0),by-Math.abs(Math.sin(T*w))*v,f,Math.round(Math.sin(T*14)),true,0);
-          if(o.alex)alex(ax+(k==="mega"?Math.cos(T*20)*5:0),by-Math.abs(Math.cos(T*w))*v,-f,Math.round(Math.cos(T*14)),true);
+          var v=12,w=7;
+          steve(bx,by-Math.abs(Math.sin(T*w))*v,f,Math.round(Math.sin(T*14)),true,0);
+          if(o.alex)alex(ax,by-Math.abs(Math.cos(T*w))*v,-f,Math.round(Math.cos(T*14)),true);
         }
         return;
       }
       g.globalAlpha=Math.min(1,(T-4)/2);crate(cx,cy,3);g.globalAlpha=1;
       steve(bx,by,f,0,false,0);
       if(o.alex)alex(ax,by,-f,0,false);
-    }
-    var dragon=null,FLY=12;
-    function flyDragon(dt,s,bx,by,ax){
-      var d=dragon,o=d.o;d.t+=dt;
-      var e,x,y,hx=bx,hy=by-26;
-      var a=(d.t-1.5)*.7,px=W/2+Math.cos(a)*W*.38,py=H*.42+Math.sin(a*2)*H*.26;
-      if(d.t<1.5){e=d.t/1.5;e=e*(2-e);x=-120+(hx+120)*e;y=H*.2+(hy-H*.2)*e}
-      else if(d.t<2.8){e=(d.t-1.5)/1.3;e=e*e*(3-2*e);x=hx+(px-hx)*e;y=hy+(py-hy)*e}
-      else if(d.t<FLY){x=px;y=py}
-      else if(d.t<FLY+1.4){e=(d.t-FLY)/1.4;e=e*e*(3-2*e);if(!d.lx){d.lx=px;d.ly=py}x=d.lx+(hx-d.lx)*e;y=d.ly+(hy-d.ly)*e}
-      else{e=(d.t-FLY-1.4)/1.2;x=hx+(W+200-hx)*e;y=hy-e*H*.6}
-      var riding=d.t>=1.5&&d.t<FLY+1.4;
-      d.trail.unshift([x,y]);if(d.trail.length>70)d.trail.pop();
-      var prev=d.trail[6]||[x-1,y],dir=x>=prev[0]?1:-1;
-      for(var i=d.trail.length-1;i>0;i-=1){
-        var q=d.trail[i],z=Math.round(14-i*.14);
-        g.fillStyle="hsl("+((i*7+s*160)%360)+",100%,62%)";
-        g.fillRect(q[0]-z/2,q[1]-z/2+Math.sin(i*.3+s*8)*3,z,z);
-      }
-      var flap=Math.sin(s*12)*14;
-      g.fillStyle="hsl("+(s*160%360)+",100%,75%)";
-      g.beginPath();g.moveTo(x-dir*14,y);g.lineTo(x-dir*40,y-20-flap);g.lineTo(x-dir*6,y-4);g.closePath();g.fill();
-      g.fillStyle="hsl("+((s*160+40)%360)+",100%,62%)";g.fillRect(x-10,y-10,24*dir>0?22:22,20);
-      g.fillRect(x+(dir>0?12:-24),y-8,14,12);
-      g.fillStyle="#fff";g.fillRect(x+(dir>0?20:-20),y-6,4,4);
-      g.fillStyle="#000";g.fillRect(x+(dir>0?22:-20),y-5,2,2);
-      if(riding){
-        steve(x-dir*4,y-9,dir,0,true,0);
-        alex(x-dir*22,y-7,dir,0,true);
-      }
-      if(d.t>FLY+1.4&&o.fly){o.fly=false;o.t=4;o.kind=null}
-      if(d.t>FLY+2.6)dragon=null;
     }
     var mates=[{t:0,face:1},{t:2,face:-1,alex:true},{t:4,face:-1}];
     var S=[],SPARK=["#b05cff","#e43a96","#ff7ad9","#d6b3ff","#fff"];
@@ -563,8 +520,8 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       if(document.querySelector(".studio.in")){opener(mates[0],foot.left+46,foot.top,dt,s);
       if(W>800)opener(mates[2],foot.left+foot.width*.45,foot.top,dt,s);
       opener(mates[1],foot.right-46,foot.top,dt,s);
-      if(dragon)flyDragon(dt,s,foot.right-46,foot.top,foot.right-82);}
-      parkour(dt,s);
+      }
+      thinker(dt,s);
       g=gb;
       g.drawImage(tree,0,TOP,600*ts,480*ts);
       P.forEach(function(p){
@@ -697,7 +654,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       if(location.hash==="#premium"&&b.dataset.tab==="premium")b.click();
     });
     function card(p,k,n,g){
-        var c=el("article","card"),img=el("img");
+        var c=el("article",k.ribbon?"card hot":"card"),img=el("img");
         img.alt="";
         // slide in only once the picture is ready
         (function(c,img,n){
