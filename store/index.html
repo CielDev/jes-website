@@ -89,7 +89,7 @@ main>.studio{position:relative;z-index:0}
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
 @property --spin{syntax:"<angle>";inherits:false;initial-value:0deg}
-.card.hot::before{content:"";position:absolute;inset:-1px;padding:2px;border-radius:15px;background:conic-gradient(from var(--spin),transparent 0 62%,var(--pink) 78%,var(--gold) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:spinLine 10s linear infinite}
+.card.hot::before{content:"";position:absolute;inset:-1px;padding:2px;border-radius:15px;background:conic-gradient(from var(--spin),transparent 0 62%,var(--pink) 78%,var(--gold) 100%);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0);pointer-events:none;animation:spinLine 20s linear infinite}
 @keyframes spinLine{to{--spin:360deg}}
 .ribbon{position:absolute;z-index:1;top:-13px;left:-12px;padding:3px 10px;background:#ff4545;color:#fff;font-weight:700;font-size:15px;line-height:1.4;text-transform:uppercase;border-radius:7px;box-shadow:0 2px 0 rgba(0,0,0,.35)}
 /* tabs and premium */
