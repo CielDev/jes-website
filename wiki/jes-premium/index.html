@@ -48,6 +48,35 @@ article .btn:hover{text-decoration:none}
 .perks b{display:block}
 .perks span{color:var(--muted);font-size:15px}
 @media(max-width:800px){.perks{grid-template-columns:1fr}}
+.pm-hero{display:flex;align-items:center;min-height:calc(100vh - 65px);padding:40px 24px;background-size:cover;background-position:center}
+.pm-in{display:grid;grid-template-columns:400px 1fr;gap:60px;align-items:center;width:100%;max-width:1000px;margin:0 auto}
+.pm-card{padding:32px;background:rgba(13,11,18,.94);border:2px solid var(--gold);border-radius:14px}
+.pm-card h1,.pm-card .big{width:auto;font-family:"Minecraft","Outfit",sans-serif;font-size:42px;line-height:1.15;background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+.pm-card p{margin:6px 0 18px;color:#d9d3e6}
+.ck{list-style:none;padding:0;margin:0 0 22px}
+.ck li{position:relative;padding:4px 0 4px 30px}
+.ck li::before{content:"\2713";position:absolute;left:2px;color:#3ddc6c;font-weight:800}
+.pm-card .btn{display:flex;width:100%;height:56px}
+.pm-icon{justify-self:center;width:280px;max-width:100%;image-rendering:pixelated;filter:drop-shadow(0 12px 34px rgba(228,58,150,.6));animation:pmBob 4s ease-in-out infinite}
+@keyframes pmBob{50%{transform:translateY(-12px)}}
+.pm-t{margin:88px 24px 48px;font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(24px,3vw,34px);text-align:center;letter-spacing:.03em}
+.pm-row{display:grid;grid-template-columns:1.5fr 1fr;gap:48px;align-items:center;max-width:1100px;margin:0 auto 72px;padding:0 24px}
+.pm-pic{display:grid;place-items:center;aspect-ratio:2/1;overflow:hidden;background:radial-gradient(circle,#4a1d5e,#1a0f2e 75%);border:1px solid var(--line);border-radius:10px}
+.pm-pic>img{width:100%;height:100%;object-fit:cover}
+.pm-pic>img.px{width:auto;height:72%;object-fit:contain;image-rendering:pixelated}
+.pm-row h3,.pm-safe h2{margin-bottom:12px;font-family:"Minecraft","Outfit",sans-serif;font-size:30px;line-height:1.25}
+.pm-row p,.pm-safe p,.pm-faq p{color:#d9d3e6}
+.chest{width:62%;padding:10px;background:#c6c6c6;color:#3f3f3f;font-size:15px}
+.chest div{display:grid;grid-template-columns:repeat(9,1fr);gap:2px;margin-top:4px}
+.chest i{aspect-ratio:1;background:#8b8b8b;border:1px solid #fff;border-top-color:#373737;border-left-color:#373737}
+.chips{display:flex;flex-wrap:wrap;justify-content:center;gap:12px;max-width:1100px;margin:0 auto;padding:0 24px}
+.chips span{padding:14px 22px;background:var(--bg2);border:1px solid var(--line);border-radius:8px}
+.pm-safe{max-width:800px;margin:96px auto;padding:0 24px}
+.pm-safe p{margin-bottom:18px}
+.pm-faq{max-width:720px;margin:0 auto;padding:0 24px}
+.pm-faq h3{margin:36px 0 8px;font-size:22px}
+.pm-faq a{color:#ff7fc2}
+@media(max-width:800px){.pm-hero{min-height:0}.pm-in,.pm-row{grid-template-columns:1fr;gap:24px}.pm-icon{order:-1;width:150px}.pm-card{padding:24px}.pm-row{margin-bottom:48px}}
 </style>
 <link rel="stylesheet" href="../../studio.css">
 </head>
@@ -92,53 +121,20 @@ article .btn:hover{text-decoration:none}
   <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a>
 </aside>
 
-<div class="wrap doc">
-  <aside class="side" aria-label="Wiki pages">
-    <a href="../../wiki/">Welcome</a>
-    <a href="../../wiki/ip/">How to join</a>
-    <a href="../../wiki/town/">Town guide</a>
-    <a href="../../wiki/how-to-claim-land/">Claiming land</a>
-    <a href="../../wiki/nation/">Nation guide</a>
-    <a href="../../wiki/map/">Map guide</a>
-    <a href="../../wiki/how-to-teleport/">Teleporting</a>
-    <a href="../../wiki/chat/">Chat</a>
-    <a href="../../wiki/gold/">Gold</a>
-    <a href="../../wiki/shops/">Shops</a>
-    <a href="../../wiki/quarters/">Quarters</a>
-    <a href="../../wiki/mcmmo/">mcMMO</a>
-    <a href="../../wiki/ranks/">Ranks and store</a>
-    <a class="on" href="../../wiki/jes-premium/">JES Premium</a>
-    <a href="../../wiki/rules/">Server rules</a>
-  </aside>
-  <article>
-    <div class="crumb"><a href="../../wiki/">Wiki</a> &rsaquo; JES Premium</div>
-    <h1>JES Premium</h1>
-    <p class="lead">The all-inclusive JES rank. Premium keeps the server running for everyone, and gives you a little extra for helping.</p>
-    <a class="btn" href="../../store/#premium">Click to get Premium</a>
-    <h2>It's time for an upgrade</h2>
-    <div class="perks">
-      <div><b>Longer view distance</b><span>See more of your empire. It's heavy on the server, so it's a Premium perk.</span></div>
-      <div><b>Double ender chest</b><span>Twice the safe storage, everywhere you go.</span></div>
-      <div><b>Monthly Lucky Crates</b><span>Free crates every month while you're subscribed.</span></div>
-      <div><b>Change map territory color</b><span>Kings can recolor their nation on the map, and all its towns follow.</span></div>
-      <div><b>Golden username</b><span>Stand out in chat and the tab list.</span></div>
-      <div><b>Queue priority</b><span>Get in first when the server is busy.</span></div>
-      <div><b>/hat and /nick</b><span>Wear any item as a hat and change your display name.</span></div>
-      <div><b>Mute vote messages</b><span>Turn off vote messages with <code>/toggle vote-messages</code>.</span></div>
-    </div>
-    <h2>And so much more</h2>
-    <ul><li><code>/seen</code> and <code>/showitem</code></li><li>Item pick-up priority</li><li>Early access</li><li>Discord image permissions</li><li>Golden Discord username, special badge and Premium chat</li></ul>
-    <h2>Safe and secure</h2>
-    <p>Payments are handled by PayNow, so we never see or store your payment details. There are no contracts, and you can cancel any time.</p>
-    <h2>Frequently asked questions</h2>
-    <h3>What is Premium?</h3><p>A paid, all-inclusive rank that helps keep JES online and free to play for everyone.</p>
-    <h3>How long does it last?</h3><p>Choose 1, 3, 6 or 12 months. It renews until you cancel, and longer plans cost less per month.</p>
-    <h3>Can I gift it?</h3><p>Yes, with the <a href="../../store/#premium">Premium Egg</a>. It's an item you can trade or gift, and it gives one month of Premium when activated.</p>
-    <h3>What happens when Premium runs out?</h3><p>Your perks stop, and your ender chest goes back to normal size.</p>
-    <h3>How do I reach a human?</h3><p>Email <b>ciel0forwork@gmail.com</b> or ask in our <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>.</p>
-    <a class="btn" href="../../store/#premium">Click to get Premium</a>
-  </article>
-</div>
+<main class="pm">
+  <header class="pm-hero" style="background-image:linear-gradient(rgba(13,11,18,.82),rgba(13,11,18,.82)),url(../../img/hero.jpg)"><div class="pm-in"><div class="pm-card"><h1>JES Premium</h1><p>The all-inclusive JES rank</p><ul class="ck"><li>Longer view distance</li><li>Double ender chest</li><li>Monthly Lucky Crates</li><li>Change map territory color</li><li>Golden username</li><li>Queue priority</li><li>/hat and /nick</li><li>Mute vote messages</li><li>Item pick-up priority</li></ul><a class="btn" href="../../store/#premium">Click to get Premium</a></div><img class="pm-icon" src="https://media.paynow.gg/media/619669854303031296/620125670055346176.webp" alt="JES Premium"></div></header>
+  <h2 class="pm-t">It's time for an upgrade</h2>
+  <section class="pm-row"><div class="pm-pic"><img src="../../img/store-banner-final.png" alt=""></div><div><h3>Longer view distance</h3><p>See more of your empire. Long view distance is heavy on the server, so it is exclusive to Premium.</p></div></section>
+  <section class="pm-row"><div class="pm-pic"><div class="chest"><b>Large Ender Chest</b><div><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div></div><div><h3>Double sized ender chest</h3><p>Premium doubles your ender chest storage, so your valuables stay safe wherever you go.</p></div></section>
+  <section class="pm-row"><div class="pm-pic"><img class="px" src="https://media.paynow.gg/media/619669854303031296/620072057912172544.png" alt=""></div><div><h3>Monthly Lucky Crates</h3><p>Get free Lucky Crates every month while you are subscribed.</p></div></section>
+  <section class="pm-row"><div class="pm-pic"><img src="../../img/map.jpg" alt=""></div><div><h3>Change map territory color</h3><p>Tired of the default claim color? Premium lets nation kings change their territory color, and every town in the nation follows.</p></div></section>
+  <section class="pm-row"><div class="pm-pic"><img class="px" src="https://media.paynow.gg/media/619669854303031296/620123571083026432.webp" alt=""></div><div><h3>Gift it with a Premium Egg</h3><p>Trade it or give it to a friend. Whoever activates it gets one month of Premium.</p></div></section>
+  <h2 class="pm-t">And so much more</h2>
+  <div class="chips"><span>Mute vote messages /toggle vote-messages</span><span>Golden username in chat and tab</span><span>Any item as /hat</span><span>Change display name with /nick</span><span>/seen</span><span>Item pick-up priority</span><span>Queue priority</span><span>Discord image perms</span><span>Early access</span><span>Show item in hand with /showitem</span><span>Golden Discord username</span><span>Special Premium Discord badge</span><span>Exclusive Discord premium chat</span></div>
+  <section class="pm-safe"><h2>Safe and secure</h2><p>JES has been online since 2020 and is supported by a long-standing community. All payments are processed by PayNow, so we never see your payment details.</p><ul class="ck"><li>Online since 2020</li><li>Secure payments</li><li>Cancel any time</li><li>No contracts or time commitments</li></ul></section>
+  <div class="pm-hero" style="background-image:linear-gradient(rgba(13,11,18,.82),rgba(13,11,18,.82)),url(../../img/banner.jpg)"><div class="pm-in"><div class="pm-card"><h2 class="big">JES Premium</h2><p>The all-inclusive JES rank</p><ul class="ck"><li>Longer view distance</li><li>Double ender chest</li><li>Monthly Lucky Crates</li><li>Change map territory color</li><li>Golden username</li><li>Queue priority</li><li>/hat and /nick</li><li>Mute vote messages</li><li>Item pick-up priority</li></ul><a class="btn" href="../../store/#premium">Click to get Premium</a></div><img class="pm-icon" src="https://media.paynow.gg/media/619669854303031296/620125670055346176.webp" alt="JES Premium"></div></div>
+  <section class="pm-faq"><h2 class="pm-t">Frequently asked questions</h2><h3>What is JES?</h3><p>Just an Earth Server is a 1:300 scale Minecraft Earth server, online since 2020, with over 300K unique players.</p><h3>What is Premium?</h3><p>Premium is an all-inclusive paid rank that supports the long-term running of the server and gives subscribers handy features and cosmetics. It helps keep JES free to play for everyone.</p><h3>How are payments secured?</h3><p>All payments are processed by PayNow, which handles the entire transaction. JES never sees, stores or has access to your card details.</p><h3>How long does it last?</h3><p>Choose 1, 3, 6 or 12 months. It renews until you cancel, and longer plans cost less per month.</p><h3>Can I gift Premium?</h3><p>Yes, with the Premium Egg. It is an item you can trade or gift, and whoever activates it gets one month of Premium.</p><h3>What happens to the double ender chest if Premium runs out?</h3><p>The ender chest goes back to normal size.</p><h3>How do I get help from a human?</h3><p>Email <b>ciel0forwork@gmail.com</b> or ask in our <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>.</p></section>
+</main>
 
 <div class="studio-wrap">
   <footer class="studio">
