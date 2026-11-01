@@ -446,7 +446,11 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     var say=document.getElementById("say");
     function hush(){clearTimeout(think.timer);clearInterval(think.tick);say.hidden=true}
     addEventListener("click",function(e){
-      if(Math.abs(e.clientX-think.sx)>18||e.clientY<think.sy-38||e.clientY>think.sy+6)return;
+      var x=e.clientX,y=e.clientY,b=say.getBoundingClientRect();
+      var body=Math.abs(x-think.sx)<=18&&y>=think.sy-38&&y<=think.sy+6;
+      var bubble=say.hidden&&Math.abs(x-think.sx-think.dir*20)<=18&&y>=think.sy-68&&y<=think.sy-36;
+      var box=!say.hidden&&x>=b.left&&x<=b.right&&y>=b.top&&y<=b.bottom+12;
+      if(!body&&!bubble&&!box)return;
       hush();
       var l=think.line++,t=LINES[l?1+(l-1)%(LINES.length-1):0],n=0;
       say.textContent="";say.hidden=false;
