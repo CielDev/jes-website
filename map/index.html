@@ -1571,7 +1571,7 @@ function frame(now) {
   U.uChunks.value = $("#tChunks").checked ? THREE.MathUtils.smoothstep(8 - bpp, 0, 5) : 0;
   atmoMat.uniforms.uA.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.05, 0.5);
   atmo.visible = atmoMat.uniforms.uA.value > 0.001 && !(doom.on && pieces && pieces.group.visible);
-  starMat.opacity = .75 * (1 - f * 0.6);
+  starMat.opacity = .75 * (1 - f);
   if (doom.on) doomCamera(now);
   else if (now - lastTiles > 90) { updateTiles(); lastTiles = now; tilesDirty = false; }
   renderer.render(scene, camera);
