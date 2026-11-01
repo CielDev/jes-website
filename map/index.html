@@ -116,6 +116,12 @@ body.cine #doom .bar{height:11vh}
 .ctl{position:fixed;right:clamp(12px,2.4vw,32px);z-index:15;background:var(--panel);border:1px solid var(--line);border-radius:12px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
 #layersBtn{top:calc(var(--top) + 16px);width:44px;height:44px;display:grid;place-items:center;cursor:pointer;transition:top .3s}
 #layersBtn[hidden]{display:none}
+#playersBtn{top:calc(var(--top) + 16px);right:calc(clamp(12px,2.4vw,32px) + 54px);width:44px;height:44px;display:grid;place-items:center;cursor:pointer;transition:top .3s}
+#playersBtn svg{width:20px;height:20px}
+#playersBtn:hover{background:var(--line)}
+#playersBtn b{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--pink);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.pl.spot{animation:spot .8s ease-out 3}
+@keyframes spot{from{box-shadow:0 0 0 0 rgba(252,208,92,.9)}to{box-shadow:0 0 0 18px rgba(252,208,92,0)}}
 #layersBtn svg{width:20px;height:20px}
 #layersBtn:hover,#zoom button:hover{background:var(--line)}
 #panel{top:calc(var(--top) + 16px);width:200px;padding:12px;transition:top .3s}
@@ -136,7 +142,7 @@ body.cine #doom .bar{height:11vh}
 #zoom button+button{border-top:1px solid var(--line)}
 
 /* player list */
-#list{position:fixed;top:calc(var(--top) + 8px);right:clamp(12px,2.4vw,32px);z-index:16;width:240px;max-height:min(60vh,460px);overflow:auto;display:none;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
+#list{position:fixed;top:calc(var(--top) + 68px);right:clamp(12px,2.4vw,32px);z-index:16;width:240px;max-height:min(60vh,460px);overflow:auto;display:none;padding:6px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
 #list.open{display:block}
 #list .row{display:flex;align-items:center;gap:10px;width:100%;padding:7px 8px;border:0;border-radius:8px;background:none;text-align:left;cursor:pointer;font-size:15px}
 #list .row:hover{background:var(--line)}
@@ -179,6 +185,8 @@ body.cine #doom .bar{height:11vh}
   #online,#ip{display:none}
   .btn.store{display:inline-flex}
   #layersBtn,#panel{top:auto;right:auto;left:12px;bottom:calc(24px + env(safe-area-inset-bottom))}
+  #playersBtn{top:auto;right:auto;left:64px;bottom:calc(24px + env(safe-area-inset-bottom))}
+  #list{top:calc(var(--top) + 8px)}
   #status{bottom:auto;top:calc(var(--top) + 44px)}
   #coords{bottom:auto;top:calc(var(--top) + 12px)}
 }
@@ -242,6 +250,9 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 <div id="pop" hidden></div>
 <div id="list" role="menu"></div>
 
+<button class="ctl" id="playersBtn" type="button" aria-label="Player list" aria-expanded="false">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-7 8-7s8 2.6 8 7"/></svg><b id="playersNum">0</b>
+</button>
 <button class="ctl" id="layersBtn" type="button" aria-label="Map layers" aria-expanded="false">
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 3 2 8l10 5 10-5-10-5z"/><path d="m2 13 10 5 10-5"/></svg>
 </button>
@@ -1015,6 +1026,7 @@ function setPlayers(list) {
   }
   for (const [name, p] of players) if (!seen.has(name)) { players.delete(name); leaving.set(name, p); }
   onlineBtn.textContent = $("#drOnline").textContent = players.size + " online";
+  $("#playersNum").textContent = players.size;
   $("#pCount").textContent = players.size;
   if (listEl.classList.contains("open")) renderList();
   dirty = true;
@@ -1026,15 +1038,19 @@ function renderList() {
     const b = document.createElement("button"); b.className = "row"; b.type = "button";
     b.appendChild(makeAvatar(p.name)); const s = document.createElement("span"); s.textContent = p.name; b.appendChild(s);
     if (!p.onMap) { const w = document.createElement("small"); w.textContent = p.world && p.world.startsWith(CONFIG.world + "_") ? p.world.slice(CONFIG.world.length + 1).replace("the_", "") : "hidden"; b.appendChild(w); }
-    else b.addEventListener("click", () => flyTo(p.tn, p.tl, 0.05));
+    else b.addEventListener("click", () => {
+      closeList(); flyTo(p.tn, p.tl, 0.05);
+      p.el.classList.remove("spot"); void p.el.offsetWidth; p.el.classList.add("spot");
+    });
     listEl.appendChild(b);
   });
 }
-function closeList() { listEl.classList.remove("open"); onlineBtn.setAttribute("aria-expanded", "false"); }
+function closeList() { listEl.classList.remove("open"); onlineBtn.setAttribute("aria-expanded", "false"); $("#playersBtn").setAttribute("aria-expanded", "false"); }
 onlineBtn.addEventListener("click", (e) => {
   e.stopPropagation(); const o = listEl.classList.toggle("open"); onlineBtn.setAttribute("aria-expanded", o);
   if (o) { renderList(); setPanel(false); }
 });
+$("#playersBtn").addEventListener("click", (e) => { e.stopPropagation(); onlineBtn.click(); $("#playersBtn").setAttribute("aria-expanded", listEl.classList.contains("open")); });
 addEventListener("click", (e) => { if (!listEl.contains(e.target) && e.target !== onlineBtn) closeList(); });
 
 async function pollPlayers() {
