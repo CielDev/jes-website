@@ -250,6 +250,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <label class="tg"><input type="checkbox" id="tPlayers" checked><i></i><span>Players</span><em id="pCount">0</em></label>
   <label class="tg"><input type="checkbox" id="tClaims" checked><i></i><span>Claims</span></label>
   <label class="tg"><input type="checkbox" id="tSights" checked><i></i><span>Landmarks</span></label>
+  <label class="tg"><input type="checkbox" id="tClouds" checked><i></i><span>Clouds</span></label>
   <label class="tg"><input type="checkbox" id="tChunks"><i></i><span>Chunks</span></label>
   <label class="tg"><input type="checkbox" id="tFlat"><i></i><span>Flat map</span></label>
   <label class="tg"><input type="checkbox" id="tNav"><i></i><span>Hide menu</span></label>
@@ -1057,7 +1058,7 @@ function setPanel(o) { panel.hidden = !o; layersBtn.hidden = o; layersBtn.setAtt
 layersBtn.addEventListener("click", () => { setPanel(true); closeList(); });
 $("#panelX").addEventListener("click", () => setPanel(false));
 setPanel(matchMedia("(max-width:800px)").matches);        // on phones the panel starts open
-const toggles = { tPlayers: true, tClaims: true, tSights: true, tChunks: false, tFlat: false, tNav: false };
+const toggles = { tPlayers: true, tClaims: true, tSights: true, tClouds: true, tChunks: false, tFlat: false, tNav: false };
 for (const id in toggles) {
   const el = $("#" + id);
   el.checked = id in store ? !!store[id] : toggles[id];
@@ -1560,7 +1561,7 @@ function frame(now) {
   updateCamera();
   U.uL.value.copy(SUN).transformDirection(camera.matrixWorld);
   const f = U.uFlat.value;
-  cloudO.value = doom.on ? 0 : (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
+  cloudO.value = doom.on || !$("#tClouds").checked ? 0 : (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
   for (const c of clouds) c.visible = cloudO.value > 0.001;
   U.uShade.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.2, 1.5);
   const bpp = RB * radPerPx();
