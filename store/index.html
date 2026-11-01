@@ -544,7 +544,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       g=gb;g.setTransform(dpr,0,0,dpr,0,0);g.clearRect(0,0,W,H);
       var ban=document.querySelector(".banner").getBoundingClientRect(),foot=document.querySelector(".studio").getBoundingClientRect();
       var floor=document.documentElement.scrollHeight-scrollY;
-      ts=Math.max(.42,Math.min(1,(ban.left+70)/250));
+      ts=Math.min(1,ban.left/440);
       if(floor<H+60)g.drawImage(ground,0,floor-56);
       g=gf;
       if(document.querySelector(".studio.in")){opener(mates[0],foot.left+46,foot.top,dt,s);
@@ -553,7 +553,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       }
       thinker(dt,s);
       g=gb;
-      g.drawImage(tree,0,TOP,600*ts,480*ts);
+      if(ts>=.3&&scrollY<480*ts+TOP){g.globalAlpha=Math.max(0,1-scrollY/(420*ts));g.drawImage(tree,0,TOP-scrollY,600*ts,480*ts);g.globalAlpha=1}   // the tree stays in the side margin and scrolls away with the page
       P.forEach(function(p){
         var dx=p.x-mx,dy=p.y-my,d2=dx*dx+dy*dy;
         if(d2<14400){var d=Math.sqrt(d2)||1,f=(1-d/120)*260;p.vx+=dx/d*f*dt;p.vy+=dy/d*f*dt}
