@@ -621,9 +621,14 @@ let dirty = true, tilesDirty = true, lastInput = -1e9, tween = null, zoomAnim = 
 let flatManual = 0;
 const autoFlat = () => 1 - THREE.MathUtils.smoothstep(view.h, 0.22, 0.6);
 const isFlat = () => U.uFlat.value > 0.5;
-const clampH = (v) => clamp(v, H_MIN, H_MAX);
+const H_FIT = Math.PI / (2 * Math.tan(THREE.MathUtils.degToRad(35 / 2)));   // the flat map exactly fills the screen height
+const clampH = (v) => clamp(v, H_MIN, flatManual === 1 ? H_FIT : H_MAX);
 const clampView = () => {
-  if (isFlat()) { view.lon = clamp(view.lon, -Math.PI, Math.PI); view.lat = clamp(view.lat, -Math.PI / 2, Math.PI / 2); }
+  if (isFlat()) {                                         // endless sideways, no gaps above or below
+    view.h = clampH(view.h); view.lon = wrap(view.lon);
+    const m = Math.max(0, Math.PI / 2 - view.h * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)));
+    view.lat = clamp(view.lat, -m, m);
+  }
   else { view.lon = wrap(view.lon); view.lat = clamp(view.lat, -1.5, 1.5); }
 };
 function updateCamera() {
@@ -651,13 +656,14 @@ function pick(cx, cy) {
   }
   const dn = d.dot(C); if (dn >= 0) return null;
   hit.copy(d).multiplyScalar((1 - o.dot(C)) / dn).add(o).sub(C);
-  return { lon: view.lon + hit.dot(E), lat: view.lat + hit.dot(N) };
+  const raw = view.lon + hit.dot(E);
+  return { lon: wrap(raw), raw, lat: view.lat + hit.dot(N) };
 }
 /* {lon, lat} -> world position, the same as place() in the shaders */
 function place(lon, lat, out) {
   const c = Math.cos(lat), f = U.uFlat.value;
   out.set(c * Math.sin(lon), Math.sin(lat), c * Math.cos(lon));
-  if (f > 0) out.lerp(hit.copy(C).addScaledVector(E, lon - view.lon).addScaledVector(N, lat - view.lat), f);
+  if (f > 0) out.lerp(hit.copy(C).addScaledVector(E, wrap(lon - view.lon)).addScaledVector(N, lat - view.lat), f);
   return out;
 }
 
@@ -677,7 +683,7 @@ function zoomAt(factor, cx, cy) {
   const a = cx == null ? null : pick(cx, cy);
   view.h = clampH(view.h * factor); updateCamera();
   const b = a && view.h < 1.5 ? pick(cx, cy) : null;
-  if (a && b) { view.lon += isFlat() ? a.lon - b.lon : wrap(a.lon - b.lon); view.lat += a.lat - b.lat; clampView(); }
+  if (a && b) { view.lon += wrap(a.lon - b.lon); view.lat += a.lat - b.lat; clampView(); }
   dirty = true;
 }
 const stopAnims = () => { tween = null; vel.lon = vel.lat = 0; lastInput = performance.now(); };
@@ -742,7 +748,7 @@ $("#zout").addEventListener("click", () => zoomBtn(2.5));
 
 function flyTo(lon, lat, h) {
   closeList();
-  const dl = isFlat() ? lon - view.lon : wrap(lon - view.lon);
+  const dl = wrap(lon - view.lon);
   tween = { lon0: view.lon, lat0: view.lat, h0: Math.log(view.h), lon1: view.lon + dl, lat1: lat, h1: Math.log(clampH(h ?? Math.min(view.h, 0.08))), t0: performance.now(), dur: reduce ? 1 : 1400 };
   vel.lon = vel.lat = 0; zoomAnim = null; lastInput = performance.now();
 }
@@ -798,7 +804,7 @@ function updateTiles() {
   // sample the screen and work out how much detail each part needs: towards the edge
   // of the globe the ground is further away and seen at a slant, so it needs less
   const dpr = Math.min(devicePixelRatio || 1, 2), pxAng = 2 * Math.tan(THREE.MathUtils.degToRad(camera.fov / 2)) / innerHeight;
-  const B = [], P = new THREE.Vector3(), Q = new THREE.Vector3();
+  const Bs = {}, P = new THREE.Vector3(), Q = new THREE.Vector3();
   for (let j = 0; j <= 12; j++) for (let i = 0; i <= 12; i++) {
     const p = pick(innerWidth * i / 12, innerHeight * j / 12); if (!p) continue;
     place(p.lon, p.lat, P);
@@ -807,12 +813,14 @@ function updateTiles() {
     const bpp = RB * dist * pxAng / Math.max(facing, 0.25) / dpr;      // blocks per device pixel here
     const k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);         // zoom k has 2^(k-1) blocks per texel
     if (k >= CONFIG.baseZoom) continue;
-    const lon = view.lon + (isFlat() ? p.lon - view.lon : wrap(p.lon - view.lon));
+    const raw = p.raw ?? view.lon + wrap(p.lon - view.lon), n = isFlat() ? Math.round(raw / (2 * Math.PI)) : 0;   // which repeat of the flat map
+    const lon = raw - n * 2 * Math.PI, B = Bs[n] || (Bs[n] = []);
     const b = B[k] || (B[k] = [Infinity, -Infinity, Infinity, -Infinity]);
     b[0] = Math.min(b[0], lon); b[1] = Math.max(b[1], lon); b[2] = Math.min(b[2], p.lat); b[3] = Math.max(b[3], p.lat);
   }
-  const half = CONFIG.worldWidth / 2, cx = view.lon * RB / 64, cy = view.lat * RB / 64;
+  const half = CONFIG.worldWidth / 2, cy = view.lat * RB / 64;
   const list = [];
+  for (const n in Bs) { const B = Bs[n], cx = (view.lon - n * 2 * Math.PI) * RB / 64;
   for (let k = 0; k < CONFIG.baseZoom; k++) {
     const b = B[k]; if (!b) continue;
     const u = 1 << k;
@@ -825,7 +833,7 @@ function updateTiles() {
       continue;
     }
     for (let ty = tya; ty <= tyb; ty += u) for (let tx = txa; tx <= txb; tx += u) list.push([k, tx, ty, Math.hypot(tx + u / 2 - cx, ty - u / 2 + 0.5 - cy) / u]);
-  }
+  } }
   list.sort((a, b) => a[3] - b[3]);
 
   const now = performance.now();
@@ -1530,6 +1538,7 @@ function frame(now) {
     const k = Math.min(1, (now - flatAnim.t0) / 700), e = k < .5 ? 2 * k * k : 1 - Math.pow(-2 * k + 2, 2) / 2;
     flatManual = flatAnim.from + (flatAnim.to - flatAnim.from) * e;
     if (k >= 1) { flatManual = flatAnim.to; flatAnim = null; updateCamera(); clampView(); }
+    if (flatAnim && flatAnim.to === 1 && view.h > H_FIT) view.h += (H_FIT - view.h) * Math.min(1, dt * 8);
     dirty = tilesDirty = true;
   }
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
@@ -1598,7 +1607,11 @@ function frame(now) {
   starMat.opacity = .75 * (1 - f);
   if (doom.on) doomCamera(now);
   else if (now - lastTiles > 90) { updateTiles(); lastTiles = now; tilesDirty = false; }
-  renderer.render(scene, camera);
+  if (f > 0.999 && !doom.on) {                            // draw the neighbouring worlds too, so the flat map never ends
+    renderer.autoClear = false; renderer.clear();
+    for (const d of [0, -2 * Math.PI, 2 * Math.PI]) { U.uC.value.x = view.lon + d; renderer.render(scene, camera); }
+    U.uC.value.x = view.lon; renderer.autoClear = true;
+  } else renderer.render(scene, camera);
 
   // DOM markers
   const near = view.h < 0.45;
