@@ -41,7 +41,7 @@ body.nonav{--top:0px}
 #online:hover{color:var(--text)}
 .btn{display:inline-flex;align-items:center;justify-content:center;height:44px;padding:.2em 26px 0;border:0;border-radius:12px;background:var(--grad);color:#1a1020;font-family:"Minecraft","Outfit",sans-serif;font-weight:700;font-size:20px;letter-spacing:.04em;text-transform:uppercase;line-height:1;cursor:pointer;box-shadow:inset 0 -4px 0 rgba(0,0,0,.3);transition:transform .15s;white-space:nowrap}
 .btn:hover{transform:translateY(-2px)}
-.btn.store{display:none}
+
 
 /* mobile menu, same as the main site */
 .burger,#scrim,#drawer{display:none}
@@ -182,7 +182,7 @@ body.cine #doom .bar{height:11vh}
   #list{left:12px;right:12px;width:auto}
   .burger{display:flex}
   #scrim,#drawer{display:block}
-  #online,#ip{display:none}
+  #online{display:none}
   .btn.store{display:inline-flex}
   #layersBtn,#panel{top:auto;right:auto;left:12px;bottom:calc(24px + env(safe-area-inset-bottom))}
   #playersBtn{top:auto;right:auto;left:64px;bottom:calc(24px + env(safe-area-inset-bottom))}
@@ -228,7 +228,6 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     </div>
     <div class="right">
       <button id="online" type="button" aria-haspopup="true" aria-expanded="false">0 online</button>
-      <button class="btn" id="ip" type="button">Play Now</button>
       <a class="btn store" href="../store/">Store</a>
     </div>
   </div>
@@ -1133,18 +1132,6 @@ let hashT;
 function saveHash() {
   clearTimeout(hashT);
   hashT = setTimeout(() => history.replaceState(null, "", `#${Math.round(view.lon * RB)},${Math.round(-view.lat * RB)},${+view.h.toPrecision(3)}`), 500);
-}
-
-/* ---------- play button ---------- */
-{
-  const b = $("#ip"); let t;
-  b.addEventListener("click", async () => {
-    let ok = false;
-    try { await navigator.clipboard.writeText(CONFIG.ip); ok = true; } catch (e) {
-      try { const ta = document.createElement("textarea"); ta.value = CONFIG.ip; ta.style.cssText = "position:fixed;opacity:0"; document.body.appendChild(ta); ta.select(); ok = document.execCommand("copy"); ta.remove(); } catch (_) {}
-    }
-    b.textContent = ok ? "Copied!" : CONFIG.ip; clearTimeout(t); t = setTimeout(() => (b.textContent = "Play Now"), 2000);
-  });
 }
 
 /* ---------- rarely, a UFO abducts a cow; pressing 6 ten times calls one ---------- */
