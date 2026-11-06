@@ -85,6 +85,7 @@ main>.studio{position:relative;z-index:0}
 .card.in{opacity:1;transform:none}
 .card img{width:100%;max-width:220px;aspect-ratio:1;object-fit:contain;image-rendering:pixelated}
 .card h2{margin-top:12px;font-size:20px}
+.card .price .was{margin-right:8px;color:var(--muted);font-size:17px;font-weight:500}
 .card .price{margin:2px 0 8px;color:var(--gold);font-size:22px;font-weight:700}
 .card p{flex:1;margin-bottom:18px;color:var(--muted);font-size:15px}
 .card .btn{width:100%}
@@ -599,9 +600,9 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     var API="https://api.paynow.gg/v1",STORE="619669854303031296",BEDROCK="_";
     // the packages on sale here, in display order
     var PACKAGES=[
-      {id:"620039387698176000"},
-      {id:"620068296078655488"},
-      {id:"620068924448313344",ribbon:"40 extra crates!"}
+      {id:"620039387698176000",n:3},
+      {id:"620068296078655488",n:20,ribbon:"5 extra crates!"},
+      {id:"620068924448313344",n:100,hot:true,ribbon:"40 extra crates!"}
     ];
     var $=function(id){return document.getElementById(id)};
     var token=null,name=null,products={},cart=null,pending=null;
@@ -685,7 +686,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       if(location.hash==="#premium"&&b.dataset.tab==="premium")b.click();
     });
     function card(p,k,n,g){
-        var c=el("article",k.ribbon?"card hot":"card"),img=el("img");
+        var c=el("article",k.hot?"card hot":"card"),img=el("img");
         img.alt="";
         // slide in only once the picture is ready
         (function(c,img,n){
@@ -698,7 +699,9 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
         c.appendChild(img);
         if(k.ribbon)c.appendChild(el("div","ribbon",k.ribbon));
         c.appendChild(el("h2","",p.name));
-        c.appendChild(el("div","price",money(p.pricing.price_final)));
+        var pr=el("div","price",money(p.pricing.price_final)),one=products[PACKAGES[0].id];
+        if(k.n&&one&&k.n>PACKAGES[0].n){var was=Math.round(one.pricing.price_final/PACKAGES[0].n*k.n);if(was>p.pricing.price_final)pr.insertBefore(el("s","was",money(was)),pr.firstChild)}
+        c.appendChild(pr);
         c.appendChild(el("p","",plain(p.description)));
         var b=el("button","btn","Add to cart");b.type="button";
         b.addEventListener("click",function(e){if(window.sparkle)window.sparkle(e.clientX,e.clientY);add(p.id)});
