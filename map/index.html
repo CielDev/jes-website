@@ -129,6 +129,10 @@ body.cine #doom .bar{height:11vh}
 .ph{display:flex;align-items:center;justify-content:space-between;margin:0 0 10px 2px;font-size:14px}
 .ph button{background:none;border:0;cursor:pointer;color:var(--muted);font-size:18px;line-height:1;padding:2px 4px}
 .ph button:hover{color:var(--text)}
+.worlds{display:flex;gap:4px;margin:2px 0 8px;padding:3px;border-radius:10px;background:#231f2c}
+.worlds button{flex:1;padding:6px 0;border:0;border-radius:7px;background:none;color:var(--muted);font-size:13px;font-weight:600}
+.worlds button.on{background:var(--pink);color:#fff}
+.worlds button[data-world=Earth_nether].on{background:#b3261e}
 .tg{display:flex;align-items:center;gap:10px;padding:7px 2px;font-size:14px;cursor:pointer;user-select:none}
 .tg input{position:absolute;opacity:0;pointer-events:none}
 .tg i{position:relative;width:32px;height:18px;flex:none;border-radius:9px;background:#3a3446;transition:background .2s}
@@ -265,6 +269,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 </button>
 <div class="ctl" id="panel" hidden>
   <div class="ph"><b>Map</b><button id="panelX" type="button" aria-label="Close">&times;</button></div>
+  <div class="worlds" role="group" aria-label="World"><button type="button" data-world="Earth" class="on">Overworld</button><button type="button" data-world="Earth_nether">Nether</button></div>
   <label class="tg"><input type="checkbox" id="tPlayers" checked><i></i><span>Players</span><em id="pCount">0</em></label>
   <label class="tg"><input type="checkbox" id="tClaims" checked><i></i><span>Claims</span></label>
   <label class="tg"><input type="checkbox" id="tSights" checked><i></i><span>Landmarks</span></label>
@@ -603,7 +608,7 @@ new THREE.TextureLoader().load(
   (tex) => {
     tex.generateMipmaps = true; tex.minFilter = THREE.LinearMipmapLinearFilter; tex.magFilter = THREE.LinearFilter;
     tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-    baseMat.uniforms.uTex.value = tex; dirty = true;
+    earthTex = tex; if (!nether) baseMat.uniforms.uTex.value = tex; dirty = true;
     requestAnimationFrame(() => requestAnimationFrame(() => loading.classList.add("done")));
   },
   undefined,
@@ -810,8 +815,9 @@ function updateTiles() {
     const dist = Q.copy(camera.position).sub(P).length();
     const facing = isFlat() ? Q.dot(C) / dist : Q.dot(P.normalize()) / dist;
     const bpp = RB * dist * pxAng / Math.max(facing, 0.25) / dpr;      // blocks per device pixel here
-    const k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);         // zoom k has 2^(k-1) blocks per texel
-    if (k >= CONFIG.baseZoom) continue;
+    let k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);         // zoom k has 2^(k-1) blocks per texel
+    if (k >= CONFIG.baseZoom) { if (!nether) continue; k = NETHER_ZOOM; }
+    if (nether && k > NETHER_ZOOM) k = NETHER_ZOOM;
     const raw = p.raw ?? view.lon + wrap(p.lon - view.lon), n = isFlat() ? Math.round(raw / (2 * Math.PI)) : 0;   // which repeat of the flat map
     const lon = raw - n * 2 * Math.PI, B = Bs[n] || (Bs[n] = []);
     const b = B[k] || (B[k] = [Infinity, -Infinity, Infinity, -Infinity]);
@@ -1052,7 +1058,7 @@ function renderList() {
   [...players.values()].sort((a, b) => a.name.localeCompare(b.name)).forEach((p) => {
     const b = document.createElement("button"); b.className = "row"; b.type = "button";
     b.appendChild(makeAvatar(p.name)); const s = document.createElement("span"); s.textContent = p.name; b.appendChild(s);
-    if (!p.onMap) { const w = document.createElement("small"); w.textContent = p.world && p.world.startsWith(CONFIG.world + "_") ? p.world.slice(CONFIG.world.length + 1).replace("the_", "") : "hidden"; b.appendChild(w); }
+    if (!p.onMap) { const w = document.createElement("small"); w.textContent = p.world === "Earth" ? "overworld" : p.world && p.world.startsWith("Earth_") ? p.world.slice(6).replace("the_", "") : "hidden"; b.appendChild(w); }
     else b.addEventListener("click", () => {
       closeList(); flyTo(p.tn, p.tl, 0.05);
       p.el.classList.remove("spot"); void p.el.offsetWidth; p.el.classList.add("spot");
@@ -1082,6 +1088,24 @@ async function pollPlayers() {
 }
 pollPlayers(); setInterval(pollPlayers, Math.max(1000, CONFIG.playerRefresh));
 pollMarkers(); setInterval(pollMarkers, Math.max(10000, CONFIG.markerRefresh));
+
+/* ---------- worlds: the overworld or the nether ----------
+   The nether has no whole-world image, so it gets a dark netherrack ground and only live tiles */
+let nether = false, earthTex = null;
+const NETHER_ZOOM = 4;                                     // the coarsest Dynmap zoom the nether has
+const netherTex = new THREE.DataTexture(new Uint8Array([46, 14, 16, 255]), 1, 1); netherTex.needsUpdate = true;
+function setWorld(w) {
+  if (w === CONFIG.world) return;
+  CONFIG.world = w; nether = w !== "Earth";
+  document.querySelectorAll(".worlds button").forEach((b) => b.classList.toggle("on", b.dataset.world === w));
+  [...tiles.values()].forEach(dropTile); queue = [];
+  if (nether) earthTex = baseMat.uniforms.uTex.value || earthTex;
+  baseMat.uniforms.uTex.value = nether ? netherTex : earthTex;
+  closePop(); buildClaims({}); pollMarkers(); pollPlayers();
+  if (nether) flyTo(0, 0, 0.35);
+  dirty = tilesDirty = true;
+}
+document.querySelectorAll(".worlds button").forEach((b) => b.addEventListener("click", () => setWorld(b.dataset.world)));
 
 /* ---------- layers panel ---------- */
 const panel = $("#panel"), layersBtn = $("#layersBtn");
@@ -1572,11 +1596,11 @@ function frame(now) {
     if (turning && !isFlat() && view.h > 1) doom.spin += Math.abs(wrap(view.lon - doom.lastLon));
     doom.lastLon = view.lon;
     doom.spin *= Math.exp(-dt / 25);
-    const goal = DOOM_TURNS * 2 * Math.PI, red = Math.min(1, Math.pow(doom.spin / goal, 2)) * 0.85;
+    const goal = DOOM_TURNS * 2 * Math.PI, red = Math.max(nether ? 0.7 : 0, Math.min(1, Math.pow(doom.spin / goal, 2)) * 0.85);
     if (Math.abs(red - atmoMat.uniforms.uRed.value) > 0.004) { atmoMat.uniforms.uRed.value = red; dirty = true; }
     if (doom.spin > goal && baseMat.uniforms.uTex.value) startDoom(now);
   }
-  const sightsOn = $("#tSights").checked && view.h > 0.08;
+  const sightsOn = $("#tSights").checked && view.h > 0.08 && !nether;
   if ((cloudO.value > 0.001 || sightsOn) && !document.hidden) dirty = true;   // clouds drift and birds fly
   if (!dirty) return;
   dirty = false; tilesDirty = true;
@@ -1584,7 +1608,7 @@ function frame(now) {
   updateCamera();
   U.uL.value.copy(SUN).transformDirection(camera.matrixWorld);
   const f = U.uFlat.value;
-  cloudO.value = doom.on ? 0 : cloudFade * (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
+  cloudO.value = doom.on || nether ? 0 : cloudFade * (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.3, 0.9); cloudT.value = now / 1000;
   for (const c of clouds) c.visible = cloudO.value > 0.001;
   U.uShade.value = (1 - f) * THREE.MathUtils.smoothstep(view.h, 0.2, 1.5);
   const bpp = RB * radPerPx();
