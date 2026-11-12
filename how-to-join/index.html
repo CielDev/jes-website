@@ -12,7 +12,12 @@
 <link rel="stylesheet" href="../site.css?v=2">
 <style>
 @font-face{font-family:"Minecraft";src:url("../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
-.head{padding:56px 0 28px;text-align:center}
+.head{position:relative;padding:56px 0 28px;text-align:center}
+.duo{position:absolute;bottom:20px;height:230px;width:auto;pointer-events:none;filter:drop-shadow(0 12px 18px rgba(0,0,0,.5)) drop-shadow(0 0 24px rgba(228,58,150,.22));animation:duo 5s ease-in-out infinite}
+.duo.l{left:4%}.duo.r{right:4%;animation-delay:-2.5s}
+@keyframes duo{50%{transform:translateY(-8px)}}
+@media(max-width:900px){.duo{display:none}}
+@media(prefers-reduced-motion:reduce){.duo{animation:none}}
 .head h1{margin:0 auto}
 .head p{margin:10px auto 22px;max-width:680px;color:var(--muted)}
 .tabs{display:flex;justify-content:center;gap:6px;width:fit-content;margin:0 auto 24px;padding:6px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
@@ -86,6 +91,8 @@ dd{margin:0;text-align:right;font-weight:600}
 
 <main class="wrap">
   <header class="head">
+    <img class="duo l" src="../img/renders/steve.webp" alt="" width="140" height="420">
+    <img class="duo r" src="../img/renders/alex.webp" alt="" width="140" height="420">
     <h1>How to Join</h1>
     <p>One address for Java and Bedrock. No mods, no launcher tricks, no nonsense.</p>
     <button class="btn" type="button" data-copy="jes.earth">IP: jes.earth</button>

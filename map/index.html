@@ -181,6 +181,9 @@ body.doom #follow{opacity:0;pointer-events:none}
 #coords:empty{display:none}
 #loading{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg);font-family:"Minecraft",system-ui,sans-serif;font-size:clamp(18px,3vw,28px);letter-spacing:.04em;color:var(--gold);text-transform:uppercase;transition:opacity .7s ease}
 #loading.done{opacity:0;pointer-events:none}
+#loading .ld{display:flex;flex-direction:column;align-items:center;gap:18px}
+#loading img{height:200px;width:auto;filter:drop-shadow(0 0 26px rgba(252,208,92,.35));animation:ldBob 2.4s ease-in-out infinite}
+@keyframes ldBob{50%{transform:translateY(-8px)}}
 #loading.err{color:#ff6b6b;text-align:center;padding:24px}
 
 @media(max-width:800px){
@@ -296,7 +299,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <div class="title">The world has ended</div>
   <button class="btn rebuild" type="button">Rebuild the world</button>
 </div>
-<div id="loading">Loading the world...</div>
+<div id="loading"><div class="ld"><img src="../img/renders/wizard-cast.webp" alt="" width="260" height="420"><span>Loading the world...</span></div></div>
 
 <noscript><p style="position:fixed;inset:0;display:grid;place-items:center;background:#05050a;color:#fff;z-index:50">This map needs JavaScript.</p></noscript>
 

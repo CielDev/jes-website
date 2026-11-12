@@ -120,6 +120,11 @@ main.wrap{max-width:1280px}
 .team{max-width:1280px;margin:0 auto;padding:96px 24px 0}
 .team>h2{font-family:"Minecraft","Outfit",sans-serif;font-size:clamp(26px,3.6vw,46px);line-height:1.2;background:linear-gradient(180deg,#fff 0%,#cdcbd6 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
 .team>p{margin:10px 0 28px;color:var(--muted)}
+.team{position:relative}
+.t-king{position:absolute;right:64px;top:28px;height:190px;width:auto;z-index:2;pointer-events:none;filter:drop-shadow(0 12px 18px rgba(0,0,0,.5)) drop-shadow(0 0 24px rgba(228,58,150,.25));animation:tKing 5s ease-in-out infinite}
+@keyframes tKing{50%{transform:translateY(-6px)}}
+@media(max-width:800px){.t-king{display:none}}
+@media(prefers-reduced-motion:reduce){.t-king{animation:none}}
 .t-card{display:grid;grid-template-columns:1fr 380px;min-height:320px;overflow:hidden;background:var(--bg2);border:1px solid var(--line);border-radius:14px;transition:opacity .3s}
 .t-card.out{opacity:0}
 .t-info{display:flex;flex-direction:column;align-items:flex-start;padding:32px 36px}
@@ -348,6 +353,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </main>
 
 <section class="team" id="team" aria-label="Meet the team">
+  <img class="t-king" src="img/renders/king-wave.webp" alt="" width="190" height="420">
   <h2>Meet the team</h2>
   <p>The people keeping the lights on, the griefers out and the group chat chaotic.</p>
   <div class="t-card" id="tCard">
