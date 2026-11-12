@@ -120,6 +120,12 @@ body.cine #doom .bar{height:11vh}
 #playersBtn svg{width:20px;height:20px}
 #playersBtn:hover{background:var(--line)}
 #playersBtn b{position:absolute;top:-6px;right:-6px;min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--pink);color:#fff;font-size:11px;line-height:18px;text-align:center}
+.pl.follow{z-index:3;outline:2px solid var(--gold);outline-offset:1px}
+#follow{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom));z-index:6;display:flex;align-items:center;gap:8px;padding:6px 6px 6px 14px;border-radius:999px;background:rgba(13,11,18,.88);border:1px solid #2a2536;font-size:14px;transform:translate(-50%,0);transition:opacity .25s,transform .25s}
+#follow[hidden]{display:flex;opacity:0;transform:translate(-50%,10px);pointer-events:none}
+#follow b{color:var(--gold)}
+#follow button{width:26px;height:26px;border:0;border-radius:50%;background:#2a2536;color:#fff;font-size:16px;line-height:1}
+body.doom #follow{opacity:0;pointer-events:none}
 .pl.spot{animation:spot .8s ease-out 3}
 @keyframes spot{from{box-shadow:0 0 0 0 rgba(252,208,92,.9)}to{box-shadow:0 0 0 18px rgba(252,208,92,0)}}
 #layersBtn svg{width:20px;height:20px}
@@ -280,6 +286,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 </div>
 <div class="ctl" id="zoom"><button id="zin" type="button" aria-label="Zoom in">+</button><button id="zout" type="button" aria-label="Zoom out">&minus;</button></div>
 <div id="status"></div>
+<div id="follow" hidden aria-live="polite"><span>Following <b></b></span><button type="button" aria-label="Stop following">&times;</button></div>
 <div id="coords"></div>
 <div id="debris"></div>
 <div id="doom" aria-live="polite">
@@ -690,6 +697,15 @@ function zoomAt(factor, cx, cy) {
   if (a && b) { view.lon += wrap(a.lon - b.lon); view.lat += a.lat - b.lat; clampView(); }
   dirty = true;
 }
+/* following a player: the camera stays on them until the map is dragged */
+let follow = null;
+function setFollow(p) {
+  if (follow) follow.el.classList.remove("follow");
+  follow = p || null;
+  if (follow) { follow.el.classList.add("follow"); $("#follow b").textContent = follow.name; }
+  $("#follow").hidden = !follow;
+}
+$("#follow button").addEventListener("click", () => setFollow(null));
 const stopAnims = () => { tween = null; vel.lon = vel.lat = 0; lastInput = performance.now(); };
 
 canvas.addEventListener("pointerdown", (e) => {
@@ -708,6 +724,7 @@ canvas.addEventListener("pointermove", (e) => {
   const p = ptrs.get(e.pointerId); if (!p) return;
   const dx = e.clientX - p.x, dy = e.clientY - p.y; p.x = e.clientX; p.y = e.clientY;
   lastInput = performance.now();
+  if (follow && (ptrs.size > 1 || Math.hypot(e.clientX - down?.x, e.clientY - down?.y) > 6)) setFollow(null);
   if (ptrs.size === 1) {
     const now = performance.now(), dt = Math.max(8, now - lastMove) / 1000; lastMove = now;
     const [dl, da] = panBy(dx, dy, true);
@@ -741,17 +758,17 @@ canvas.addEventListener("pointercancel", endPtr);
 const onWheel = (e) => {
   e.preventDefault(); if (doom.on) return; stopAnims();
   const f = Math.exp(e.deltaY * (e.deltaMode ? 0.06 : 0.0015));
-  zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: e.clientX, y: e.clientY };
+  zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: follow ? innerWidth / 2 : e.clientX, y: follow ? innerHeight / 2 : e.clientY };
 };
-const onDbl = (e) => { if (doom.on) return; stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: e.clientX, y: e.clientY }; };
+const onDbl = (e) => { if (doom.on) return; stopAnims(); zoomAnim = { target: clampH(view.h * 0.4), x: follow ? innerWidth / 2 : e.clientX, y: follow ? innerHeight / 2 : e.clientY }; };
 // icons sit on top of the map, so zooming over one has to be passed through to it
 for (const el of [canvas, $("#markers")]) { el.addEventListener("wheel", onWheel, { passive: false }); el.addEventListener("dblclick", onDbl); }
 const zoomBtn = (f) => { stopAnims(); zoomAnim = { target: clampH((zoomAnim ? zoomAnim.target : view.h) * f), x: innerWidth / 2, y: innerHeight / 2 }; };
 $("#zin").addEventListener("click", () => zoomBtn(0.4));
 $("#zout").addEventListener("click", () => zoomBtn(2.5));
 
-function flyTo(lon, lat, h) {
-  closeList();
+function flyTo(lon, lat, h, who) {
+  closeList(); setFollow(who);
   const dl = wrap(lon - view.lon);
   tween = { lon0: view.lon, lat0: view.lat, h0: Math.log(view.h), lon1: view.lon + dl, lat1: lat, h1: Math.log(clampH(h ?? Math.min(view.h, 0.08))), t0: performance.now(), dur: reduce ? 1 : 1400 };
   vel.lon = vel.lat = 0; zoomAnim = null; lastInput = performance.now();
@@ -1101,7 +1118,7 @@ function setPlayers(list) {
       el.appendChild(makeAvatar(q.name));
       const s = document.createElement("span"); s.textContent = q.name; el.appendChild(s);
       p = { name: q.name, lon: q.lon, lat: q.lat, tn: q.lon, tl: q.lat, vis: 0, el };
-      el.addEventListener("click", () => flyTo(p.tn, p.tl, Math.min(view.h, 0.05)));
+      el.addEventListener("click", () => flyTo(p.lon, p.lat, Math.min(view.h, 0.05), p));
       markersEl.appendChild(el); players.set(q.name, p);
     }
     p.world = q.world; p.onMap = q.onMap;
@@ -1109,6 +1126,7 @@ function setPlayers(list) {
     if (p.onMap && p.vis === 0) { p.lon = q.lon; p.lat = q.lat; }
   }
   for (const [name, p] of players) if (!seen.has(name)) { players.delete(name); leaving.set(name, p); }
+  if (follow && (!players.has(follow.name) || !follow.onMap)) setFollow(null);
   onlineBtn.textContent = $("#drOnline").textContent = players.size + " online";
   $("#playersNum").textContent = players.size;
   $("#pCount").textContent = players.size;
@@ -1123,7 +1141,7 @@ function renderList() {
     b.appendChild(makeAvatar(p.name)); const s = document.createElement("span"); s.textContent = p.name; b.appendChild(s);
     if (!p.onMap) { const w = document.createElement("small"); w.textContent = p.world === "Earth" ? "overworld" : p.world && p.world.startsWith("Earth_") ? p.world.slice(6).replace("the_", "") : "hidden"; b.appendChild(w); }
     else b.addEventListener("click", () => {
-      closeList(); flyTo(p.tn, p.tl, 0.05);
+      closeList(); flyTo(p.lon, p.lat, 0.05, p);
       p.el.classList.remove("spot"); void p.el.offsetWidth; p.el.classList.add("spot");
     });
     listEl.appendChild(b);
@@ -1620,6 +1638,7 @@ function frame(now) {
     view.lon += pend.lon * k; view.lat += pend.lat * k; clampView();
     pend.lon *= 1 - k; pend.lat *= 1 - k; dirty = true;
   }
+  if (tween && follow) { tween.lon1 = tween.lon0 + wrap(follow.lon - tween.lon0); tween.lat1 = follow.lat; }
   if (tween) {
     const k = Math.min(1, (now - tween.t0) / tween.dur), e = k < .5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2;
     view.lon = tween.lon0 + (tween.lon1 - tween.lon0) * e; view.lat = tween.lat0 + (tween.lat1 - tween.lat0) * e;
@@ -1647,6 +1666,11 @@ function frame(now) {
     if (!p.onMap) continue;
     const dl = wrap(p.tn - p.lon);
     if (Math.abs(dl) > 1e-7 || Math.abs(p.tl - p.lat) > 1e-7) { const f = Math.min(1, dt * 5); p.lon += dl * f; p.lat += (p.tl - p.lat) * f; dirty = true; }
+  }
+  if (follow && !tween && !ptrs.size && !doom.on) {
+    const dl = wrap(follow.lon - view.lon), da = follow.lat - view.lat;
+    if (Math.abs(dl) + Math.abs(da) > 1e-9) { view.lon += dl; view.lat += da; clampView(); dirty = true; }
+    vel.lon = vel.lat = 0; lastInput = now;
   }
   for (const [name, p] of leaving) {
     p.vis = Math.max(0, p.vis - dt * 3); dirty = true;
