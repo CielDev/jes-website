@@ -866,7 +866,7 @@ const CLAIM_VS = GL + `
   }`;
 const CLAIM_FS = `varying vec4 vCol; varying float vFace; void main(){ if (vFace < 0.0) discard; gl_FragColor = vCol; }`;
 const claimMat = () => new THREE.ShaderMaterial({ uniforms: U, vertexShader: CLAIM_VS, fragmentShader: CLAIM_FS, transparent: true, depthTest: false, depthWrite: false, side: THREE.DoubleSide });
-let areas = [], claimCount = {}, capitals = {};          // capitals: nation -> capital home block
+let areas = [], claimCount = {}, capitals = {};          // capitals: nation -> its towns home blocks
 const markersEl = $("#markers"), towns = [];
 const STAR = `<svg viewBox="0 0 24 24"><path fill="#FCD05C" stroke="#7a5a00" stroke-width="1.2" d="M12 2.5l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.3 1.3-6.6-4.9-4.6 6.6-.8z"/></svg>`;
 
@@ -894,7 +894,7 @@ function buildClaims(data) {
       let sq = 0;                                          // claimed chunks = polygon area / 256
       for (let i = 0; i < pts.length; i++) { const p = pts[i], q = pts[(i + 1) % pts.length]; sq += p.x * q.y - q.x * p.y; }
       claimCount[a.label] = (claimCount[a.label] || 0) + Math.round(Math.abs(sq) / 2 / 256);
-      areas.push({ label: a.label, desc: a.desc, pts, x0: Math.min(...xs), x1: Math.max(...xs), z0: Math.min(...zs), z1: Math.max(...zs) });
+      areas.push({ label: a.label, desc: a.desc, fill: a.fillcolor, pts, x0: Math.min(...xs), x1: Math.max(...xs), z0: Math.min(...zs), z1: Math.max(...zs) });
     }
     for (const m of Object.values(set.markers || {})) {
       const el = document.createElement("div"), cap = m.icon === "star";
@@ -902,7 +902,8 @@ function buildClaims(data) {
       el.innerHTML = cap ? STAR : "<b></b>";
       const s = document.createElement("span"); s.textContent = m.label || ""; el.appendChild(s);
       const t = { el, lon: m.x / RB, lat: -m.z / RB, label: m.label, desc: m.desc };
-      if (cap) { const n = parseTown(m.desc)?.nation; if (n) capitals[n] = { x: m.x, z: m.z }; }
+      const nat = parseTown(m.desc)?.nation;              // every town home block, grouped by nation
+      if (nat) (capitals[nat] || (capitals[nat] = [])).push({ x: m.x, z: m.z, cap, label: m.label });
       el.addEventListener("click", () => openPop(t.lon, t.lat, t.label, t.desc));
       markersEl.appendChild(el); towns.push(t);
     }
@@ -1015,22 +1016,43 @@ function closePop() { pop.hidden = true; popAt = null; showRange(null); }
 
 /* nation range: towns can only join a nation if their home block is within
    nation_proximity_to_capital_city (400 townblocks of 16) of the capital home block */
-const NATION_RANGE = 400 * 16;
+const RANGE = { capital: 400 * 16, town: 100 * 16, max: 800 * 16, most: 128 };   // Towny proximity settings, in blocks
 let rangeMesh = null;
+const RANGE_FS = GL + `
+  #define MAXC ${RANGE.most}
+  uniform vec3 uCirc[MAXC]; uniform int uCount; uniform vec3 uMax; uniform vec3 uFill;
+  varying vec2 vLL; varying vec3 vW;
+  void main(){
+    if (uFlat < 0.5 && dot(sph(vLL), normalize(cameraPosition - vW)) < 0.0) discard;
+    vec2 b = vec2(vLL.x, -vLL.y) * uRB;                       // block x, z
+    float d = 1e9;
+    for (int i = 0; i < MAXC; i++) { if (i >= uCount) break; d = min(d, length(b - uCirc[i].xy) - uCirc[i].z); }
+    d = max(d, length(b - uMax.xy) - uMax.z);                 // never further than the absolute limit
+    float w = fwidth(d);
+    if (d > w) discard;
+    float edge = 1.0 - smoothstep(0.0, 1.5 * w, abs(d));
+    gl_FragColor = mix(vec4(uFill, 0.16), vec4(mix(uFill, vec3(1.0), 0.35), 0.95), edge);
+  }`;
 function showRange(nation) {
   if (rangeMesh) { scene.remove(rangeMesh); rangeMesh.geometry.dispose(); rangeMesh.material.dispose(); rangeMesh = null; }
-  const c = nation && capitals[nation]; dirty = true;
+  const list = nation && capitals[nation]; dirty = true;
+  const c = list && list.find((t) => t.cap);
   if (!c) return;
-  const n = 256, ll = [], col = [];
-  for (let i = 0; i < n; i++) for (const j of [i, i + 1]) {
-    const a = j / n * 2 * Math.PI;
-    ll.push((c.x + Math.cos(a) * NATION_RANGE) / RB, -(c.z + Math.sin(a) * NATION_RANGE) / RB); col.push(1, 1, 1, 0.9);
-  }
-  const g = new THREE.BufferGeometry();
-  g.setAttribute("position", new THREE.BufferAttribute(new Float32Array(ll.length / 2 * 3), 3));
-  g.setAttribute("ll", new THREE.BufferAttribute(new Float32Array(ll), 2));
-  g.setAttribute("col", new THREE.BufferAttribute(new Float32Array(col), 4));
-  rangeMesh = new THREE.LineSegments(g, claimMat()); rangeMesh.frustumCulled = false; rangeMesh.renderOrder = 52;
+  // the capital reaches RANGE.capital; with chaining every other town in the nation adds RANGE.town around itself
+  const circ = [c, ...list.filter((t) => t !== c && Math.hypot(t.x - c.x, t.z - c.z) < RANGE.max)].slice(0, RANGE.most)
+    .map((t) => new THREE.Vector3(t.x, t.z, t === c ? RANGE.capital : RANGE.town));
+  while (circ.length < RANGE.most) circ.push(new THREE.Vector3());
+  const a = areas.find((x) => x.label === c.label), m = /^#?([0-9a-f]{6})$/i.exec(a && a.fill || "");
+  const fill = new THREE.Color(m ? "#" + m[1] : "#ffffff");
+  const R = RANGE.max + 64;
+  const mat = new THREE.ShaderMaterial({
+    uniforms: { ...U, uCirc: { value: circ }, uCount: { value: Math.min(list.length, RANGE.most) }, uMax: { value: new THREE.Vector3(c.x, c.z, RANGE.max) },
+      uFill: { value: fill } },
+    vertexShader: `${GL} attribute vec2 ll; varying vec2 vLL; varying vec3 vW; void main(){ vLL = ll; vec3 p = place(ll); vW = p; gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`,
+    fragmentShader: RANGE_FS, transparent: true, depthTest: false, depthWrite: false, extensions: { derivatives: true },
+  });
+  rangeMesh = new THREE.Mesh(gridGeo((c.x - R) / RB, (c.x + R) / RB, -(c.z + R) / RB, -(c.z - R) / RB, 48, 48), mat);
+  rangeMesh.frustumCulled = false; rangeMesh.renderOrder = 49;
   scene.add(rangeMesh);
 }
 function onClick(cx, cy) {
