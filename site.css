@@ -56,3 +56,12 @@ footer{margin-top:auto;padding:24px 0;border-top:1px solid var(--line);backgroun
 
 /* wiki subtitles */
 article h2,article h3,.pm-faq h3{font-family:"Minecraft","Outfit",sans-serif;font-weight:700;letter-spacing:.03em}
+
+/* wiki page header with a player render */
+.whead{display:flex;align-items:center;gap:32px;margin-bottom:8px}
+.whead>div{flex:1;min-width:0}
+.whead h1{margin-bottom:14px}
+.wpal{flex:none;width:auto;height:210px;margin:-8px 8px 0 0;filter:drop-shadow(0 14px 22px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(228,58,150,.28));animation:wpal 5s ease-in-out infinite}
+@keyframes wpal{50%{transform:translateY(-8px)}}
+@media(max-width:800px){.whead{gap:14px}.wpal{height:130px;margin:0}}
+@media(prefers-reduced-motion:reduce){.wpal{animation:none}}
