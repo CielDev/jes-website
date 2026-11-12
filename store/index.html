@@ -78,10 +78,6 @@ main>.studio{position:relative;z-index:0}
 .banner p{color:var(--gold);font-weight:600;line-height:1.2}
 
 .tabrow{position:relative}
-.jester{position:absolute;right:56px;bottom:-26px;height:170px;width:auto;z-index:3;pointer-events:none;filter:drop-shadow(0 10px 16px rgba(0,0,0,.55)) drop-shadow(0 0 22px rgba(228,58,150,.3));animation:jHop 2.6s ease-in-out infinite}
-@keyframes jHop{50%{transform:translateY(-5px) rotate(-2deg)}}
-@media(max-width:900px){.jester{display:none}}
-@media(prefers-reduced-motion:reduce){.jester{animation:none}}
 #rankGrid::after{content:"";min-height:150px;background:url(../img/renders/king-sword.webp) center bottom/contain no-repeat;filter:drop-shadow(0 0 20px rgba(252,208,92,.35))}
 #grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;min-height:488px;margin-bottom:64px}
 .studio{opacity:0;transition:opacity .8s ease}
@@ -286,7 +282,6 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     <button type="button" class="on" data-tab="grid">Lucky Crates</button>
     <button type="button" data-tab="premium">JES Premium</button>
   </div>
-  <img class="jester" id="jester" src="../img/renders/jester-juggle.webp" alt="" width="150" height="420">
   </div>
   <section id="grid"></section>
   <section id="premium" hidden>
@@ -689,7 +684,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
     [].forEach.call(document.querySelectorAll("[data-tab]"),function(b,i,all){
       b.addEventListener("click",function(){
         [].forEach.call(all,function(x){x.classList.toggle("on",x===b);$(x.dataset.tab).hidden=x!==b});
-        var pr=b.dataset.tab==="premium";$("ranksBtn").hidden=pr;$("jester").hidden=pr;$("pLink").hidden=!pr;
+        var pr=b.dataset.tab==="premium";$("ranksBtn").hidden=pr;$("pLink").hidden=!pr;
         history.replaceState(null,"",b.dataset.tab==="premium"?"#premium":location.pathname+location.search);
       });
       if(location.hash==="#premium"&&b.dataset.tab==="premium")b.click();
