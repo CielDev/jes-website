@@ -1017,25 +1017,43 @@ function closePop() { pop.hidden = true; popAt = null; showRange(null); }
 /* nation range: towns can only join a nation if their home block is within
    nation_proximity_to_capital_city (400 townblocks of 16) of the capital home block */
 const RANGE = { capital: 400 * 16, town: 100 * 16, max: 800 * 16, most: 128 };   // Towny proximity settings, in blocks
-let rangeMesh = null;
+let rangeMesh = null, rangeNation = null, rangeAnim = null;   // grows out of the capital when shown, fades out when closed
+const rangeOut = [];                                       // ranges fading away
+function dropRange(m) { scene.remove(m); m.geometry.dispose(); m.material.dispose(); }
+function rangeFrame(now) {
+  if (rangeAnim && rangeMesh) {
+    const t = Math.min(1, (now - rangeAnim) / 650), e = 1 - Math.pow(1 - t, 4);
+    rangeMesh.material.uniforms.uGrow.value = 0.04 + 0.96 * e; rangeMesh.material.uniforms.uAlpha.value = Math.min(1, t * 2.5);
+    if (t >= 1) rangeAnim = null;
+  }
+  for (let i = rangeOut.length - 1; i >= 0; i--) {
+    const o = rangeOut[i], t = Math.min(1, (now - o.t0) / 320), u = o.m.material.uniforms;
+    u.uAlpha.value = o.a0 * (1 - t); u.uGrow.value = o.g0 * (1 + 0.04 * t * t);
+    if (t >= 1) { dropRange(o.m); rangeOut.splice(i, 1); }
+  }
+  return !!rangeAnim || rangeOut.length > 0;
+}
 const RANGE_FS = GL + `
   #define MAXC ${RANGE.most}
-  uniform vec3 uCirc[MAXC]; uniform int uCount; uniform vec3 uMax; uniform vec3 uFill;
+  uniform vec3 uCirc[MAXC]; uniform int uCount; uniform vec3 uMax; uniform vec3 uFill; uniform float uGrow, uAlpha;
   varying vec2 vLL; varying vec3 vW;
   void main(){
     if (uFlat < 0.5 && dot(sph(vLL), normalize(cameraPosition - vW)) < 0.0) discard;
     vec2 b = vec2(vLL.x, -vLL.y) * uRB;                       // block x, z
     float d = 1e9;
-    for (int i = 0; i < MAXC; i++) { if (i >= uCount) break; d = min(d, length(b - uCirc[i].xy) - uCirc[i].z); }
-    d = max(d, length(b - uMax.xy) - uMax.z);                 // never further than the absolute limit
+    for (int i = 0; i < MAXC; i++) { if (i >= uCount) break; d = min(d, length(b - uCirc[i].xy) - uCirc[i].z * uGrow); }
+    d = max(d, length(b - uMax.xy) - uMax.z * uGrow);                 // never further than the absolute limit
     float w = fwidth(d);
     if (d > w) discard;
     float edge = 1.0 - smoothstep(0.0, 1.5 * w, abs(d));
     gl_FragColor = mix(vec4(uFill, 0.16), vec4(mix(uFill, vec3(1.0), 0.35), 0.95), edge);
+    gl_FragColor.a *= uAlpha;
   }`;
 function showRange(nation) {
-  if (rangeMesh) { scene.remove(rangeMesh); rangeMesh.geometry.dispose(); rangeMesh.material.dispose(); rangeMesh = null; }
-  const list = nation && capitals[nation]; dirty = true;
+  if (rangeMesh && nation === rangeNation) return;          // same nation: keep it as it is
+  if (rangeMesh) { rangeAnim = null; rangeOut.push({ m: rangeMesh, t0: performance.now(), g0: rangeMesh.material.uniforms.uGrow.value, a0: rangeMesh.material.uniforms.uAlpha.value }); rangeMesh = null; }
+  rangeNation = null; dirty = true;
+  const list = nation && capitals[nation];
   const c = list && list.find((t) => t.cap);
   if (!c) return;
   // the capital reaches RANGE.capital; with chaining every other town in the nation adds RANGE.town around itself
@@ -1047,13 +1065,13 @@ function showRange(nation) {
   const R = RANGE.max + 64;
   const mat = new THREE.ShaderMaterial({
     uniforms: { ...U, uCirc: { value: circ }, uCount: { value: Math.min(list.length, RANGE.most) }, uMax: { value: new THREE.Vector3(c.x, c.z, RANGE.max) },
-      uFill: { value: fill } },
+      uFill: { value: fill }, uGrow: { value: reduce ? 1 : 0.04 }, uAlpha: { value: reduce ? 1 : 0 } },
     vertexShader: `${GL} attribute vec2 ll; varying vec2 vLL; varying vec3 vW; void main(){ vLL = ll; vec3 p = place(ll); vW = p; gl_Position = projectionMatrix * viewMatrix * vec4(p, 1.0); }`,
     fragmentShader: RANGE_FS, transparent: true, depthTest: false, depthWrite: false, extensions: { derivatives: true },
   });
   rangeMesh = new THREE.Mesh(gridGeo((c.x - R) / RB, (c.x + R) / RB, -(c.z + R) / RB, -(c.z - R) / RB, 48, 48), mat);
   rangeMesh.frustumCulled = false; rangeMesh.renderOrder = 49;
-  scene.add(rangeMesh);
+  scene.add(rangeMesh); rangeNation = nation; rangeAnim = reduce ? null : performance.now();
 }
 function onClick(cx, cy) {
   const p = pick(cx, cy);
@@ -1634,6 +1652,7 @@ function frame(now) {
     p.vis = Math.max(0, p.vis - dt * 3); dirty = true;
     if (!p.vis) { p.el.remove(); leaving.delete(name); }
   }
+  if (rangeFrame(now)) dirty = true;
   if (doom.on) { doomFrame(now, dt); dirty = true; }
   else {
     // count how far the globe has been spun by hand; the halo turns red as it gets close
