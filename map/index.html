@@ -220,11 +220,6 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 <meta property="og:site_name" content="Just an Earth Server">
 <meta property="og:image" content="https://www.jes.earth/img/hero.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<script>if (/[?&]embed\b/.test(location.search)) document.documentElement.classList.add("embed");</script>
-<style>
-html.embed nav,html.embed .ctl,html.embed #drawer,html.embed #scrim,html.embed #coords,html.embed #status,html.embed #follow,html.embed #list,html.embed #pop,html.embed #loading{display:none!important}
-html.embed canvas,html.embed #markers{pointer-events:none}
-</style>
 </head>
 <body>
 
@@ -350,11 +345,7 @@ try {
   loading.className = "err"; loading.textContent = "Your browser could not start WebGL, so the map can't be shown.";
   throw e;
 }
-const EMBED = document.documentElement.classList.contains("embed");   // homepage background: flat, no controls, sways slowly
-const EMBED_LON = -0.06, EMBED_STILL = /[?&]still\b/.test(location.search);
-const EMBED_K = /[?&]k=(\d)/.test(location.search) ? +/[?&]k=(\d)/.exec(location.search)[1] : null;   // test hook: force a tile level
-let embedLon = 0, embedReady = false, embedT0 = 0, gotTowns = false, gotPlayers = false;
-renderer.setPixelRatio(EMBED ? 1 : Math.min(devicePixelRatio || 1, 2));
+renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
 renderer.setClearColor(0x05050a, 1);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 200);
@@ -850,7 +841,6 @@ function updateTiles() {
     const facing = isFlat() ? Q.dot(C) / dist : Q.dot(P.normalize()) / dist;
     const bpp = RB * dist * pxAng / Math.max(facing, 0.25) / dpr;      // blocks per device pixel here
     let k = Math.max(0, Math.floor(Math.log2(bpp * 1.4)) + 1);         // zoom k has 2^(k-1) blocks per texel
-    if (EMBED) k = EMBED_K ?? Math.max(0, Math.floor(Math.log2(RB * view.h * pxAng / dpr * 1.4)) + 1);   // background: the same level everywhere
     if (k >= CONFIG.baseZoom) { if (!nether) continue; k = NETHER_ZOOM; }
     if (nether && k > NETHER_ZOOM) k = NETHER_ZOOM;
     const raw = p.raw ?? view.lon + wrap(p.lon - view.lon), n = isFlat() ? Math.round(raw / (2 * Math.PI)) : 0;   // which repeat of the flat map
@@ -969,7 +959,7 @@ function areaAt(x, z) {
 async function pollMarkers() {
   try {
     const r = await fetch(`${CONFIG.map}/tiles/_markers_/marker_${CONFIG.world}.json`, { cache: "no-cache" });
-    if (r.ok) { buildClaims(await r.json()); gotTowns = true; }
+    if (r.ok) buildClaims(await r.json());
   } catch (e) {}
 }
 
@@ -1182,7 +1172,7 @@ async function pollPlayers() {
       name: p.account || String(p.name).replace(/<[^>]*>/g, ""), world: p.world,
       onMap: p.world === CONFIG.world, lon: p.x / RB, lat: -p.z / RB,
     })));
-    statusEl.textContent = ""; gotPlayers = true;
+    statusEl.textContent = "";
   } catch (e) { statusEl.textContent = "Live data is unavailable right now"; }
 }
 pollPlayers(); setInterval(pollPlayers, Math.max(1000, CONFIG.playerRefresh));
@@ -1215,8 +1205,8 @@ setPanel(matchMedia("(max-width:800px)").matches);        // on phones the panel
 const toggles = { tPlayers: true, tClaims: true, tSights: true, tClouds: true, tChunks: false, tFlat: false, tNav: false };
 for (const id in toggles) {
   const el = $("#" + id);
-  el.checked = EMBED ? (id === "tFlat" ? true : id === "tClouds" || id === "tSights" ? false : toggles[id]) : id in store ? !!store[id] : toggles[id];
-  el.addEventListener("change", () => { if (!EMBED) { store[id] = el.checked; save(); } applyToggles(true); });
+  el.checked = id in store ? !!store[id] : toggles[id];
+  el.addEventListener("change", () => { store[id] = el.checked; save(); applyToggles(true); });
 }
 function applyToggles(animate) {
   claimGroup.visible = $("#tClaims").checked;
@@ -1250,7 +1240,6 @@ matchMedia("(min-width:801px)").addEventListener("change", (e) => { if (e.matche
 {
   const m = /^#(-?\d+),(-?\d+)(?:,([\d.]+))?/.exec(location.hash);
   if (m) { view.lon = +m[1] / RB; view.lat = -m[2] / RB; if (m[3]) view.h = clampH(+m[3]); clampView(); lastInput = performance.now(); }
-  else if (EMBED) { view.lon = EMBED_LON; view.lat = 0.69; view.h = 0.6; clampView(); }   // western Europe, Spain left of centre
 }
 let hashT;
 function saveHash() {
@@ -1286,7 +1275,7 @@ function abduction() {
     return off.finished;
   }).then(() => { box.remove(); ufoBusy = false; });
 }
-const rollUfo = () => { if (!EMBED && !document.hidden && !reduce && Math.random() < 0.1) abduction(); };
+const rollUfo = () => { if (!document.hidden && !reduce && Math.random() < 0.1) abduction(); };
 setTimeout(rollUfo, 8000); setInterval(rollUfo, 60000);
 {
   let sixes = 0, t;
@@ -1651,10 +1640,6 @@ function frame(now) {
     if (k >= 1) { flatManual = flatAnim.to; flatAnim = null; updateCamera(); clampView(); }
     if (flatAnim && flatAnim.to === 1 && view.h > H_FIT) view.h += (H_FIT - view.h) * Math.min(1, dt * 8);
     dirty = tilesDirty = true;
-  }
-  if (EMBED && !tween) {
-    if (!EMBED_STILL && embedReady) { view.lon = embedLon + 0.05 * Math.sin(Math.max(0, now - embedT0) / 1000 / 28); dirty = true; }   // slow sway, starting from the preview picture once shown
-    if (!embedReady && baseMat.uniforms.uTex.value && gotTowns && gotPlayers && tiles.size && !inflight && !queue.length) { embedReady = true; embedT0 = now + 3500; embedLon = view.lon; try { parent.postMessage("jes-map-ready", "*"); } catch (e) {} }
   }
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
     const k = 1 - Math.exp(-dt * 16);
