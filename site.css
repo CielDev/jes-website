@@ -58,7 +58,8 @@ footer{margin-top:auto;padding:24px 0;border-top:1px solid var(--line);backgroun
 article h2,article h3,.pm-faq h3{font-family:"Minecraft","Outfit",sans-serif;font-weight:700;letter-spacing:.03em}
 
 /* wiki page header with a player render */
-.whead{display:flex;align-items:center;gap:32px;margin-bottom:8px}
+.whead{display:flex;align-items:flex-start;gap:32px;min-height:214px;margin-bottom:8px}
+.whead>div{padding-top:34px}
 .whead>div{flex:1;min-width:0}
 .whead h1{margin-bottom:14px}
 .wpal{flex:none;width:auto;height:210px;margin:-8px 8px 0 0;filter:drop-shadow(0 14px 22px rgba(0,0,0,.55)) drop-shadow(0 0 26px rgba(228,58,150,.28));animation:wpal 5s ease-in-out infinite}
@@ -75,3 +76,7 @@ aside.side .side-h{display:block;margin:14px 0 4px;padding-left:14px;color:var(-
 /* less empty space between the wiki and the footer card */
 div.wrap.doc{padding-top:14px;padding-bottom:0}
 .doc+.studio-wrap{margin-top:auto;margin-bottom:auto;padding-top:32px;padding-bottom:32px}
+
+/* every wiki page starts in the same place: the pinned sidebar stays where it loads */
+@media(min-width:801px){.doc aside.side{top:79px}}
+@media(max-width:800px){.whead{min-height:0;align-items:center}.whead>div{padding-top:0}}
