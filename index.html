@@ -84,9 +84,11 @@ html.menu #drawer{transform:none;visibility:visible}
 .hero{position:relative;display:flex;align-items:center;min-height:clamp(520px,80vh,740px);padding:72px 0;overflow:hidden;border-bottom:1px solid var(--line);background:#000}
 .hero-bg{position:absolute;top:0;right:0;width:70%;height:100%;object-fit:cover;object-position:center;-webkit-mask-image:linear-gradient(to right,transparent 0%,transparent 15%,rgba(0,0,0,.35) 35%,rgba(0,0,0,.8) 50%,#000 62%);mask-image:linear-gradient(to right,transparent 0%,transparent 15%,rgba(0,0,0,.35) 35%,rgba(0,0,0,.8) 50%,#000 62%)}
 .hero .wrap{position:relative;z-index:1;width:100%}
-.hero-live{border:0;opacity:0;pointer-events:none;transition:opacity 1.6s ease}
+/* one fade mask on the box; the picture and the live map crossfade inside it, so the fade never shifts */
+.hero-media img,.hero-media iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.hero-media img{object-fit:cover;object-position:center}
+.hero-live{opacity:0;pointer-events:none;transition:opacity 1.6s ease}
 .hero-live.on{opacity:1}
-.hero-bg.off{opacity:0;transition:opacity 1.6s ease}
 .hero-skin{position:absolute;left:52.7vw;top:calc(100% - 28.75vw);width:40.15vw;height:auto;z-index:1;pointer-events:none;user-select:none;transform-origin:50% 100%;animation:skinIn 1s ease 1s both,skinFloat 6s ease-in-out 2s infinite}
 @keyframes skinIn{from{opacity:0}to{opacity:1}}
 @keyframes skinFloat{0%,100%{transform:translateY(0) rotate(0deg)}50%{transform:translateY(-16px) rotate(1.2deg)}}
@@ -188,6 +190,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   .hero-bg{width:100%;height:58%;object-position:35% center;filter:saturate(1.1);-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent 100%);mask-image:linear-gradient(to bottom,#000 55%,transparent 100%)}
   .hero-skin{display:none}
   .hero-live{display:none}
+  .hero-media img{object-position:35% center}
   html{overflow-x:hidden}
   body{overflow-x:clip}
   body{font-size:17px}
@@ -297,8 +300,10 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </aside>
 
 <header class="hero">
-  <img class="hero-bg" src="img/hero-map.jpg?v=4" alt="" onerror="this.remove()">
-  <iframe class="hero-bg hero-live" id="heroLive" title="Live map" tabindex="-1" aria-hidden="true"></iframe>
+  <div class="hero-bg hero-media">
+    <img src="img/hero-map.jpg?v=4" alt="" onerror="this.remove()">
+    <iframe class="hero-live" id="heroLive" title="Live map" tabindex="-1" aria-hidden="true"></iframe>
+  </div>
   <img class="hero-skin" src="img/skin.png" alt="" onerror="this.remove()">
   <div class="wrap">
     <div class="hero-copy">
@@ -1192,7 +1197,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   (function(){
     var f=document.getElementById("heroLive");
     if(!f||!matchMedia("(min-width:801px)").matches||matchMedia("(prefers-reduced-data: reduce)").matches)return;
-    var done=false;function show(){if(done)return;done=true;f.classList.add("on");setTimeout(function(){var i=document.querySelector("img.hero-bg");if(i)i.classList.add("off")},1700)}
+    var done=false;function show(){if(done)return;done=true;f.classList.add("on")}
     addEventListener("message",function(e){if(e.source===f.contentWindow&&e.data==="jes-map-ready")setTimeout(show,600)});
     f.addEventListener("load",function(){setTimeout(show,9000)});
     f.src="map/?embed&v=4#-1176,-13521,0.6";
