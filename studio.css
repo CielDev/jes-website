@@ -24,3 +24,8 @@
 /* diamond spear cursor */
 html,body{cursor:url("img/spear.png") 1 1,auto}
 a,button,label,summary,[role=button],.btn{cursor:url("img/spear.png") 1 1,pointer}
+
+/* the Premium link in the menu shimmers pink to gold */
+.nav-prem{background:linear-gradient(90deg,#E43A96,#FCD05C,#E43A96);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent!important;font-weight:600;animation:navPrem 3s linear infinite}
+@keyframes navPrem{to{background-position:200% center}}
+@media(prefers-reduced-motion:reduce){.nav-prem{animation:none}}

@@ -208,6 +208,9 @@ body.doom #follow{opacity:0;pointer-events:none}
 /* diamond spear cursor */
 html,body{cursor:url("../img/spear.png") 1 1,auto}
 a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,pointer}
+.nav-prem{background:linear-gradient(90deg,#E43A96,#FCD05C,#E43A96);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent!important;font-weight:600;animation:navPrem 3s linear infinite}
+@keyframes navPrem{to{background-position:200% center}}
+@media(prefers-reduced-motion:reduce){.nav-prem{animation:none}}
 </style>
 <link rel="canonical" href="https://www.jes.earth/map/">
 <meta property="og:title" content="Live Map | Just an Earth Server">
@@ -237,7 +240,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       <a href="../store/">Store</a>
       <a href="../wiki/">Wiki</a>
       <a class="on" href="./">Map</a>
-      <a href="../premium/">Premium</a>
+      <a class="nav-prem" href="../premium/">Premium</a>
       <a href="../how-to-join/">How to Join</a>
     </div>
     <div class="right">
@@ -262,7 +265,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <a href="../store/">Store</a>
   <a href="../wiki/">Wiki</a>
   <a href="./">Map</a>
-  <a href="../premium/">Premium</a>
+  <a class="nav-prem" href="../premium/">Premium</a>
   <a href="../how-to-join/">How to Join</a>
   <button class="dr-sub" id="drOnline" type="button">0 online</button>
 </aside>

@@ -228,6 +228,9 @@ dialog .btn{width:100%}
 /* diamond spear cursor */
 html,body{cursor:url("../img/spear.png") 1 1,auto}
 a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,pointer}
+.nav-prem{background:linear-gradient(90deg,#E43A96,#FCD05C,#E43A96);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent!important;font-weight:600;animation:navPrem 3s linear infinite}
+@keyframes navPrem{to{background-position:200% center}}
+@media(prefers-reduced-motion:reduce){.nav-prem{animation:none}}
 </style>
 <meta name="robots" content="noindex"></head>
 <body>
@@ -249,7 +252,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
       <a class="on" href="./">Store</a>
       <a href="../wiki/">Wiki</a>
       <a href="../map/">Map</a>
-      <a href="../premium/">Premium</a>
+      <a class="nav-prem" href="../premium/">Premium</a>
       <a href="../how-to-join/">How to Join</a>
     </div>
     <button class="btn" id="cartBtn" type="button">Cart <span id="count">0</span></button>
@@ -271,7 +274,7 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
   <a href="./">Store</a>
   <a href="../wiki/">Wiki</a>
   <a href="../map/">Map</a>
-  <a href="../premium/">Premium</a>
+  <a class="nav-prem" href="../premium/">Premium</a>
   <a href="../how-to-join/">How to Join</a>
 </aside>
 
