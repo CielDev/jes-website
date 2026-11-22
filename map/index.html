@@ -351,9 +351,9 @@ try {
   throw e;
 }
 const EMBED = document.documentElement.classList.contains("embed");   // homepage background: flat, no controls, sways slowly
-const EMBED_LON = 0, EMBED_STILL = /[?&]still\b/.test(location.search);
+const EMBED_LON = -0.06, EMBED_STILL = /[?&]still\b/.test(location.search);
 const EMBED_K = /[?&]k=(\d)/.test(location.search) ? +/[?&]k=(\d)/.exec(location.search)[1] : null;   // test hook: force a tile level
-let embedReady = false;
+let embedReady = false, embedT0 = 0;
 renderer.setPixelRatio(EMBED ? 1 : Math.min(devicePixelRatio || 1, 2));
 renderer.setClearColor(0x05050a, 1);
 const scene = new THREE.Scene();
@@ -1286,7 +1286,7 @@ function abduction() {
     return off.finished;
   }).then(() => { box.remove(); ufoBusy = false; });
 }
-const rollUfo = () => { if (!document.hidden && !reduce && Math.random() < 0.1) abduction(); };
+const rollUfo = () => { if (!EMBED && !document.hidden && !reduce && Math.random() < 0.1) abduction(); };
 setTimeout(rollUfo, 8000); setInterval(rollUfo, 60000);
 {
   let sixes = 0, t;
@@ -1653,8 +1653,8 @@ function frame(now) {
     dirty = tilesDirty = true;
   }
   if (EMBED && !tween) {
-    if (!EMBED_STILL) { view.lon = EMBED_LON + 0.05 * Math.sin(now / 1000 / 28); dirty = true; }   // slow sway around Spain and France
-    if (!embedReady && baseMat.uniforms.uTex.value && tiles.size && !inflight && !queue.length) { embedReady = true; try { parent.postMessage("jes-map-ready", "*"); } catch (e) {} }
+    if (!EMBED_STILL && embedReady) { view.lon = EMBED_LON + 0.05 * Math.sin(Math.max(0, now - embedT0) / 1000 / 28); dirty = true; }   // slow sway, starting from the preview picture once shown
+    if (!embedReady && baseMat.uniforms.uTex.value && tiles.size && !inflight && !queue.length) { embedReady = true; embedT0 = now + 3500; try { parent.postMessage("jes-map-ready", "*"); } catch (e) {} }
   }
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
     const k = 1 - Math.exp(-dt * 16);
