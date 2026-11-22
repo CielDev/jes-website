@@ -220,6 +220,11 @@ a,button,label,summary,[role=button],.btn{cursor:url("../img/spear.png") 1 1,poi
 <meta property="og:site_name" content="Just an Earth Server">
 <meta property="og:image" content="https://www.jes.earth/img/hero.jpg">
 <meta name="twitter:card" content="summary_large_image">
+<script>if (/[?&]embed\b/.test(location.search)) document.documentElement.classList.add("embed");</script>
+<style>
+html.embed nav,html.embed .ctl,html.embed #drawer,html.embed #scrim,html.embed #coords,html.embed #status,html.embed #follow,html.embed #list,html.embed #pop,html.embed #loading{display:none!important}
+html.embed canvas,html.embed #markers{pointer-events:none}
+</style>
 </head>
 <body>
 
@@ -345,7 +350,8 @@ try {
   loading.className = "err"; loading.textContent = "Your browser could not start WebGL, so the map can't be shown.";
   throw e;
 }
-renderer.setPixelRatio(Math.min(devicePixelRatio || 1, 2));
+const EMBED = document.documentElement.classList.contains("embed");   // homepage background: flat, no controls, drifts slowly
+renderer.setPixelRatio(EMBED ? 1 : Math.min(devicePixelRatio || 1, 2));
 renderer.setClearColor(0x05050a, 1);
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(35, 1, 0.01, 200);
@@ -1205,8 +1211,8 @@ setPanel(matchMedia("(max-width:800px)").matches);        // on phones the panel
 const toggles = { tPlayers: true, tClaims: true, tSights: true, tClouds: true, tChunks: false, tFlat: false, tNav: false };
 for (const id in toggles) {
   const el = $("#" + id);
-  el.checked = id in store ? !!store[id] : toggles[id];
-  el.addEventListener("change", () => { store[id] = el.checked; save(); applyToggles(true); });
+  el.checked = EMBED ? (id === "tFlat" ? true : id === "tClouds" || id === "tSights" ? false : toggles[id]) : id in store ? !!store[id] : toggles[id];
+  el.addEventListener("change", () => { if (!EMBED) { store[id] = el.checked; save(); } applyToggles(true); });
 }
 function applyToggles(animate) {
   claimGroup.visible = $("#tClaims").checked;
@@ -1240,6 +1246,7 @@ matchMedia("(min-width:801px)").addEventListener("change", (e) => { if (e.matche
 {
   const m = /^#(-?\d+),(-?\d+)(?:,([\d.]+))?/.exec(location.hash);
   if (m) { view.lon = +m[1] / RB; view.lat = -m[2] / RB; if (m[3]) view.h = clampH(+m[3]); clampView(); lastInput = performance.now(); }
+  else if (EMBED) { view.lon = 0.2; view.lat = 0.82; view.h = 0.38; clampView(); }   // over Europe, where most towns are
 }
 let hashT;
 function saveHash() {
@@ -1641,6 +1648,7 @@ function frame(now) {
     if (flatAnim && flatAnim.to === 1 && view.h > H_FIT) view.h += (H_FIT - view.h) * Math.min(1, dt * 8);
     dirty = tilesDirty = true;
   }
+  if (EMBED && !tween) { view.lon = wrap(view.lon + dt * 0.0022); dirty = true; }   // slow drift east
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
     const k = 1 - Math.exp(-dt * 16);
     view.lon += pend.lon * k; view.lat += pend.lat * k; clampView();
