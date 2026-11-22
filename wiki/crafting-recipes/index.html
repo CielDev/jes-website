@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crafting recipes | JES Wiki</title>
+<meta name="description" content="Custom crafting recipes on Just an Earth Server: powered rails, cobwebs, end stone, froglights and more.">
+<link rel="icon" type="image/png" href="../../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../site.css?v=4">
+<style>
+@font-face{font-family:"Minecraft";src:url("../../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+.doc{display:grid;grid-template-columns:220px 1fr;gap:40px;padding-top:40px;padding-bottom:56px;max-width:1100px}
+aside.side{position:sticky;top:88px;align-self:start}
+aside.side a{display:block;padding:6px 12px;border-left:2px solid var(--line);color:var(--muted)}
+aside.side a:hover,aside.side a.on{border-color:var(--pink);color:var(--text)}
+article{min-width:0}
+section{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
+section:last-child{border:0}
+h2{font-size:26px;margin-bottom:10px}
+h3{font-size:19px;margin:16px 0 8px}
+article p,article ul{margin-bottom:12px;color:#d9d3e6}
+article ul{padding-left:22px}
+article li{margin-bottom:6px}
+article a{color:#ff7fc2}
+article a:hover{text-decoration:underline}
+table{border-collapse:collapse;margin-bottom:14px}
+td{padding:6px 24px 6px 0;border-bottom:1px solid var(--line)}
+td:first-child{color:var(--muted)}
+h1{margin-bottom:24px}
+@media(max-width:800px){.doc{grid-template-columns:1fr;gap:20px}aside.side{position:static;display:flex;flex-wrap:wrap;gap:6px}aside.side a{padding:4px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px}}
+td code{white-space:normal}
+.crumb{margin-bottom:10px;color:var(--muted);font-size:15px}
+.crumb a{color:var(--muted)}
+.t{width:100%}
+th{padding:6px 16px 6px 0;border-bottom:1px solid var(--line);color:var(--muted);text-align:left;font-weight:600}
+td{padding:7px 16px 7px 0}
+td:first-child{color:var(--text)}
+article ol{padding-left:22px;margin-bottom:12px;color:#d9d3e6}
+h2{margin-top:30px}
+.recipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px;margin:8px 0 28px}
+.recipe{padding:14px 14px 16px;background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+.recipe h3{margin:0 0 10px;font-size:15px;text-align:center}
+.grid3{display:grid;grid-template-columns:repeat(3,48px);gap:4px;justify-content:center}
+.grid3 span{display:grid;place-items:center;width:48px;height:48px;background:#8b8b8b;border:2px solid;border-color:#373737 #fff #fff #373737}
+.grid3 img{width:36px;height:36px;object-fit:contain;image-rendering:pixelated}
+.carpet{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin:10px 0 14px}
+.carpet .grid3 span{background:#8b8b8b}
+.carpet .grid3 i{width:34px;height:10px;margin-top:22px;background:#e9ecec;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.carpet b{font-size:26px;color:var(--gold)}
+.carpet .out{display:grid;place-items:center;width:56px;height:56px;background:#8b8b8b;border:2px solid;border-color:#373737 #fff #fff #373737;position:relative}
+.carpet .out i{width:38px;height:11px;margin-top:22px;background:#e9ecec;box-shadow:inset 0 -2px 0 rgba(0,0,0,.18)}
+.carpet .out em{position:absolute;right:3px;bottom:0;font-style:normal;font-weight:700;color:#fff;text-shadow:2px 2px 0 #3f3f3f}
+</style>
+<link rel="stylesheet" href="../../studio.css">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+    <a class="brand" href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a></li>
+          <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+      <a href="../../store/">Store</a>
+      <a class="on" href="../../wiki/">Wiki</a>
+      <a href="../../map/">Map</a>
+      <a href="../../how-to-join/">How to Join</a>
+    </div>
+    <a class="btn" href="../../how-to-join/">Play Now</a>
+  </div>
+</nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu">&times;</button>
+  </div>
+  <a href="../../store/">Store</a>
+  <a href="../../wiki/">Wiki</a>
+  <a href="../../map/">Map</a>
+  <a href="../../how-to-join/">How to Join</a>
+  <small>Community</small>
+  <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>
+  <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>
+  <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a>
+  <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a>
+</aside>
+
+<div class="wrap doc">
+  <aside class="side" aria-label="Wiki pages">
+    <a href="../../wiki/">Welcome</a>
+    <a href="../../wiki/ip/">How to join</a>
+    <a href="../../wiki/town/">Town guide</a>
+    <a href="../../wiki/how-to-claim-land/">Claiming land</a>
+    <a href="../../wiki/nation/">Nation guide</a>
+    <a href="../../wiki/map/">Map guide</a>
+    <a href="../../wiki/how-to-teleport/">Teleporting</a>
+    <a href="../../wiki/chat/">Chat</a>
+    <a href="../../wiki/gold/">Gold</a>
+    <a href="../../wiki/shops/">Shops</a>
+    <a href="../../wiki/quarters/">Quarters</a>
+    <a href="../../wiki/elevators/">Elevators</a>
+    <a href="../../wiki/mcmmo/">mcMMO</a>
+    <a href="../../wiki/ranks/">Ranks and store</a>
+    <a href="../../wiki/jes-premium/">JES Premium</a>
+    <a href="../../wiki/rules/">Server rules</a>
+    <small class="side-h">Misc</small>
+    <a class="on" href="../../wiki/crafting-recipes/">Crafting recipes</a>
+  </aside>
+  <article>
+    <div class="crumb"><a href="../../wiki/">Wiki</a> &rsaquo; Misc &rsaquo; Crafting recipes</div>
+    <h1>Crafting recipes</h1>
+    <p>JES adds a few custom recipes on top of vanilla Minecraft, mostly for blocks that are hard to get on an Earth map. Use them in a normal crafting table. Hover over an ingredient to see its name.</p>
+<h2>Custom recipes</h2>
+<div class="recipes">
+<div class="recipe"><h3>Powered Rails</h3><div class="grid3"><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span><span></span><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span><span><img src="../../img/crafting/stick.png" alt="Stick" title="Stick" loading="lazy"></span><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span><span><img src="../../img/crafting/redstone_dust.png" alt="Redstone Dust" title="Redstone Dust" loading="lazy"></span><span><img src="../../img/crafting/iron_ingot.png" alt="Iron Ingot" title="Iron Ingot" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Cobweb</h3><div class="grid3"><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span><span><img src="../../img/crafting/string.png" alt="String" title="String" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Ink Sac</h3><div class="grid3"><span></span><span></span><span></span><span></span><span><img src="../../img/crafting/coal.png" alt="Coal/Charcoal" title="Coal/Charcoal" loading="lazy"></span><span></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Prismarine Shard</h3><div class="grid3"><span></span><span></span><span></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/dirt.png" alt="Dirt" title="Dirt" loading="lazy"></span><span><img src="../../img/crafting/lapis_lazuli.png" alt="Lapis Lazuli" title="Lapis Lazuli" loading="lazy"></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Prismarine Crystal</h3><div class="grid3"><span></span><span></span><span></span><span></span><span><img src="../../img/crafting/prismarine_shard.png" alt="Prismarine Shard" title="Prismarine Shard" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Coral Blocks</h3><div class="grid3"><span></span><span></span><span></span><span></span><span><img src="../../img/crafting/coral.png" alt="Coral" title="Coral" loading="lazy"></span><span><img src="../../img/crafting/coral.png" alt="Coral" title="Coral" loading="lazy"></span><span></span><span><img src="../../img/crafting/coral.png" alt="Coral" title="Coral" loading="lazy"></span><span><img src="../../img/crafting/coral.png" alt="Coral" title="Coral" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Purpur Block</h3><div class="grid3"><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/purple_dye.png" alt="Purple dye" title="Purple dye" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span><span><img src="../../img/crafting/stone_brick.png" alt="Stone Brick" title="Stone Brick" loading="lazy"></span></div></div>
+<div class="recipe"><h3>End Stone</h3><div class="grid3"><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/cobblestone.png" alt="Cobblestone" title="Cobblestone" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span><span><img src="../../img/crafting/sand.png" alt="Sand" title="Sand" loading="lazy"></span></div></div>
+<div class="recipe"><h3>End Rod</h3><div class="grid3"><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span><img src="../../img/crafting/white_stained_glass.png" alt="White Stained Glass" title="White Stained Glass" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span><img src="../../img/crafting/white_stained_glass.png" alt="White Stained Glass" title="White Stained Glass" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span><span><img src="../../img/crafting/white_stained_glass.png" alt="White Stained Glass" title="White Stained Glass" loading="lazy"></span><span><img src="../../img/crafting/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Lily Pad</h3><div class="grid3"><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Vines</h3><div class="grid3"><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span><span></span><span><img src="../../img/crafting/leaves.png" alt="Leaves" title="Leaves" loading="lazy"></span></div></div>
+<div class="recipe"><h3>Ochre Froglight</h3><div class="grid3"><span><img src="../../img/crafting/glowstone.png" alt="Glowstone" title="Glowstone" loading="lazy"></span><span><img src="../../img/crafting/honeycomb.png" alt="Honeycomb" title="Honeycomb" loading="lazy"></span><span><img src="../../img/crafting/yellow_dye.png" alt="Yellow Dye" title="Yellow Dye" loading="lazy"></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Verdant Froglight</h3><div class="grid3"><span><img src="../../img/crafting/glowstone.png" alt="Glowstone" title="Glowstone" loading="lazy"></span><span><img src="../../img/crafting/honeycomb.png" alt="Honeycomb" title="Honeycomb" loading="lazy"></span><span><img src="../../img/crafting/lime_dye.png" alt="Lime Dye" title="Lime Dye" loading="lazy"></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Pearlescent Froglight</h3><div class="grid3"><span><img src="../../img/crafting/glowstone.png" alt="Glowstone" title="Glowstone" loading="lazy"></span><span><img src="../../img/crafting/honeycomb.png" alt="Honeycomb" title="Honeycomb" loading="lazy"></span><span><img src="../../img/crafting/magenta_dye.png" alt="Magenta Dye" title="Magenta Dye" loading="lazy"></span><span></span><span></span><span></span><span></span><span></span><span></span></div></div>
+<div class="recipe"><h3>Nautilus Armor</h3><div class="grid3"><span><img src="../../img/crafting/armor_material.png" alt="Armor Material" title="Armor Material" loading="lazy"></span><span><img src="../../img/crafting/armor_material.png" alt="Armor Material" title="Armor Material" loading="lazy"></span><span><img src="../../img/crafting/armor_material.png" alt="Armor Material" title="Armor Material" loading="lazy"></span><span><img src="../../img/crafting/armor_material.png" alt="Armor Material" title="Armor Material" loading="lazy"></span><span><img src="../../img/crafting/nautilus_shell.png" alt="Nautilus Shell" title="Nautilus Shell" loading="lazy"></span><span><img src="../../img/crafting/armor_material.png" alt="Armor Material" title="Armor Material" loading="lazy"></span><span></span><span></span><span></span></div></div>
+</div>
+<h2>Duplicating carpets</h2>
+<p>Put <b>9 carpets</b> of the same color in a crafting table to get <b>18</b> back.</p>
+<div class="carpet" aria-hidden="true"><div class="grid3"><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span><span><i></i></span></div><b>&rarr;</b><div class="out"><i></i><em>18</em></div></div>
+  </article>
+</div>
+
+<div class="studio-wrap">
+  <footer class="studio">
+    <img src="../../img/logo.png" alt="">
+    <div class="s-mid">
+      <button class="ipbox" id="ipBox" type="button" title="Click to copy"><b id="ipText">jes.earth</b><span id="onlineNow">–</span></button>
+    <div class="s-text">Just an Earth Server, powered by <b>Ciel Studios</b><small>© Ciel Studios. All rights reserved.</small></div>
+    </div>
+    <div class="s-side">
+    <div class="socials">
+      <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener" aria-label="Discord"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.8732.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></a>
+      <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+      <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+    </div>
+    <div class="s-text">Support: <b>ciel0forwork@gmail.com</b></div>
+    </div>
+  </footer>
+</div>
+
+<script src="../../site.js"></script>
+<script src="../../studio.js"></script>
+<script src="../../cursor.js"></script>
+</body>
+</html>

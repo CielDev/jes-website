@@ -65,3 +65,7 @@ article h2,article h3,.pm-faq h3{font-family:"Minecraft","Outfit",sans-serif;fon
 @keyframes wpal{50%{transform:translateY(-8px)}}
 @media(max-width:800px){.whead{gap:14px}.wpal{height:130px;margin:0}}
 @media(prefers-reduced-motion:reduce){.wpal{animation:none}}
+
+/* wiki sidebar section label */
+aside.side .side-h{display:block;margin:14px 0 4px;padding-left:14px;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
+@media(max-width:800px){aside.side .side-h{flex-basis:100%;margin:8px 0 0;padding-left:2px}}
