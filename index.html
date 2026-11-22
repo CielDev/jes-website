@@ -297,7 +297,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </aside>
 
 <header class="hero">
-  <img class="hero-bg" src="img/hero-map.jpg?v=3" alt="" onerror="this.remove()">
+  <img class="hero-bg" src="img/hero-map.jpg?v=4" alt="" onerror="this.remove()">
   <iframe class="hero-bg hero-live" id="heroLive" title="Live map" tabindex="-1" aria-hidden="true"></iframe>
   <img class="hero-skin" src="img/skin.png" alt="" onerror="this.remove()">
   <div class="wrap">
@@ -1193,9 +1193,9 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
     var f=document.getElementById("heroLive");
     if(!f||!matchMedia("(min-width:801px)").matches||matchMedia("(prefers-reduced-data: reduce)").matches)return;
     var done=false;function show(){if(done)return;done=true;f.classList.add("on");setTimeout(function(){var i=document.querySelector("img.hero-bg");if(i)i.classList.add("off")},1700)}
-    addEventListener("message",function(e){if(e.source===f.contentWindow&&e.data==="jes-map-ready")show()});
+    addEventListener("message",function(e){if(e.source===f.contentWindow&&e.data==="jes-map-ready")setTimeout(show,600)});
     f.addEventListener("load",function(){setTimeout(show,9000)});
-    f.src="map/?embed";
+    f.src="map/?embed&v=4#-1176,-13521,0.6";
   })();
 </script>
 </body>

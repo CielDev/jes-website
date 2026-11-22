@@ -353,7 +353,7 @@ try {
 const EMBED = document.documentElement.classList.contains("embed");   // homepage background: flat, no controls, sways slowly
 const EMBED_LON = -0.06, EMBED_STILL = /[?&]still\b/.test(location.search);
 const EMBED_K = /[?&]k=(\d)/.test(location.search) ? +/[?&]k=(\d)/.exec(location.search)[1] : null;   // test hook: force a tile level
-let embedReady = false, embedT0 = 0;
+let embedLon = 0, embedReady = false, embedT0 = 0, gotTowns = false, gotPlayers = false;
 renderer.setPixelRatio(EMBED ? 1 : Math.min(devicePixelRatio || 1, 2));
 renderer.setClearColor(0x05050a, 1);
 const scene = new THREE.Scene();
@@ -969,7 +969,7 @@ function areaAt(x, z) {
 async function pollMarkers() {
   try {
     const r = await fetch(`${CONFIG.map}/tiles/_markers_/marker_${CONFIG.world}.json`, { cache: "no-cache" });
-    if (r.ok) buildClaims(await r.json());
+    if (r.ok) { buildClaims(await r.json()); gotTowns = true; }
   } catch (e) {}
 }
 
@@ -1182,7 +1182,7 @@ async function pollPlayers() {
       name: p.account || String(p.name).replace(/<[^>]*>/g, ""), world: p.world,
       onMap: p.world === CONFIG.world, lon: p.x / RB, lat: -p.z / RB,
     })));
-    statusEl.textContent = "";
+    statusEl.textContent = ""; gotPlayers = true;
   } catch (e) { statusEl.textContent = "Live data is unavailable right now"; }
 }
 pollPlayers(); setInterval(pollPlayers, Math.max(1000, CONFIG.playerRefresh));
@@ -1653,8 +1653,8 @@ function frame(now) {
     dirty = tilesDirty = true;
   }
   if (EMBED && !tween) {
-    if (!EMBED_STILL && embedReady) { view.lon = EMBED_LON + 0.05 * Math.sin(Math.max(0, now - embedT0) / 1000 / 28); dirty = true; }   // slow sway, starting from the preview picture once shown
-    if (!embedReady && baseMat.uniforms.uTex.value && tiles.size && !inflight && !queue.length) { embedReady = true; embedT0 = now + 3500; try { parent.postMessage("jes-map-ready", "*"); } catch (e) {} }
+    if (!EMBED_STILL && embedReady) { view.lon = embedLon + 0.05 * Math.sin(Math.max(0, now - embedT0) / 1000 / 28); dirty = true; }   // slow sway, starting from the preview picture once shown
+    if (!embedReady && baseMat.uniforms.uTex.value && gotTowns && gotPlayers && tiles.size && !inflight && !queue.length) { embedReady = true; embedT0 = now + 3500; embedLon = view.lon; try { parent.postMessage("jes-map-ready", "*"); } catch (e) {} }
   }
   if (Math.abs(pend.lon) + Math.abs(pend.lat) > 1e-7) {   // the globe eases after the mouse instead of jumping
     const k = 1 - Math.exp(-dt * 16);
