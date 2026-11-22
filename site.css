@@ -69,3 +69,6 @@ article h2,article h3,.pm-faq h3{font-family:"Minecraft","Outfit",sans-serif;fon
 /* wiki sidebar section label */
 aside.side .side-h{display:block;margin:14px 0 4px;padding-left:14px;color:var(--muted);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase}
 @media(max-width:800px){aside.side .side-h{flex-basis:100%;margin:8px 0 0;padding-left:2px}}
+
+/* keep the wiki sidebar on screen while it is pinned */
+@media(min-width:801px){aside.side{max-height:calc(100vh - 104px);overflow-y:auto;scrollbar-width:thin}aside.side a{padding:5px 12px}}
