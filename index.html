@@ -86,6 +86,7 @@ html.menu #drawer{transform:none;visibility:visible}
 .hero .wrap{position:relative;z-index:1;width:100%}
 .hero-live{border:0;opacity:0;pointer-events:none;transition:opacity 1.6s ease}
 .hero-live.on{opacity:1}
+@media(min-width:801px){.hero-bg{-webkit-mask-image:linear-gradient(to right,transparent 0%,transparent 6%,rgba(0,0,0,.45) 16%,rgba(0,0,0,.85) 27%,#000 36%);mask-image:linear-gradient(to right,transparent 0%,transparent 6%,rgba(0,0,0,.45) 16%,rgba(0,0,0,.85) 27%,#000 36%)}}
 .hero-bg.off{opacity:0;transition:opacity 1.6s ease}
 .hero-skin{position:absolute;left:52.7vw;top:calc(100% - 28.75vw);width:40.15vw;height:auto;z-index:1;pointer-events:none;user-select:none;transform-origin:50% 100%;animation:skinIn 1s ease 1s both,skinFloat 6s ease-in-out 2s infinite}
 @keyframes skinIn{from{opacity:0}to{opacity:1}}
@@ -297,7 +298,7 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
 </aside>
 
 <header class="hero">
-  <img class="hero-bg" src="img/hero.jpg" alt="" onerror="this.remove()">
+  <img class="hero-bg" src="img/hero-map.jpg" alt="" onerror="this.remove()">
   <iframe class="hero-bg hero-live" id="heroLive" title="Live map" tabindex="-1" aria-hidden="true"></iframe>
   <img class="hero-skin" src="img/skin.png" alt="" onerror="this.remove()">
   <div class="wrap">
@@ -1192,7 +1193,9 @@ footer li a{display:inline-flex;align-items:center;gap:6px}
   (function(){
     var f=document.getElementById("heroLive");
     if(!f||!matchMedia("(min-width:801px)").matches||matchMedia("(prefers-reduced-data: reduce)").matches)return;
-    f.addEventListener("load",function(){setTimeout(function(){f.classList.add("on");var i=document.querySelector("img.hero-bg");if(i)i.classList.add("off")},1500)});
+    var done=false;function show(){if(done)return;done=true;f.classList.add("on");setTimeout(function(){var i=document.querySelector("img.hero-bg");if(i)i.classList.add("off")},1700)}
+    addEventListener("message",function(e){if(e.source===f.contentWindow&&e.data==="jes-map-ready")show()});
+    f.addEventListener("load",function(){setTimeout(show,9000)});
     f.src="map/?embed";
   })();
 </script>
