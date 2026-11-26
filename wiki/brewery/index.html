@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brewery | JES Wiki</title>
+<meta name="description" content="How to brew on Just an Earth Server: fermenting, distilling, aging in barrels, and every drink recipe with its ingredients.">
+<link rel="icon" type="image/png" href="../../img/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../site.css?v=9">
+<style>
+@font-face{font-family:"Minecraft";src:url("../../fonts/MinecraftClassic-Bold.ttf") format("truetype");font-weight:700;font-style:normal;font-display:swap}
+.doc{display:grid;grid-template-columns:220px 1fr;gap:40px;padding-top:40px;padding-bottom:56px;max-width:1100px}
+aside.side{position:sticky;top:88px;align-self:start}
+aside.side a{display:block;padding:6px 12px;border-left:2px solid var(--line);color:var(--muted)}
+aside.side a:hover,aside.side a.on{border-color:var(--pink);color:var(--text)}
+article{min-width:0}
+section{padding-bottom:36px;margin-bottom:36px;border-bottom:1px solid var(--line)}
+section:last-child{border:0}
+h2{font-size:26px;margin-bottom:10px}
+h3{font-size:19px;margin:16px 0 8px}
+article p,article ul{margin-bottom:12px;color:#d9d3e6}
+article ul{padding-left:22px}
+article li{margin-bottom:6px}
+article a{color:#ff7fc2}
+article a:hover{text-decoration:underline}
+table{border-collapse:collapse;margin-bottom:14px}
+td{padding:6px 24px 6px 0;border-bottom:1px solid var(--line)}
+td:first-child{color:var(--muted)}
+h1{margin-bottom:24px}
+@media(max-width:800px){.doc{grid-template-columns:1fr;gap:20px}aside.side{position:static;display:flex;flex-wrap:wrap;gap:6px}aside.side a{padding:4px 10px;border:1px solid var(--line);border-radius:8px;font-size:15px}}
+td code{white-space:normal}
+.crumb{margin-bottom:10px;color:var(--muted);font-size:15px}
+.crumb a{color:var(--muted)}
+.t{width:100%}
+th{padding:6px 16px 6px 0;border-bottom:1px solid var(--line);color:var(--muted);text-align:left;font-weight:600}
+td{padding:7px 16px 7px 0}
+td:first-child{color:var(--text)}
+article ol{padding-left:22px;margin-bottom:12px;color:#d9d3e6}
+h2{margin-top:30px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:14px 0 8px}
+.flow div{padding:14px 12px;text-align:center;background:var(--bg2);border:1px solid var(--line);border-radius:12px}
+.flow img{display:block;margin:0 auto 8px}
+.flow b{display:block;font-size:15px}
+.flow span{color:var(--muted);font-size:13px;line-height:1.4}
+img.mc{image-rendering:pixelated;vertical-align:middle}
+.shot{display:block;width:100%;max-width:620px;height:auto;margin:10px 0 14px;border-radius:14px;border:1px solid var(--line)}
+.shots{display:grid;grid-template-columns:1fr 1fr;gap:10px;max-width:620px;margin:10px 0 14px}
+.shots img{width:100%;height:auto;border-radius:12px;border:1px solid var(--line);background:#1b1724}
+.woods{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:8px;margin:10px 0 14px}
+.woods span{display:flex;align-items:center;gap:8px;padding:6px 10px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;font-size:14px}
+.woods b{color:var(--gold);font-weight:700;min-width:18px}
+.drinks{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px;margin:12px 0 24px}
+.drink{padding:16px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
+.drink header{display:flex;align-items:center;gap:12px;margin-bottom:12px}
+.drink h3{margin:0;font-size:17px}
+.drink .meta{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 0}
+.drink .meta span{padding:1px 8px;border-radius:999px;background:#231f2c;color:var(--muted);font-size:12px}
+.ings{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px}
+.ing{position:relative;display:grid;place-items:center;width:52px;height:52px;background:#8b8b8b;border:2px solid;border-color:#373737 #fff #fff #373737}
+.ing b{position:absolute;right:2px;bottom:-2px;color:#fff;font-size:15px;text-shadow:2px 2px 0 #3f3f3f}
+.ing small{display:none}
+.steps{list-style:none;padding:0!important;margin:0 0 8px}
+.steps li{display:flex;align-items:center;gap:10px;margin:0 0 6px;font-size:14.5px;color:#d9d3e6}
+.steps i{color:var(--muted);font-style:normal}
+.drink .fx{margin:6px 0 0;font-size:13.5px;color:var(--muted)}
+.drink .q{display:flex;flex-wrap:wrap;gap:4px 14px;margin:8px 0 0;font-size:12.5px;color:var(--muted)}
+.craft{display:flex;align-items:center;gap:16px;margin:10px 0 14px}
+.craft .grid3{display:grid;grid-template-columns:repeat(3,44px);gap:3px}
+.craft .grid3 span,.craft .out{display:grid;place-items:center;width:44px;height:44px;background:#8b8b8b;border:2px solid;border-color:#373737 #fff #fff #373737}
+.craft .out{width:52px;height:52px}
+.craft b{font-size:24px;color:var(--gold)}
+.tip{padding:12px 16px;margin:10px 0 16px;background:var(--bg2);border-left:3px solid var(--pink);border-radius:0 10px 10px 0;color:#d9d3e6}
+@media(max-width:800px){.flow{grid-template-columns:1fr 1fr}.shots{grid-template-columns:1fr}.drinks{grid-template-columns:1fr}}
+</style>
+<link rel="stylesheet" href="../../studio.css?v=2">
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <button class="burger" id="burger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="drawer"><i></i><i></i><i></i></button>
+    <a class="brand" href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <div class="links">
+      <div class="dd">
+        <button type="button">Community ▾</button>
+        <ul>
+          <li><a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a></li>
+          <li><a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a></li>
+          <li><a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a></li>
+          <li><a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a></li>
+        </ul>
+      </div>
+      <a href="../../store/">Store</a>
+      <a class="on" href="../../wiki/">Wiki</a>
+      <a href="../../map/">Map</a>
+      <a class="nav-prem" href="../../premium/">Premium</a>
+      <a href="../../how-to-join/">How to Join</a>
+    </div>
+    <a class="btn" href="../../how-to-join/">Play Now</a>
+  </div>
+</nav>
+<div id="scrim"></div>
+<aside id="drawer" aria-label="Menu">
+  <div class="dr-top">
+    <a href="../../"><img src="../../img/logo.png" alt="Just an Earth Server"></a>
+    <button class="dr-close" id="drClose" type="button" aria-label="Close menu">&times;</button>
+  </div>
+  <a href="../../store/">Store</a>
+  <a href="../../wiki/">Wiki</a>
+  <a href="../../map/">Map</a>
+  <a class="nav-prem" href="../../premium/">Premium</a>
+  <a href="../../how-to-join/">How to Join</a>
+  <small>Community</small>
+  <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener">Discord</a>
+  <a href="https://jes.fandom.com/" target="_blank" rel="noopener">History Wiki</a>
+  <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener">YouTube</a>
+  <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener">TikTok</a>
+</aside>
+
+<div class="wrap doc">
+  <aside class="side" aria-label="Wiki pages">
+    <a href="../../wiki/">Welcome</a>
+    <a href="../../wiki/ip/">How to join</a>
+    <a href="../../wiki/town/">Town guide</a>
+    <a href="../../wiki/how-to-claim-land/">Claiming land</a>
+    <a href="../../wiki/nation/">Nation guide</a>
+    <a href="../../wiki/map/">Map guide</a>
+    <a href="../../wiki/how-to-teleport/">Teleporting</a>
+    <a href="../../wiki/chat/">Chat</a>
+    <a href="../../wiki/gold/">Gold</a>
+    <a href="../../wiki/shops/">Shops</a>
+    <a href="../../wiki/quarters/">Quarters</a>
+    <a href="../../wiki/mcmmo/">mcMMO</a>
+    <a href="../../wiki/ranks/">Ranks and store</a>
+    <a href="../../wiki/jes-premium/">JES Premium</a>
+    <a href="../../wiki/rules/">Server rules</a>
+    <details class="side-misc" open>
+      <summary>Misc</summary>
+      <a href="../../wiki/crafting-recipes/">Crafting recipes</a>
+      <a href="../../wiki/elevators/">Elevators</a>
+      <a class="on" href="../../wiki/brewery/">Brewery</a>
+    </details>
+  </aside>
+  <article>
+    <div class="crumb"><a href="../../wiki/">Wiki</a> &rsaquo; Misc &rsaquo; Brewery</div>
+    <div class="whead">
+      <div>
+      <h1>Brewery</h1>
+      <p>Brew beer, wine, rum, vodka and more. Real brewing takes time: ingredients ferment in a cauldron, some drinks get distilled, and the best ones age in wooden barrels. The more precise you are, the better the drink.</p>
+      </div>
+      <img class="wpal" src="../../img/renders/wizard-potion.webp" alt="" width="200" height="420">
+    </div>
+<h2>How it works</h2>
+<div class="flow">
+  <div><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="40" height="40"><b>1. Ferment</b><span>Boil the ingredients in a cauldron</span></div>
+  <div><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="40" height="40"><b>2. Distill</b><span>Spirits only, in a brewing stand</span></div>
+  <div><img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Barrel" title="Barrel" width="40" height="40"><b>3. Age</b><span>Some drinks rest in a wooden barrel</span></div>
+  <div><img class="mc" src="../../img/brewery/icons/potion.png" alt="Potion" title="Potion" width="40" height="40"><b>4. Drink</b><span>Or sell it in your shop</span></div>
+</div>
+<p>Not every drink needs every step. Each recipe below tells you exactly which steps it needs.</p>
+
+<h2>1. Fermenting</h2>
+<ol>
+  <li>Place a <b>cauldron</b> over a heat source, like fire, lava or a lit campfire.</li>
+  <li>Fill it with a <b>water bucket</b>.</li>
+  <li>Right-click the cauldron with each ingredient to add it. Add the exact amounts from the recipe.</li>
+  <li>Wait while it boils. The time is in <b>real minutes</b>. Right-click the cauldron with a <b>clock</b> to see how long it has been boiling.</li>
+  <li>Right-click with <b>glass bottles</b> to fill them. One cauldron fills <b>3 bottles</b>.</li>
+</ol>
+<img class="shot" src="../../img/brewery/fermenting.webp" alt="A cauldron of water over a fire" width="900" height="469" loading="lazy">
+<p class="tip">Boiling too short or too long lowers the quality. Use the clock and take the bottles out on time.</p>
+
+<h2>2. Distilling</h2>
+<p>Only spirits like whiskey, rum, vodka, gin, tequila and absinthe need this. Skip it for beer, wine and mead.</p>
+<ol>
+  <li>Put your bottles from the cauldron into a <b>brewing stand</b>.</li>
+  <li>Put <b>glowstone dust</b> <img class="mc" src="../../img/brewery/icons/glowstone_dust.png" alt="Glowstone Dust" title="Glowstone Dust" width="20" height="20"> in the top slot as a filter. It is not used up.</li>
+  <li>Each run takes about <b>40 seconds</b> unless the recipe says otherwise. Repeat as many times as the recipe needs.</li>
+</ol>
+<img class="shot" src="../../img/brewery/distilling.webp" alt="Brewing stands distilling brews" width="900" height="469" loading="lazy">
+
+<h2>3. Aging in a barrel</h2>
+<p>Drinks that need aging rest in a barrel. On JES, <b>one year in the barrel is 20 real minutes</b> (one Minecraft day).</p>
+<h3>Minecraft barrel: 6 drinks</h3>
+<p>A normal crafted <img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Barrel" title="Barrel" width="20" height="20"> barrel works too. It holds up to <b>6 drinks</b> and always counts as <b>oak</b>.</p>
+<h3>Small barrel: 9 slots</h3>
+<p>Place <b>8 wooden stairs</b> in a barrel shape, then put a sign on the lower right side with <b>Barrel</b> on the top line. You will see "Barrel created".</p>
+<div class="shots"><img src="../../img/brewery/small-barrel-shape.webp" alt="8 stairs in a barrel shape" loading="lazy"><img src="../../img/brewery/small-barrel-sign.webp" alt="Small barrel with a Barrel sign" loading="lazy"></div>
+<h3>Big barrel: 27 slots</h3>
+<p>Use <b>5 fences, 16 wooden stairs and 18 wood planks</b> in a barrel shape. Add a fence as the tap and a sign with <b>Barrel</b> on it. You can remove the sign once the barrel is created.</p>
+<div class="shots"><img src="../../img/brewery/big-barrel-shape.webp" alt="Big barrel shape on fence legs" loading="lazy"><img src="../../img/brewery/big-barrel-sign.webp" alt="Big barrel with a Barrel sign and tap" loading="lazy"></div>
+<h3>Wood types</h3>
+<p>Some drinks need a specific wood. Using the wrong wood lowers the quality.</p>
+<div class="woods"><span><b>1</b><img class="mc" src="../../img/brewery/icons/birch_planks.png" alt="Birch" title="Birch" width="20" height="20">Birch</span><span><b>2</b><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Oak" title="Oak" width="20" height="20">Oak</span><span><b>3</b><img class="mc" src="../../img/brewery/icons/jungle_planks.png" alt="Jungle" title="Jungle" width="20" height="20">Jungle</span><span><b>4</b><img class="mc" src="../../img/brewery/icons/spruce_planks.png" alt="Spruce" title="Spruce" width="20" height="20">Spruce</span><span><b>5</b><img class="mc" src="../../img/brewery/icons/acacia_planks.png" alt="Acacia" title="Acacia" width="20" height="20">Acacia</span><span><b>6</b><img class="mc" src="../../img/brewery/icons/dark_oak_planks.png" alt="Dark Oak" title="Dark Oak" width="20" height="20">Dark Oak</span><span><b>7</b><img class="mc" src="../../img/brewery/icons/crimson_planks.png" alt="Crimson" title="Crimson" width="20" height="20">Crimson</span><span><b>8</b><img class="mc" src="../../img/brewery/icons/warped_planks.png" alt="Warped" title="Warped" width="20" height="20">Warped</span><span><b>9</b><img class="mc" src="../../img/brewery/icons/mangrove_planks.png" alt="Mangrove" title="Mangrove" width="20" height="20">Mangrove</span><span><b>10</b><img class="mc" src="../../img/brewery/icons/cherry_planks.png" alt="Cherry" title="Cherry" width="20" height="20">Cherry</span><span><b>11</b><img class="mc" src="../../img/brewery/icons/bamboo_planks.png" alt="Bamboo" title="Bamboo" width="20" height="20">Bamboo</span><span><b>12</b><img class="mc" src="../../img/brewery/icons/cut_copper.png" alt="Cut Copper" title="Cut Copper" width="20" height="20">Cut Copper</span><span><b>13</b><img class="mc" src="../../img/brewery/icons/pale_oak_planks.png" alt="Pale Oak" title="Pale Oak" width="20" height="20">Pale Oak</span></div>
+
+<h2>4. Drinking</h2>
+<ul>
+  <li>Every drink shows its <b>quality</b>. Better quality means more alcohol and fewer bad side effects.</li>
+  <li>Drink too much and you will <b>stumble</b>, your <b>chat gets slurred</b>, and you might even <b>throw up</b>.</li>
+  <li>Logging off very drunk is a gamble: you may wake up somewhere strange, or back at your home.</li>
+  <li>To sober up faster, eat <img class="mc" src="../../img/brewery/icons/bread.png" alt="Bread" title="Bread" width="20" height="20"> <b>bread</b> or drink a <img class="mc" src="../../img/brewery/icons/milk_bucket.png" alt="Milk Bucket" title="Milk Bucket" width="20" height="20"> <b>milk bucket</b>. Bad quality drinks can leave you with a hangover.</li>
+</ul>
+
+<h2>Selling drinks: the sealing table</h2>
+<p>Shops need identical items, so seal your drinks before selling them. Craft a <b>Brew Sealing Table</b> with 2 glass bottles over 4 planks. It looks like a smoker. Put drinks in it to seal them. Sealed drinks stop aging and stack with others of the same kind.</p>
+<div class="craft"><div class="grid3"><span><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="Glass Bottle" title="Glass Bottle" width="30" height="30"></span><span><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="Glass Bottle" title="Glass Bottle" width="30" height="30"></span><span></span><span><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Any Wood Planks" title="Any Wood Planks" width="30" height="30"></span><span><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Any Wood Planks" title="Any Wood Planks" width="30" height="30"></span><span></span><span><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Any Wood Planks" title="Any Wood Planks" width="30" height="30"></span><span><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Any Wood Planks" title="Any Wood Planks" width="30" height="30"></span><span></span></div><b>&rarr;</b><div class="out"><img class="mc" src="../../img/brewery/icons/smoker_front.png" alt="Brew Sealing Table" title="Brew Sealing Table" width="36" height="36"></div></div>
+
+<h2>Recipes</h2>
+<p>All drinks on JES. The number on each ingredient is how many to put in the cauldron. Hover an ingredient to see its name.</p>
+<h3>Beer, wine and mead</h3>
+<div class="drinks">
+<article class="drink" id="wheatbeer">
+  <header><img class="mc" src="../../img/brewery/drink-wheatbeer.png" alt="" width="40" height="40"><div><h3>Wheatbeer</h3><p class="meta"><span>5% alcohol</span><span>Difficulty 1/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>3</b><small>Wheat</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>8 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/birch_planks.png" alt="Birch" title="Birch" width="20" height="20"><span>Age <b>2 years</b> in a <b>Birch</b> barrel <i>(about 40 min)</i></span></li></ol>
+  <p class="q"><span>Bad: Skunky Wheatbeer</span><span>Best: Fine Wheatbeer</span></p>
+</article>
+<article class="drink" id="beer">
+  <header><img class="mc" src="../../img/brewery/drink-beer.png" alt="" width="40" height="40"><div><h3>Beer</h3><p class="meta"><span>6% alcohol</span><span>Difficulty 1/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>6</b><small>Wheat</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>8 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Any wood" title="Any wood" width="20" height="20"><span>Age <b>3 years</b> in <b>any</b> barrel <i>(about 1 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Skunky Beer</span><span>Best: Fine Beer</span></p>
+</article>
+<article class="drink" id="darkbeer">
+  <header><img class="mc" src="../../img/brewery/drink-darkbeer.png" alt="" width="40" height="40"><div><h3>Darkbeer</h3><p class="meta"><span>7% alcohol</span><span>Difficulty 2/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>6</b><small>Wheat</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>8 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/dark_oak_planks.png" alt="Dark Oak" title="Dark Oak" width="20" height="20"><span>Age <b>8 years</b> in a <b>Dark Oak</b> barrel <i>(about 2 h 40 min)</i></span></li></ol>
+  <p class="q"><span>Bad: Skunky Darkbeer</span><span>Best: Fine Darkbeer</span></p>
+</article>
+<article class="drink" id="wine">
+  <header><img class="mc" src="../../img/brewery/drink-wine.png" alt="" width="40" height="40"><div><h3>Red Wine</h3><p class="meta"><span>8% alcohol</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/sweet_berries.png" alt="Sweet Berries" title="Sweet Berries" width="32" height="32"><b>5</b><small>Sweet Berries</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>5 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Any wood" title="Any wood" width="20" height="20"><span>Age <b>20 years</b> in <b>any</b> barrel <i>(about 6 h 40 min)</i></span></li></ol>
+  
+</article>
+<article class="drink" id="mead">
+  <header><img class="mc" src="../../img/brewery/drink-mead.png" alt="" width="40" height="40"><div><h3>Mead</h3><p class="meta"><span>9% alcohol</span><span>Difficulty 2/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/sugar_cane.png" alt="Sugar Cane" title="Sugar Cane" width="32" height="32"><b>6</b><small>Sugar Cane</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>3 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Oak" title="Oak" width="20" height="20"><span>Age <b>4 years</b> in a <b>Oak</b> barrel <i>(about 1 h 20 min)</i></span></li></ol>
+  <p class="q"><span>Bad: Awkward Mead</span><span>Best: Golden Mead</span></p>
+</article>
+<article class="drink" id="ap_mead">
+  <header><img class="mc" src="../../img/brewery/drink-ap_mead.png" alt="" width="40" height="40"><div><h3>Sweet Apple Mead</h3><p class="meta"><span>11% alcohol</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/sugar_cane.png" alt="Sugar Cane" title="Sugar Cane" width="32" height="32"><b>6</b><small>Sugar Cane</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/apple.png" alt="Apple" title="Apple" width="32" height="32"><b>2</b><small>Apple</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>4 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Oak" title="Oak" width="20" height="20"><span>Age <b>4 years</b> in a <b>Oak</b> barrel <i>(about 1 h 20 min)</i></span></li></ol>
+  <p class="fx">Effects: Water Breathing</p>
+  <p class="q"><span>Bad: Apple Mead</span><span>Best: Sweet Golden Apple Mead</span></p>
+</article>
+<article class="drink" id="cidre">
+  <header><img class="mc" src="../../img/brewery/drink-cidre.png" alt="" width="40" height="40"><div><h3>Apple Cider</h3><p class="meta"><span>7% alcohol</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/apple.png" alt="Apple" title="Apple" width="32" height="32"><b>14</b><small>Apple</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>7 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Any wood" title="Any wood" width="20" height="20"><span>Age <b>3 years</b> in <b>any</b> barrel <i>(about 1 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Poor Cidre</span><span>Best: Great Apple Cider</span></p>
+</article>
+<article class="drink" id="eggnog">
+  <header><img class="mc" src="../../img/brewery/drink-eggnog.png" alt="" width="40" height="40"><div><h3>Eggnog</h3><p class="meta"><span>10% alcohol</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/egg.png" alt="Egg" title="Egg" width="32" height="32"><b>5</b><small>Egg</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/sugar.png" alt="Sugar" title="Sugar" width="32" height="32"><b>2</b><small>Sugar</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/milk_bucket.png" alt="Milk Bucket" title="Milk Bucket" width="32" height="32"><b>1</b><small>Milk Bucket</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>2 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/barrel_side.png" alt="Any wood" title="Any wood" width="20" height="20"><span>Age <b>3 years</b> in <b>any</b> barrel <i>(about 1 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Egg Liquor</span><span>Best: Advocaat</span></p>
+</article>
+</div>
+<h3>Spirits</h3>
+<div class="drinks">
+<article class="drink" id="apple_liquor">
+  <header><img class="mc" src="../../img/brewery/drink-apple_liquor.png" alt="" width="40" height="40"><div><h3>Apple Liquor</h3><p class="meta"><span>14% alcohol</span><span>Difficulty 5/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/apple.png" alt="Apple" title="Apple" width="32" height="32"><b>12</b><small>Apple</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>16 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>3×</b></span></li><li><img class="mc" src="../../img/brewery/icons/acacia_planks.png" alt="Acacia" title="Acacia" width="20" height="20"><span>Age <b>6 years</b> in a <b>Acacia</b> barrel <i>(about 2 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Sour Apple Liquor</span><span>Best: Calvados</span></p>
+</article>
+<article class="drink" id="whiskey">
+  <header><img class="mc" src="../../img/brewery/drink-whiskey.png" alt="" width="40" height="40"><div><h3>Whiskey</h3><p class="meta"><span>26% alcohol</span><span>Difficulty 7/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>10</b><small>Wheat</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>10 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>2×</b> <i>(50s each)</i></span></li><li><img class="mc" src="../../img/brewery/icons/spruce_planks.png" alt="Spruce" title="Spruce" width="20" height="20"><span>Age <b>18 years</b> in a <b>Spruce</b> barrel <i>(about 6 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Unsightly Whiskey</span><span>Best: Scotch Whiskey</span></p>
+</article>
+<article class="drink" id="rum">
+  <header><img class="mc" src="../../img/brewery/drink-rum.png" alt="" width="40" height="40"><div><h3>Spicy Rum</h3><p class="meta"><span>30% alcohol</span><span>Difficulty 6/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/sugar_cane.png" alt="Sugar Cane" title="Sugar Cane" width="32" height="32"><b>18</b><small>Sugar Cane</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>6 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>2×</b> <i>(30s each)</i></span></li><li><img class="mc" src="../../img/brewery/icons/oak_planks.png" alt="Oak" title="Oak" width="20" height="20"><span>Age <b>14 years</b> in a <b>Oak</b> barrel <i>(about 4 h 40 min)</i></span></li></ol>
+  <p class="fx">Effects: Fire Resistance, Poison</p>
+  <p class="q"><span>Bad: Bitter Rum</span><span>Best: Golden Rum</span></p>
+</article>
+<article class="drink" id="vodka">
+  <header><img class="mc" src="../../img/brewery/drink-vodka.png" alt="" width="40" height="40"><div><h3>Vodka</h3><p class="meta"><span>20% alcohol</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/potato.png" alt="Potato" title="Potato" width="32" height="32"><b>10</b><small>Potato</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>15 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>3×</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Weakness, Poison</p>
+  <p class="q"><span>Bad: Lousy Vodka</span><span>Best: Russian Vodka</span></p>
+</article>
+<article class="drink" id="shroom_vodka">
+  <header><img class="mc" src="../../img/brewery/drink-shroom_vodka.png" alt="" width="40" height="40"><div><h3>Mushroom Vodka</h3><p class="meta"><span>18% alcohol</span><span>Difficulty 7/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/potato.png" alt="Potato" title="Potato" width="32" height="32"><b>10</b><small>Potato</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/red_mushroom.png" alt="Red Mushroom" title="Red Mushroom" width="32" height="32"><b>3</b><small>Red Mushroom</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/brown_mushroom.png" alt="Brown Mushroom" title="Brown Mushroom" width="32" height="32"><b>3</b><small>Brown Mushroom</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>18 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>5×</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Weakness, Nausea, Night Vision, Blindness, Slowness</p>
+  <p class="q"><span>Bad: Mushroom Vodka</span><span>Best: Glowing Mushroom Vodka</span></p>
+</article>
+<article class="drink" id="gin">
+  <header><img class="mc" src="../../img/brewery/drink-gin.png" alt="" width="40" height="40"><div><h3>Gin</h3><p class="meta"><span>20% alcohol</span><span>Difficulty 6/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>9</b><small>Wheat</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/cornflower.png" alt="Cornflower or Blue Orchid" title="Cornflower or Blue Orchid" width="32" height="32"><b>6</b><small>Cornflower or Blue Orchid</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/apple.png" alt="Apple" title="Apple" width="32" height="32"><b>1</b><small>Apple</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>6 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>2×</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="q"><span>Bad: Pale Gin</span><span>Best: Old Tom Gin</span></p>
+</article>
+<article class="drink" id="tequila">
+  <header><img class="mc" src="../../img/brewery/drink-tequila.png" alt="" width="40" height="40"><div><h3>Tequila</h3><p class="meta"><span>20% alcohol</span><span>Difficulty 5/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/cactus_side.png" alt="Cactus" title="Cactus" width="32" height="32"><b>8</b><small>Cactus</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>15 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>2×</b></span></li><li><img class="mc" src="../../img/brewery/icons/birch_planks.png" alt="Birch" title="Birch" width="20" height="20"><span>Age <b>12 years</b> in a <b>Birch</b> barrel <i>(about 4 h)</i></span></li></ol>
+  <p class="q"><span>Bad: Mezcal</span><span>Best: Tequila anejo</span></p>
+</article>
+<article class="drink" id="absinthe">
+  <header><img class="mc" src="../../img/brewery/drink-absinthe.png" alt="" width="40" height="40"><div><h3>Absinthe</h3><p class="meta"><span>42% alcohol</span><span>Difficulty 8/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/short_grass.png" alt="Grass" title="Grass" width="32" height="32"><b>15</b><small>Grass</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>3 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>6×</b> <i>(80s each)</i></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Poison</p>
+  <p class="q"><span>Bad: Poor Absinthe</span><span>Best: Strong Absinthe</span></p>
+</article>
+<article class="drink" id="gr_absinthe">
+  <header><img class="mc" src="../../img/brewery/drink-gr_absinthe.png" alt="" width="40" height="40"><div><h3>Green Absinthe</h3><p class="meta"><span>46% alcohol</span><span>Difficulty 9/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/short_grass.png" alt="Grass" title="Grass" width="32" height="32"><b>17</b><small>Grass</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/poisonous_potato.png" alt="Poisonous Potato" title="Poisonous Potato" width="32" height="32"><b>2</b><small>Poisonous Potato</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>5 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>6×</b> <i>(85s each)</i></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Poison, Instant Damage, Night Vision</p>
+  <p class="q"><span>Bad: Poor Absinthe</span><span>Best: Bright Green Absinthe</span></p>
+</article>
+<article class="drink" id="g_vodka">
+  <header><img class="mc" src="../../img/brewery/drink-g_vodka.png" alt="" width="40" height="40"><div><h3>Golden Vodka</h3><p class="meta"><span>20% alcohol</span><span>Difficulty 6/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/potato.png" alt="Potato" title="Potato" width="32" height="32"><b>10</b><small>Potato</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/gold_nugget.png" alt="Gold Nugget" title="Gold Nugget" width="32" height="32"><b>2</b><small>Gold Nugget</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>18 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>3×</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Weakness, Poison</p>
+  <p class="q"><span>Bad: Rancid Vodka</span><span>Best: Shimmering Golden Vodka</span></p>
+</article>
+<article class="drink" id="fire_whiskey">
+  <header><img class="mc" src="../../img/brewery/drink-fire_whiskey.png" alt="" width="40" height="40"><div><h3>Burning Whiskey</h3><p class="meta"><span>28% alcohol</span><span>Difficulty 7/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/wheat.png" alt="Wheat" title="Wheat" width="32" height="32"><b>10</b><small>Wheat</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/blaze_powder.png" alt="Blaze Powder" title="Blaze Powder" width="32" height="32"><b>2</b><small>Blaze Powder</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>12 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/brewing_stand.png" alt="Brewing Stand" title="Brewing Stand" width="20" height="20"><span>Distill <b>3×</b> <i>(55s each)</i></span></li><li><img class="mc" src="../../img/brewery/icons/spruce_planks.png" alt="Spruce" title="Spruce" width="20" height="20"><span>Age <b>18 years</b> in a <b>Spruce</b> barrel <i>(about 6 h)</i></span></li></ol>
+  <p class="fx">&ldquo;You get a burning feeling in your mouth&rdquo;</p>
+  <p class="q"><span>Bad: Powdery Whiskey</span><span>Best: Blazing Whiskey</span></p>
+</article>
+</div>
+<h3>Without alcohol</h3>
+<div class="drinks">
+<article class="drink" id="potato_soup">
+  <header><img class="mc" src="../../img/brewery/drink-potato_soup.png" alt="" width="40" height="40"><div><h3>Potato soup</h3><p class="meta"><span>No alcohol</span><span>Difficulty 1/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/potato.png" alt="Potato" title="Potato" width="32" height="32"><b>5</b><small>Potato</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/short_grass.png" alt="Grass" title="Grass" width="32" height="32"><b>3</b><small>Grass</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>3 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Instant Health</p>
+  
+</article>
+<article class="drink" id="coffee">
+  <header><img class="mc" src="../../img/brewery/drink-coffee.png" alt="" width="40" height="40"><div><h3>Coffee</h3><p class="meta"><span>Sobers you up</span><span>Difficulty 3/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/cocoa_beans.png" alt="Cocoa Beans" title="Cocoa Beans" width="32" height="32"><b>12</b><small>Cocoa Beans</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/milk_bucket.png" alt="Milk Bucket" title="Milk Bucket" width="32" height="32"><b>2</b><small>Milk Bucket</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>2 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Regeneration, Speed</p>
+  <p class="q"><span>Bad: Stale Coffee</span><span>Best: Strong Coffee</span></p>
+</article>
+<article class="drink" id="hot_choc">
+  <header><img class="mc" src="../../img/brewery/drink-hot_choc.png" alt="" width="40" height="40"><div><h3>Hot Chocolate</h3><p class="meta"><span>No alcohol</span><span>Difficulty 2/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/cookie.png" alt="Cookie" title="Cookie" width="32" height="32"><b>3</b><small>Cookie</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>2 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Haste</p>
+  
+</article>
+<article class="drink" id="iced_coffee">
+  <header><img class="mc" src="../../img/brewery/drink-iced_coffee.png" alt="" width="40" height="40"><div><h3>Iced Coffee</h3><p class="meta"><span>Sobers you up</span><span>Difficulty 4/10</span></p></div></header>
+  <div class="ings"><span class="ing"><img class="mc" src="../../img/brewery/icons/cookie.png" alt="Cookie" title="Cookie" width="32" height="32"><b>8</b><small>Cookie</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/snowball.png" alt="Snowball" title="Snowball" width="32" height="32"><b>4</b><small>Snowball</small></span><span class="ing"><img class="mc" src="../../img/brewery/icons/milk_bucket.png" alt="Milk Bucket" title="Milk Bucket" width="32" height="32"><b>1</b><small>Milk Bucket</small></span></div>
+  <ol class="steps"><li><img class="mc" src="../../img/brewery/icons/cauldron.png" alt="Cauldron" title="Cauldron" width="20" height="20"><span>Boil <b>1 min</b></span></li><li><img class="mc" src="../../img/brewery/icons/glass_bottle.png" alt="No aging" title="No aging" width="20" height="20"><span>No aging needed</span></li></ol>
+  <p class="fx">Effects: Regeneration, Speed</p>
+  <p class="q"><span>Bad: Watery Coffee</span><span>Best: Strong Iced Coffee</span></p>
+</article>
+</div>
+<p class="credits" style="margin-top:32px;font-size:13px;color:var(--muted)">Guide pictures from the official Brewery wiki.</p>
+  </article>
+</div>
+
+<div class="studio-wrap">
+  <footer class="studio">
+    <img src="../../img/logo.png" alt="">
+    <div class="s-mid">
+      <button class="ipbox" id="ipBox" type="button" title="Click to copy"><b id="ipText">jes.earth</b><span id="onlineNow">–</span></button>
+    <div class="s-text">Just an Earth Server, powered by <b>Ciel Studios</b><small>© Ciel Studios. All rights reserved.</small></div>
+    </div>
+    <div class="s-side">
+    <div class="socials">
+      <a href="https://discord.gg/8ngbqfhkWt" target="_blank" rel="noopener" aria-label="Discord"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.8732.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/></svg></a>
+      <a href="https://www.youtube.com/@JustAnEarthServer" target="_blank" rel="noopener" aria-label="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg></a>
+      <a href="https://www.tiktok.com/@justanearthserver" target="_blank" rel="noopener" aria-label="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg></a>
+    </div>
+    <div class="s-text">Support: <b>ciel0forwork@gmail.com</b></div>
+    </div>
+  </footer>
+</div>
+
+<script src="../../site.js"></script>
+<script src="../../studio.js"></script>
+<script src="../../cursor.js"></script>
+</body>
+</html>

@@ -80,3 +80,13 @@ div.wrap.doc{padding-top:14px;padding-bottom:0}
 /* every wiki page starts in the same place: the pinned sidebar stays where it loads */
 @media(min-width:801px){.doc aside.side{top:79px}}
 @media(max-width:800px){.whead{min-height:0;align-items:center}.whead>div{padding-top:0}}
+
+/* wiki sidebar: Misc is a dropdown, like a folder */
+aside.side .side-misc{margin-top:6px}
+aside.side .side-misc summary{display:flex;align-items:center;justify-content:space-between;padding:2px 12px;border-left:2px solid var(--line);color:var(--text);font-weight:600;line-height:1.4;cursor:pointer;list-style:none;user-select:none}
+aside.side .side-misc summary::-webkit-details-marker{display:none}
+aside.side .side-misc summary::after{content:"";width:7px;height:7px;margin-right:4px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(-45deg);transition:transform .2s}
+aside.side .side-misc[open] summary::after{transform:rotate(45deg)}
+aside.side .side-misc summary:hover{color:var(--text)}
+aside.side .side-misc a{padding-left:26px}
+@media(max-width:800px){aside.side .side-misc{flex-basis:100%;margin-top:4px}aside.side .side-misc summary{padding:4px 2px 6px;border:0;font-size:15px}aside.side .side-misc a{display:inline-block;margin:0 6px 6px 0;padding:4px 10px}}
